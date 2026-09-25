@@ -1,0 +1,104 @@
+<div class="pb" id="pb-root">
+  <div class="pb-marquee">
+    <span class="pb-logo">PASS BLASTER</span>
+    <span class="pb-sub">UPchieve pricing &middot; arcade edition</span>
+  </div>
+  <div class="pb-body">
+    <div class="pb-main">
+      <div class="pb-screen" id="pb-screen">
+        <canvas id="pb-canvas" role="img" aria-label="A district map with schools and students"></canvas>
+        <div class="pb-hud">
+          <div class="pb-level" id="pb-level">1 PLAYER</div>
+          <div class="pb-power" id="pb-power">
+            <span class="pb-power-label">POWER</span>
+            <span class="pb-power-bar"><span class="pb-power-fill" id="pb-power-fill"></span></span>
+            <span class="pb-power-num" id="pb-power-num">0</span>
+          </div>
+        </div>
+        <div class="pb-clock" id="pb-clock" hidden>1:00 PM</div>
+        <div class="pb-banner" id="pb-banner"></div>
+        <button class="pb-mute" id="pb-mute" type="button" aria-pressed="false">SOUND: ON</button>
+
+        <div class="pb-overlay" id="pb-title">
+          <h2 class="pb-title-logo"><span>PASS</span><span>BLASTER</span></h2>
+          <p class="pb-tagline">Your students are wandering. Their dreams are dropping. Only a school administrator can save them.</p>
+          <button class="pb-btn pb-btn--yellow pb-btn--big is-pulse" id="pb-start" type="button">PRESS START</button>
+          <p class="pb-coin">INSERT COIN &middot; JK, IT&rsquo;S FREE</p>
+          <button class="pb-link" id="pb-skip" type="button">Skip the intro, just show me pricing</button>
+        </div>
+
+        <div class="pb-overlay" id="pb-select" hidden>
+          <p class="pb-select-title">CHOOSE YOUR ADMIN</p>
+          <div class="pb-roles" id="pb-roles"></div>
+        </div>
+
+        <div class="pb-overlay pb-shop" id="pb-shop" hidden role="dialog" aria-modal="true" aria-labelledby="pb-shop-title">
+          <div class="pb-shop-card">
+            <div class="pb-shop-head">
+              <h3 id="pb-shop-title">ITEM SHOP</h3>
+              <span>1 ITEM IN STOCK</span>
+            </div>
+            <div class="pb-item">
+              <canvas id="pb-item-icon" width="24" height="24"></canvas>
+              <div>
+                <p class="pb-item-name">UPchieve POWER-UP</p>
+                <p class="pb-item-desc">Every student in every one of your buildings gets a free, 24/7 tutor. Priced per building, not per student.</p>
+              </div>
+            </div>
+            <ul class="pb-includes" aria-label="Includes">
+              <li>all students</li>
+              <li>unlimited hours</li>
+              <li>in-person student presentation</li>
+              <li>teacher PD</li>
+              <li>and more!</li>
+            </ul>
+            <div class="pb-receipt" id="pb-receipt"></div>
+            <div class="pb-shop-price">
+              <strong id="pb-shop-total">$0</strong>
+              <span>per year &middot; <b id="pb-shop-per">$0</b> per student</span>
+            </div>
+            <div class="pb-shop-actions">
+              <button class="pb-btn pb-btn--yellow pb-btn--big is-pulse" id="pb-buy" type="button">GET UNLIMITED POWER</button>
+              <button class="pb-link" id="pb-shop-close" type="button">Back to my schools</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pb-meters is-idle" id="pb-meters" aria-label="Student outcomes"></div>
+    </div>
+
+    <aside class="pb-deck" aria-label="Your schools">
+      <div class="pb-deck-head">
+        <h3>YOUR SCHOOLS</h3>
+        <span id="pb-count">0 BLDG</span>
+      </div>
+      <p class="pb-hint" id="pb-hint">Add each school in your district and set how many students it holds.</p>
+      <ol class="pb-list" id="pb-list"></ol>
+      <div class="pb-add-row">
+        <button class="pb-btn pb-btn--blue" id="pb-add" type="button">+ ADD SCHOOL</button>
+        <button class="pb-btn pb-btn--blue" id="pb-add5" type="button" aria-label="Add 5 schools">+5</button>
+      </div>
+      <div class="pb-egg" id="pb-egg" hidden></div>
+      <div class="pb-total">
+        <span>Students</span><strong id="pb-students">0</strong>
+        <span>Yearly price</span><strong class="pb-total-price" id="pb-price">$0</strong>
+      </div>
+      <button class="pb-btn pb-btn--wide" id="pb-next" type="button" disabled>DONE ADDING SCHOOLS</button>
+
+      <div class="pb-quote" id="pb-quote" hidden>
+        <p class="pb-quote-title">YOUR QUOTE</p>
+        <p class="pb-quote-price"><span id="pb-q-price">$0</span> <small>/YEAR</small></p>
+        <div class="pb-quote-stats">
+          <span><b id="pb-q-bldg">0</b> buildings &middot; <b id="pb-q-kids">0</b> students</span>
+          <span>Tutoring sessions used: <b id="pb-q-sessions">0</b></span>
+          <span>Extra charges: <b>$0.00</b></span>
+        </div>
+        <a class="pb-btn pb-btn--yellow pb-btn--wide" href="https://calendly.com/aly-murray/upchieve-partnerships" target="_blank" rel="noopener">BOOK A DEMO</a>
+        <p class="pb-fine">Can&rsquo;t afford us? Email <a href="mailto:partnerships@upchieve.org">partnerships@upchieve.org</a> to join our sponsorship waitlist.</p>
+        <button class="pb-link" id="pb-again" type="button">Play again</button>
+      </div>
+    </aside>
+  </div>
+  <div class="pb-sr" id="pb-live" aria-live="polite"></div>
+</div>

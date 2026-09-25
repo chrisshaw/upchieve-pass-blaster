@@ -1,0 +1,83 @@
+<div class="pb" id="pb-root">
+  <div class="pb-tabrow">
+    <span class="pb-tab"><span class="pb-tab-label">Pass Blaster <small>the price calculator, but fun</small></span></span>
+  </div>
+  <div class="pb-screen" id="pb-screen">
+    <canvas id="pb-canvas" tabindex="0" role="img" aria-label="A school district map. Click the map to add a school."></canvas>
+
+    <div class="pb-topc">
+      <p class="pb-status" id="pb-status"></p>
+      <div class="pb-meter pb-dreams" id="pb-dreams" hidden>
+        <span class="pb-meter-label">Dreams</span>
+        <span class="pb-bar"><span class="pb-fill" id="pb-dreams-fill"></span></span>
+        <span class="pb-meter-num" id="pb-dreams-mult">&times;1</span>
+      </div>
+    </div>
+
+    <div class="pb-corner">
+      <span class="pb-clock" id="pb-clock" hidden></span>
+      <button class="pb-icon" id="pb-again" type="button" aria-label="Play again" hidden>&#8635;</button>
+      <button class="pb-icon" id="pb-mute" type="button" aria-label="Mute sound" aria-pressed="false">&#128266;</button>
+    </div>
+
+    <div class="pb-meter pb-power" id="pb-power">
+      <span class="pb-meter-label">Power</span>
+      <span class="pb-bar"><span class="pb-fill" id="pb-power-fill"></span></span>
+      <span class="pb-meter-num" id="pb-power-num">0</span>
+    </div>
+
+    <div class="pb-pu" id="pb-pu" hidden>
+      <button class="pb-orb" id="pb-orb" type="button" aria-describedby="pb-tip" aria-label="UPchieve power-up. Click to charge up.">
+        <span class="pb-orb-rays" aria-hidden="true"></span>
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <path d="M50 5 L62 36 L96 38 L69 59 L79 93 L50 74 L21 93 L31 59 L4 38 L38 36 Z" fill="#FFC94D" stroke="#1C222B" stroke-width="5" stroke-linejoin="round"/>
+          <text x="50" y="62" text-anchor="middle" font-family="Work Sans, sans-serif" font-weight="800" font-size="24" fill="#154BB7">UP</text>
+        </svg>
+      </button>
+      <div class="pb-tip" id="pb-tip" role="tooltip">
+        <p class="pb-tip-name">UPchieve power-up</p>
+        <p class="pb-tip-desc">Unlimited tutoring for every student in every school</p>
+        <p class="pb-tip-price"><span id="pb-tip-price">$0</span><small>/year</small></p>
+        <button class="pb-textbtn" id="pb-tip-invoice" type="button">See the invoice</button>
+      </div>
+    </div>
+
+    <button class="pb-done" id="pb-done" type="button" hidden aria-label="Done adding schools">
+      <svg class="pb-done-ring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="46" id="pb-done-ring"/></svg>
+      <span class="pb-done-face" id="pb-done-face"><b>&#10003;</b><small>Done</small></span>
+    </button>
+
+    <div class="pb-pop" id="pb-pop" hidden role="dialog" aria-labelledby="pb-pop-title">
+      <div class="pb-pop-head">
+        <p class="pb-pop-title" id="pb-pop-title">How many students at <b id="pb-pop-name"></b>?</p>
+        <button class="pb-pop-del" id="pb-pop-del" type="button" aria-label="Remove this school">&times;</button>
+      </div>
+      <div class="pb-chips" id="pb-chips"></div>
+      <button class="pb-pop-copy" id="pb-pop-copy" type="button">+5 more like this</button>
+      <span class="pb-pop-timer" id="pb-pop-timer"></span>
+      <span class="pb-pop-tail" id="pb-pop-tail"></span>
+    </div>
+
+    <div class="pb-invoice" id="pb-invoice" hidden role="dialog" aria-modal="true" aria-labelledby="pb-inv-title">
+      <div class="pb-invoice-card">
+        <div class="pb-invoice-head">
+          <h3 id="pb-inv-title">Your invoice</h3>
+          <button class="pb-x" id="pb-inv-close" type="button" aria-label="Close invoice">&times;</button>
+        </div>
+        <div class="pb-lines" id="pb-lines"></div>
+        <button class="pb-addline" id="pb-inv-add" type="button">+ Add a school</button>
+        <div class="pb-price-box"><span>Yearly price</span><strong id="pb-inv-total">$0</strong></div>
+        <p class="pb-inv-note">Priced per building, not per student. Unlimited hours, $0 overage fees.</p>
+        <ul class="pb-includes" aria-label="Includes">
+          <li>all students</li>
+          <li>unlimited hours</li>
+          <li>in-person student presentation</li>
+          <li>teacher PD</li>
+          <li>and more!</li>
+        </ul>
+        <p class="pb-fine">Can&rsquo;t afford us? Email <a href="mailto:partnerships@upchieve.org">partnerships@upchieve.org</a> to join our sponsorship waitlist.</p>
+      </div>
+    </div>
+  </div>
+  <div class="pb-sr" id="pb-live" aria-live="polite"></div>
+</div>

@@ -1,0 +1,103 @@
+<div class="pb" id="pb-root">
+  <div class="pb-tabrow">
+    <span class="pb-tab"><span class="pb-tab-label">Pass Blaster <small>the price calculator, but fun</small></span></span>
+  </div>
+  <div class="pb-screen" id="pb-screen">
+    <canvas id="pb-canvas" tabindex="0" role="img" aria-label="A school district map. Click the map to add a school."></canvas>
+
+    <div class="pb-top">
+      <div class="pb-center">
+        <p class="pb-mission pb-chip-ui" id="pb-mission"></p>
+        <div class="pb-dreams pb-chip-ui" id="pb-dreams" hidden>
+          <span class="pb-dreams-label">Dreams</span>
+          <span class="pb-dreams-bar"><span class="pb-dreams-fill" id="pb-dreams-fill"></span></span>
+          <span class="pb-dreams-mult" id="pb-dreams-mult">&times;1</span>
+        </div>
+      </div>
+      <div class="pb-right">
+        <div class="pb-gauge pb-chip-ui" id="pb-gauge" hidden>
+          <span>Power</span>
+          <span class="pb-gauge-bar"><span class="pb-gauge-fill" id="pb-gauge-fill"></span></span>
+          <span class="pb-gauge-num" id="pb-gauge-num">0</span>
+        </div>
+        <div class="pb-clock pb-chip-ui" id="pb-clock" hidden></div>
+      </div>
+    </div>
+
+    <div class="pb-announce" id="pb-announce" aria-hidden="true"></div>
+
+    <div class="pb-countdown" id="pb-countdown" hidden>
+      <span class="pb-cd-label pb-chip-ui">Level 2 starts in</span>
+      <span class="pb-cd-num" id="pb-cd-num">3</span>
+      <span class="pb-cd-sub pb-chip-ui">Add another school to keep going</span>
+    </div>
+    <button class="pb-btn pb-done" id="pb-done" type="button" hidden>I&rsquo;m done adding schools</button>
+
+    <div class="pb-pop" id="pb-pop" hidden role="dialog" aria-labelledby="pb-pop-title">
+      <p class="pb-pop-title" id="pb-pop-title">How many students?</p>
+      <p class="pb-pop-name" id="pb-pop-name"></p>
+      <div class="pb-pop-opts" id="pb-pop-opts"></div>
+      <p class="pb-pop-hint" id="pb-pop-hint" hidden>Tap 2,500+ again to add capacity</p>
+      <div class="pb-pop-foot">
+        <button type="button" id="pb-pop-copy">+5 more like this</button>
+        <button type="button" class="pb-del" id="pb-pop-del">Remove</button>
+      </div>
+      <span class="pb-pop-timer" id="pb-pop-timer"></span>
+    </div>
+
+    <img class="pb-updog pb-updog--delivery" id="pb-dog-delivery" alt="" hidden>
+    <p class="pb-bubble pb-bubble--delivery pb-chip-ui" id="pb-dog-bubble" hidden>Special delivery!</p>
+    <div class="pb-powerup" id="pb-powerup" hidden>
+      <div class="pb-powerup-art" aria-hidden="true">
+        <svg viewBox="0 0 100 100"><path d="M50 4 L62 36 L96 38 L69 59 L79 93 L50 73 L21 93 L31 59 L4 38 L38 36 Z" fill="#FFC94D" stroke="#1C222B" stroke-width="5" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="pb-powerup-body">
+        <p class="pb-powerup-kicker">Power-up</p>
+        <p class="pb-powerup-name">UPchieve for every school</p>
+        <p class="pb-powerup-desc">Unlimited tutoring for <em>every</em> student</p>
+        <div class="pb-price-box"><span>Yearly price</span><strong><span id="pb-pu-price">$0</span><small>/year</small></strong></div>
+      </div>
+      <div class="pb-powerup-actions">
+        <button class="pb-btn" id="pb-unlock" type="button">Unlock unlimited power</button>
+        <button class="pb-textbtn" id="pb-pu-invoice" type="button">See the invoice</button>
+      </div>
+    </div>
+
+    <div class="pb-quote" id="pb-quote" hidden>
+      <p class="pb-quote-title">Unlimited tutoring</p>
+      <div class="pb-price-box"><span>Yearly price</span><strong><span id="pb-q-price">$0</span><small>/year</small></strong></div>
+      <p class="pb-quote-stats"><span id="pb-q-bldg">0</span> &middot; <span id="pb-q-sessions">0</span> sessions &middot; $0.00 extra</p>
+      <a class="pb-btn" href="https://calendly.com/aly-murray/upchieve-partnerships" target="_blank" rel="noopener">Book a demo</a>
+      <div class="pb-quote-links">
+        <button class="pb-textbtn" id="pb-q-invoice" type="button">See the invoice</button>
+        <button class="pb-textbtn" id="pb-again" type="button">Play again</button>
+      </div>
+    </div>
+    <img class="pb-updog pb-updog--party" id="pb-dog-party" alt="" hidden>
+
+    <button class="pb-mute" id="pb-mute" type="button" aria-label="Mute sound" aria-pressed="false">&#128266;</button>
+
+    <div class="pb-invoice" id="pb-invoice" hidden role="dialog" aria-modal="true" aria-labelledby="pb-inv-title">
+      <div class="pb-invoice-card">
+        <div class="pb-invoice-head">
+          <h3 id="pb-inv-title">Your invoice</h3>
+          <button class="pb-x" id="pb-inv-close" type="button" aria-label="Close invoice">&times;</button>
+        </div>
+        <div class="pb-lines" id="pb-lines"></div>
+        <button class="pb-addline" id="pb-inv-add" type="button">+ Add a school</button>
+        <div class="pb-price-box"><span>Yearly price</span><strong id="pb-inv-total">$0</strong></div>
+        <p class="pb-inv-note">Priced per building, not per student. Unlimited hours, $0 overage fees.</p>
+        <ul class="pb-includes" aria-label="Includes">
+          <li>all students</li>
+          <li>unlimited hours</li>
+          <li>in-person student presentation</li>
+          <li>teacher PD</li>
+          <li>and more!</li>
+        </ul>
+        <a class="pb-btn" href="https://calendly.com/aly-murray/upchieve-partnerships" target="_blank" rel="noopener">Book a demo</a>
+        <p class="pb-fine">Can&rsquo;t afford us? Email <a href="mailto:partnerships@upchieve.org">partnerships@upchieve.org</a> to join our sponsorship waitlist.</p>
+      </div>
+    </div>
+  </div>
+  <div class="pb-sr" id="pb-live" aria-live="polite"></div>
+</div>

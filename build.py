@@ -1,0 +1,42 @@
+# Builds the Squarespace code-block snippet and a standalone preview page from src/.
+from pathlib import Path
+
+src = Path(__file__).parent / 'src'
+fonts = '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700;1,800&display=swap">'
+css = (src / 'pb.css').read_text()
+html = (src / 'pb.html').read_text()
+js = '\n'.join((src / f).read_text() for f in ['pb-core.js', 'pb-world.js', 'pb-draw.js', 'pb-ui.js'])
+import base64
+dog = src / 'updog.png'
+updog = 'data:image/png;base64,' + base64.b64encode(dog.read_bytes()).decode() if dog.exists() else ''
+js = "var UPDOG = '" + updog + "';\n" + js
+js = '(function () {\n"use strict";\n' + js + '\n})();\n'
+# Escape non-ASCII so the snippet works whatever encoding the host page declares.
+def esc(ch):
+    o = ord(ch)
+    if o < 128:
+        return ch
+    if o > 0xFFFF:
+        o -= 0x10000
+        return '\\u%04x\\u%04x' % (0xD800 + (o >> 10), 0xDC00 + (o & 0x3FF))
+    return '\\u%04x' % o
+js = ''.join(esc(ch) for ch in js)
+
+embed = f'<!-- Pass Blaster: UPchieve pricing game. Paste this whole block into a Squarespace Code block. -->\n{fonts}\n<style>\n{css}</style>\n{html}<script>\n{js}</script>\n'
+(Path(__file__).parent / 'pass-blaster-embed.html').write_text(embed)
+(src.parent / 'build' ).mkdir(exist_ok=True)
+(src.parent / 'build' / 'pb.js').write_text(js)
+
+page = f'''<meta charset="utf-8">
+<title>Pass Blaster</title>
+<meta name="description" content="Pass Blaster, an arcade-style pricing calculator for UPchieve school partnerships.">
+<style>
+  :root {{ color-scheme: light; }}
+  body {{ background: #DEF4F0; color: #1C222B; padding-block: 32px 40px; padding-inline: 16px; font-family: \"Work Sans\", system-ui, sans-serif; }}
+  .preview-note {{ max-width: 1180px; margin: 20px auto 0; font-size: 14px; color: #4A5261; }}
+</style>
+{embed}
+<p class="preview-note">Preview of the embed for upchieve.org/schools. Prices use the same per-building tiers as the current calculator.</p>
+'''
+(Path(__file__).parent / 'pass-blaster.html').write_text(page)
+print(len(embed), 'bytes embed')

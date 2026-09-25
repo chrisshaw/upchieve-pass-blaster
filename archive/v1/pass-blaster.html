@@ -1,0 +1,1896 @@
+<meta charset="utf-8">
+<title>Pass Blaster</title>
+<meta name="description" content="Pass Blaster, an arcade-style pricing calculator for UPchieve school partnerships.">
+<style>
+  :root { color-scheme: dark; }
+  body { background: #070A1F; color: #F4F1FF; padding-block: 24px 40px; padding-inline: 16px; font-family: "Work Sans", system-ui, sans-serif; }
+  .preview-note { max-width: 1180px; margin: 14px auto 0; font-size: 13px; color: #A9B0DA; }
+</style>
+<!-- Pass Blaster: UPchieve pricing game. Paste this whole block into a Squarespace Code block. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Work+Sans:wght@400;600&display=swap">
+<style>
+.pb{
+  --pb-ink:#0E1433;
+  --pb-ink-2:#18204A;
+  --pb-ink-3:#252F66;
+  --pb-line:#3A4690;
+  --pb-yellow:#FFD23F;
+  --pb-pink:#FF5EA8;
+  --pb-blue:#154BB7;
+  --pb-sky:#5FA8FF;
+  --pb-mint:#7BE0C8;
+  --pb-cream:#FFF0C3;
+  --pb-red:#FF4D4D;
+  --pb-text:#F4F1FF;
+  --pb-dim:#A9B0DA;
+  --pb-pixel:"Press Start 2P", "Courier New", monospace;
+  --pb-sans:"Work Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  container-type:inline-size;
+  position:relative;
+  max-width:1180px;
+  margin:0 auto;
+  padding:clamp(10px, 1.6vw, 18px);
+  border-radius:18px;
+  background:var(--pb-ink);
+  color:var(--pb-text);
+  font-family:var(--pb-sans);
+  font-size:15px;
+  line-height:1.4;
+  box-shadow:0 0 0 3px var(--pb-ink-3), 0 18px 40px rgba(14,20,51,.35);
+  -webkit-font-smoothing:antialiased;
+}
+.pb *, .pb *::before, .pb *::after{ box-sizing:border-box; }
+.pb [hidden]{ display:none !important; }
+.pb p, .pb h2, .pb h3, .pb ol, .pb ul{ margin:0 !important; padding:0; }
+.pb ol, .pb ul{ list-style:none; }
+.pb h2, .pb h3{ text-transform:none; font-weight:400; }
+.pb button{
+  font:inherit;
+  color:inherit;
+  cursor:pointer;
+  border:0;
+  background:none;
+  margin:0;
+  text-transform:none;
+  letter-spacing:normal;
+}
+.pb button:focus-visible, .pb input:focus-visible, .pb a:focus-visible{
+  outline:3px solid var(--pb-yellow);
+  outline-offset:2px;
+}
+
+/* Marquee */
+.pb-marquee{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:8px 16px;
+  flex-wrap:wrap;
+  padding:4px 4px 12px;
+}
+.pb-logo{
+  font-family:var(--pb-pixel);
+  font-size:clamp(16px, 3.2cqi, 26px);
+  letter-spacing:.04em;
+  color:var(--pb-yellow);
+  text-shadow:3px 3px 0 var(--pb-pink), 6px 6px 0 var(--pb-blue);
+  white-space:nowrap;
+}
+.pb-sub{
+  font-family:var(--pb-pixel);
+  font-size:9px;
+  letter-spacing:.08em;
+  color:var(--pb-dim);
+  text-transform:uppercase;
+}
+
+/* Body grid */
+.pb-body{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  align-items:start;
+  gap:12px;
+}
+@container (min-width: 820px){
+  .pb-body{ grid-template-columns:minmax(0,1fr) 300px; }
+}
+.pb-main{ display:grid; align-content:start; gap:10px; min-width:0; }
+
+/* Screen */
+.pb-screen{
+  position:relative;
+  width:100%;
+  max-width:100%;
+  aspect-ratio:4 / 5;
+  border-radius:10px;
+  overflow:hidden;
+  background:#1B2B6B;
+  box-shadow:inset 0 0 0 3px #000, 0 0 0 3px var(--pb-line);
+  user-select:none;
+  -webkit-user-select:none;
+  touch-action:manipulation;
+}
+@container (min-width: 560px){
+  .pb-screen{ aspect-ratio:16 / 10; }
+}
+.pb-screen > canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+  image-rendering:pixelated;
+  cursor:crosshair;
+}
+.pb-screen::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:repeating-linear-gradient(0deg, rgba(0,0,0,.10) 0 1px, transparent 1px 3px);
+  mix-blend-mode:multiply;
+}
+
+/* HUD */
+.pb-hud{
+  position:absolute;
+  top:0; left:0; right:0;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:8px;
+  padding:10px;
+  pointer-events:none;
+  z-index:3;
+}
+.pb-level{
+  font-family:var(--pb-pixel);
+  font-size:clamp(8px, 1.5cqi, 11px);
+  line-height:1.6;
+  padding:6px 8px;
+  border-radius:4px;
+  background:rgba(14,20,51,.78);
+  color:var(--pb-yellow);
+  max-width:55%;
+}
+@container (max-width: 520px){ .pb-power-label{ display:none; } }
+.pb-power{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 8px;
+  border-radius:4px;
+  background:rgba(14,20,51,.78);
+  font-family:var(--pb-pixel);
+  font-size:9px;
+}
+.pb-power-bar{
+  position:relative;
+  width:clamp(48px, 16cqi, 130px);
+  height:12px;
+  border:2px solid var(--pb-text);
+  background:#000;
+}
+.pb-power-fill{
+  position:absolute;
+  inset:0 auto 0 0;
+  width:0%;
+  background:var(--pb-mint);
+  transition:width .12s linear;
+}
+.pb-power-num{ min-width:3ch; text-align:right; font-variant-numeric:tabular-nums; }
+.pb.is-unlimited .pb-power{ animation:pb-throb 1s ease-in-out infinite; }
+.pb.is-unlimited .pb-power-fill{
+  width:100% !important;
+  background:linear-gradient(90deg,#FF4D4D,#FFD23F,#7BE0C8,#5FA8FF,#FF5EA8,#FF4D4D);
+  background-size:200% 100%;
+  animation:pb-rainbow 1s linear infinite;
+}
+.pb.is-unlimited .pb-power-num{ color:var(--pb-yellow); font-size:14px; }
+.pb-inf{ font-family:var(--pb-sans); font-weight:600; font-size:1.7em; line-height:0; vertical-align:-0.1em; }
+.pb-clock{
+  position:absolute;
+  left:10px;
+  bottom:10px;
+  z-index:3;
+  padding:6px 8px;
+  border-radius:4px;
+  background:rgba(14,20,51,.78);
+  font-family:var(--pb-pixel);
+  font-size:9px;
+  color:var(--pb-cream);
+  pointer-events:none;
+  font-variant-numeric:tabular-nums;
+}
+.pb .pb-mute{
+  position:absolute;
+  right:10px;
+  bottom:10px;
+  z-index:6;
+  padding:6px 8px;
+  border-radius:4px;
+  background:rgba(14,20,51,.78);
+  font-family:var(--pb-pixel);
+  font-size:8px;
+  color:var(--pb-dim);
+}
+.pb-banner{
+  position:absolute;
+  left:50%;
+  top:22%;
+  z-index:4;
+  transform:translateX(-50%);
+  width:max-content;
+  max-width:88%;
+  text-align:center;
+  font-family:var(--pb-pixel);
+  font-size:clamp(10px, 2.3cqi, 18px);
+  line-height:1.6;
+  color:var(--pb-yellow);
+  text-shadow:2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .2s;
+}
+.pb-banner.is-on{ opacity:1; animation:pb-pop .35s ease-out; }
+.pb-banner.is-alarm{ color:var(--pb-red); animation:pb-blink .5s steps(2) infinite; }
+.pb-banner small{ display:block; font-size:.6em; color:var(--pb-text); margin-top:6px; }
+
+/* Overlays */
+.pb-overlay{
+  position:absolute;
+  inset:0;
+  z-index:5;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  padding:48px 18px 18px;
+  text-align:center;
+  background:rgba(14,20,51,.62);
+  overflow:auto;
+}
+.pb-title-logo{
+  font-family:var(--pb-pixel);
+  font-size:clamp(26px, 8.5cqi, 64px);
+  line-height:1.1;
+  color:var(--pb-yellow);
+  text-shadow:4px 4px 0 var(--pb-pink), 8px 8px 0 var(--pb-blue);
+  letter-spacing:.02em;
+}
+.pb-title-logo span{ display:block; }
+.pb-tagline{
+  max-width:40ch;
+  font-size:clamp(13px, 1.9cqi, 16px);
+  color:var(--pb-text);
+}
+.pb-coin{
+  font-family:var(--pb-pixel);
+  font-size:9px;
+  color:var(--pb-mint);
+  animation:pb-blink 1s steps(2) infinite;
+}
+.pb .pb-link{
+  font-family:var(--pb-sans);
+  font-size:13px;
+  color:var(--pb-dim);
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+
+/* Arcade buttons */
+.pb .pb-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:14px 18px;
+  border-radius:6px;
+  background:var(--pb-pink);
+  color:#fff;
+  font-family:var(--pb-pixel);
+  font-size:12px;
+  line-height:1.3;
+  box-shadow:0 5px 0 #A3245F, 0 5px 0 2px #000;
+  transform:translateY(0);
+  transition:transform .06s, box-shadow .06s, filter .1s;
+  text-decoration:none;
+}
+.pb .pb-btn:hover{ filter:brightness(1.08); }
+.pb .pb-btn:active{ transform:translateY(4px); box-shadow:0 1px 0 #A3245F, 0 1px 0 2px #000; }
+.pb .pb-btn:disabled{ cursor:not-allowed; filter:grayscale(.8) brightness(.7); }
+.pb .pb-btn--yellow{ background:var(--pb-yellow); color:var(--pb-ink); box-shadow:0 5px 0 #B38A00, 0 5px 0 2px #000; }
+.pb .pb-btn--yellow:active{ box-shadow:0 1px 0 #B38A00, 0 1px 0 2px #000; }
+.pb .pb-btn--blue{ background:var(--pb-blue); box-shadow:0 5px 0 #0A2A6E, 0 5px 0 2px #000; }
+.pb .pb-btn--blue:active{ box-shadow:0 1px 0 #0A2A6E, 0 1px 0 2px #000; }
+.pb .pb-btn--big{ font-size:clamp(12px, 2.4cqi, 16px); padding:16px 24px; }
+.pb .pb-btn--wide{ width:100%; }
+.pb .pb-btn.is-pulse{ animation:pb-throb .9s ease-in-out infinite; }
+
+/* Character select */
+.pb-select-title{
+  font-family:var(--pb-pixel);
+  font-size:clamp(12px, 2.6cqi, 20px);
+  color:var(--pb-yellow);
+}
+.pb-roles{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+  gap:10px;
+  width:100%;
+  max-width:720px;
+}
+.pb .pb-role{
+  display:grid;
+  justify-items:center;
+  align-content:start;
+  gap:8px;
+  padding:12px 8px;
+  border-radius:8px;
+  background:var(--pb-ink-2);
+  box-shadow:inset 0 0 0 2px var(--pb-line);
+  text-align:center;
+  transition:transform .1s, box-shadow .1s;
+}
+.pb .pb-role:hover, .pb .pb-role:focus-visible{ transform:translateY(-3px); box-shadow:inset 0 0 0 3px var(--pb-yellow); }
+.pb-role canvas{ width:64px; height:64px; image-rendering:pixelated; }
+.pb-role-name{ font-family:var(--pb-pixel); font-size:clamp(7px, 1.4cqi, 10px); line-height:1.5; color:var(--pb-yellow); }
+.pb-role-stats{ display:grid; gap:3px; width:100%; font-size:11px; color:var(--pb-dim); text-align:left; }
+.pb-role-stats span{ display:flex; justify-content:space-between; gap:6px; }
+.pb-role-stats b{ font-family:var(--pb-pixel); font-size:7px; font-weight:400; color:var(--pb-mint); letter-spacing:-1px; white-space:nowrap; }
+@container (max-width: 520px){
+  .pb-roles{ grid-template-columns:minmax(0,1fr); max-width:320px; }
+  .pb .pb-role{ grid-template-columns:48px minmax(0,1fr); justify-items:start; text-align:left; }
+  .pb-role canvas{ width:48px; height:48px; grid-row:span 2; }
+  .pb-role-stats{ display:none; }
+}
+
+/* Shop */
+.pb-shop{ background:rgba(8,10,30,.86); justify-content:flex-start; padding:16px; }
+.pb-shop-card{
+  display:grid;
+  gap:12px;
+  width:100%;
+  max-width:560px;
+  margin:auto 0;
+  padding:16px;
+  border-radius:10px;
+  background:var(--pb-ink-2);
+  box-shadow:inset 0 0 0 3px var(--pb-yellow);
+  text-align:left;
+}
+.pb-shop-head{ display:flex; justify-content:space-between; align-items:center; gap:8px; }
+.pb-shop-head h3{ font-family:var(--pb-pixel); font-size:12px; font-weight:400; color:var(--pb-yellow); }
+.pb-shop-head span{ font-family:var(--pb-pixel); font-size:8px; color:var(--pb-dim); }
+.pb-item{ display:grid; grid-template-columns:72px minmax(0,1fr); gap:12px; align-items:center; }
+.pb-item canvas{ width:72px; height:72px; image-rendering:pixelated; border-radius:6px; background:#000; }
+.pb-item-name{ font-family:var(--pb-pixel); font-size:11px; line-height:1.5; color:var(--pb-text); }
+.pb-item-desc{ font-size:13px; color:var(--pb-dim); margin-top:4px !important; }
+.pb-includes{ display:flex; flex-wrap:wrap; gap:6px; }
+.pb-includes li{
+  padding:4px 8px;
+  border-radius:99px;
+  background:var(--pb-ink-3);
+  font-size:12px;
+  color:var(--pb-cream);
+}
+.pb-receipt{
+  display:grid;
+  gap:4px;
+  max-height:130px;
+  overflow:auto;
+  padding:10px 12px;
+  border-radius:6px;
+  background:var(--pb-cream);
+  color:var(--pb-ink);
+  font-family:"Courier New", monospace;
+  font-size:13px;
+  font-variant-numeric:tabular-nums;
+}
+.pb-receipt div{ display:flex; justify-content:space-between; gap:10px; }
+.pb-receipt div span:first-child{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.pb-receipt .pb-rule{ border-top:2px dashed var(--pb-ink); margin:4px 0; }
+.pb-receipt .pb-strong{ font-weight:700; }
+.pb-shop-price{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.pb-shop-price strong{ font-family:var(--pb-pixel); font-size:clamp(16px, 3.4cqi, 24px); font-weight:400; color:var(--pb-yellow); }
+.pb-shop-price span{ font-size:12px; color:var(--pb-dim); }
+.pb-shop-actions{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+
+/* Meters */
+.pb-meters{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0,1fr));
+  gap:8px;
+}
+@container (min-width: 620px){
+  .pb-meters{ grid-template-columns:repeat(4, minmax(0,1fr)); }
+}
+.pb-meter{
+  display:grid;
+  gap:6px;
+  padding:8px 10px;
+  border-radius:8px;
+  background:var(--pb-ink-2);
+  box-shadow:inset 0 0 0 2px var(--pb-ink-3);
+  min-width:0;
+}
+.pb-meter-top{ display:flex; justify-content:space-between; align-items:baseline; gap:6px; }
+.pb-meter-label{ font-family:var(--pb-pixel); font-size:7px; line-height:1.4; letter-spacing:.04em; color:var(--pb-dim); }
+.pb-meter-lvl{ font-family:var(--pb-pixel); font-size:7px; color:var(--pb-ink); background:var(--pb-yellow); padding:2px 4px; border-radius:2px; }
+.pb-meter-bar{ position:relative; height:10px; background:#000; border:2px solid var(--pb-ink-3); overflow:hidden; }
+.pb-meter-fill{ position:absolute; inset:0 auto 0 0; width:0; background:var(--pb-mint); }
+.pb-meter-val{
+  font-family:var(--pb-pixel);
+  font-size:clamp(8px, 1.5cqi, 10px);
+  line-height:1.5;
+  color:var(--pb-text);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  font-variant-numeric:tabular-nums;
+}
+.pb-meter--dreams{ box-shadow:inset 0 0 0 2px var(--pb-pink); }
+.pb-meter--dreams .pb-meter-label{ color:var(--pb-pink); font-size:9px; }
+.pb.is-crisis .pb-meter-fill{ background:var(--pb-red); }
+.pb.is-crisis .pb-meter{ animation:pb-shiver .25s linear infinite; }
+.pb.is-unlimited .pb-meter-fill{ background:linear-gradient(90deg, var(--pb-mint), var(--pb-yellow)); }
+.pb-meters.is-idle{ opacity:.45; }
+
+/* Deck */
+.pb-deck{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  min-width:0;
+  padding:12px;
+  border-radius:10px;
+  background:var(--pb-ink-2);
+  box-shadow:inset 0 0 0 2px var(--pb-ink-3);
+}
+.pb-deck-head{ display:flex; justify-content:space-between; align-items:center; gap:8px; }
+.pb-deck-head h3{ font-family:var(--pb-pixel); font-size:10px; font-weight:400; color:var(--pb-yellow); }
+.pb-deck-head span{ font-family:var(--pb-pixel); font-size:9px; color:var(--pb-dim); }
+.pb-hint{ font-size:13px; color:var(--pb-dim); }
+.pb-list{ display:grid; gap:6px; max-height:300px; overflow:auto; padding-right:2px; }
+@container (max-width: 819px){ .pb-list{ max-height:220px; } }
+.pb-school{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:4px 8px;
+  align-items:center;
+  padding:8px;
+  border-radius:6px;
+  background:var(--pb-ink);
+}
+.pb-school.is-new{ animation:pb-pop-plain .3s ease-out; }
+.pb-school-name{ font-size:13px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.pb-school-price{ font-family:var(--pb-pixel); font-size:9px; color:var(--pb-mint); text-align:right; }
+.pb-school-ctrl{ grid-column:1 / -1; display:flex; align-items:center; gap:4px; }
+.pb .pb-step{
+  flex:none;
+  width:30px;
+  height:30px;
+  border-radius:4px;
+  background:var(--pb-ink-3);
+  font-family:var(--pb-pixel);
+  font-size:11px;
+  color:var(--pb-text);
+}
+.pb .pb-step:hover{ background:var(--pb-line); }
+.pb .pb-size{
+  flex:1 1 auto;
+  min-width:0;
+  width:100%;
+  height:30px;
+  margin:0;
+  padding:0 6px;
+  border:2px solid var(--pb-ink-3);
+  border-radius:4px;
+  background:#000;
+  color:var(--pb-text);
+  font-family:var(--pb-pixel);
+  font-size:10px;
+  text-align:center;
+  font-variant-numeric:tabular-nums;
+  -moz-appearance:textfield;
+}
+.pb .pb-size::-webkit-outer-spin-button, .pb .pb-size::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+.pb-kids{ font-size:11px; color:var(--pb-dim); white-space:nowrap; }
+.pb .pb-remove{ flex:none; width:30px; height:30px; border-radius:4px; color:var(--pb-dim); font-size:16px; }
+.pb .pb-remove:hover{ color:var(--pb-red); background:var(--pb-ink-3); }
+.pb-add-row{ display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; }
+.pb-total{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  gap:4px 10px;
+  align-items:baseline;
+  padding:10px;
+  border-radius:6px;
+  background:var(--pb-ink);
+}
+.pb-total span{ font-size:12px; color:var(--pb-dim); }
+.pb-total strong{ font-family:var(--pb-pixel); font-size:12px; font-weight:400; text-align:right; font-variant-numeric:tabular-nums; }
+.pb-total .pb-total-price{ color:var(--pb-yellow); font-size:14px; }
+.pb-egg{
+  padding:8px 10px;
+  border-radius:6px;
+  background:var(--pb-cream);
+  color:var(--pb-ink);
+  font-size:13px;
+}
+.pb-quote{ display:grid; gap:10px; padding:12px; border-radius:8px; background:var(--pb-ink); box-shadow:inset 0 0 0 2px var(--pb-yellow); }
+.pb-quote-title{ font-family:var(--pb-pixel); font-size:9px; color:var(--pb-yellow); }
+.pb-quote-price{ font-family:var(--pb-pixel); font-size:18px; color:var(--pb-text); }
+.pb-quote-price small{ font-size:9px; color:var(--pb-dim); }
+.pb-quote-stats{ display:grid; gap:2px; font-size:13px; color:var(--pb-dim); }
+.pb-quote-stats b{ color:var(--pb-text); font-weight:600; font-variant-numeric:tabular-nums; }
+.pb-fine{ font-size:12px; color:var(--pb-dim); }
+.pb-fine a{ color:var(--pb-mint) !important; }
+.pb-sr{ position:absolute !important; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+
+@keyframes pb-blink{ 50%{ opacity:0; } }
+@keyframes pb-pop{ 0%{ transform:translateX(-50%) scale(.6); } 70%{ transform:translateX(-50%) scale(1.08); } 100%{ transform:translateX(-50%) scale(1); } }
+@keyframes pb-pop-plain{ 0%{ transform:scale(.8); opacity:0; } 100%{ transform:scale(1); opacity:1; } }
+@keyframes pb-throb{ 50%{ transform:scale(1.06); } }
+@keyframes pb-rainbow{ to{ background-position:200% 0; } }
+@keyframes pb-shiver{ 25%{ transform:translateX(-1px); } 75%{ transform:translateX(1px); } }
+@media (prefers-reduced-motion: reduce){
+  .pb *, .pb *::before, .pb *::after{ animation:none !important; transition:none !important; }
+}
+</style>
+<div class="pb" id="pb-root">
+  <div class="pb-marquee">
+    <span class="pb-logo">PASS BLASTER</span>
+    <span class="pb-sub">UPchieve pricing &middot; arcade edition</span>
+  </div>
+  <div class="pb-body">
+    <div class="pb-main">
+      <div class="pb-screen" id="pb-screen">
+        <canvas id="pb-canvas" role="img" aria-label="A district map with schools and students"></canvas>
+        <div class="pb-hud">
+          <div class="pb-level" id="pb-level">1 PLAYER</div>
+          <div class="pb-power" id="pb-power">
+            <span class="pb-power-label">POWER</span>
+            <span class="pb-power-bar"><span class="pb-power-fill" id="pb-power-fill"></span></span>
+            <span class="pb-power-num" id="pb-power-num">0</span>
+          </div>
+        </div>
+        <div class="pb-clock" id="pb-clock" hidden>1:00 PM</div>
+        <div class="pb-banner" id="pb-banner"></div>
+        <button class="pb-mute" id="pb-mute" type="button" aria-pressed="false">SOUND: ON</button>
+
+        <div class="pb-overlay" id="pb-title">
+          <h2 class="pb-title-logo"><span>PASS</span><span>BLASTER</span></h2>
+          <p class="pb-tagline">Your students are wandering. Their dreams are dropping. Only a school administrator can save them.</p>
+          <button class="pb-btn pb-btn--yellow pb-btn--big is-pulse" id="pb-start" type="button">PRESS START</button>
+          <p class="pb-coin">INSERT COIN &middot; JK, IT&rsquo;S FREE</p>
+          <button class="pb-link" id="pb-skip" type="button">Skip the intro, just show me pricing</button>
+        </div>
+
+        <div class="pb-overlay" id="pb-select" hidden>
+          <p class="pb-select-title">CHOOSE YOUR ADMIN</p>
+          <div class="pb-roles" id="pb-roles"></div>
+        </div>
+
+        <div class="pb-overlay pb-shop" id="pb-shop" hidden role="dialog" aria-modal="true" aria-labelledby="pb-shop-title">
+          <div class="pb-shop-card">
+            <div class="pb-shop-head">
+              <h3 id="pb-shop-title">ITEM SHOP</h3>
+              <span>1 ITEM IN STOCK</span>
+            </div>
+            <div class="pb-item">
+              <canvas id="pb-item-icon" width="24" height="24"></canvas>
+              <div>
+                <p class="pb-item-name">UPchieve POWER-UP</p>
+                <p class="pb-item-desc">Every student in every one of your buildings gets a free, 24/7 tutor. Priced per building, not per student.</p>
+              </div>
+            </div>
+            <ul class="pb-includes" aria-label="Includes">
+              <li>all students</li>
+              <li>unlimited hours</li>
+              <li>in-person student presentation</li>
+              <li>teacher PD</li>
+              <li>and more!</li>
+            </ul>
+            <div class="pb-receipt" id="pb-receipt"></div>
+            <div class="pb-shop-price">
+              <strong id="pb-shop-total">$0</strong>
+              <span>per year &middot; <b id="pb-shop-per">$0</b> per student</span>
+            </div>
+            <div class="pb-shop-actions">
+              <button class="pb-btn pb-btn--yellow pb-btn--big is-pulse" id="pb-buy" type="button">GET UNLIMITED POWER</button>
+              <button class="pb-link" id="pb-shop-close" type="button">Back to my schools</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pb-meters is-idle" id="pb-meters" aria-label="Student outcomes"></div>
+    </div>
+
+    <aside class="pb-deck" aria-label="Your schools">
+      <div class="pb-deck-head">
+        <h3>YOUR SCHOOLS</h3>
+        <span id="pb-count">0 BLDG</span>
+      </div>
+      <p class="pb-hint" id="pb-hint">Add each school in your district and set how many students it holds.</p>
+      <ol class="pb-list" id="pb-list"></ol>
+      <div class="pb-add-row">
+        <button class="pb-btn pb-btn--blue" id="pb-add" type="button">+ ADD SCHOOL</button>
+        <button class="pb-btn pb-btn--blue" id="pb-add5" type="button" aria-label="Add 5 schools">+5</button>
+      </div>
+      <div class="pb-egg" id="pb-egg" hidden></div>
+      <div class="pb-total">
+        <span>Students</span><strong id="pb-students">0</strong>
+        <span>Yearly price</span><strong class="pb-total-price" id="pb-price">$0</strong>
+      </div>
+      <button class="pb-btn pb-btn--wide" id="pb-next" type="button" disabled>DONE ADDING SCHOOLS</button>
+
+      <div class="pb-quote" id="pb-quote" hidden>
+        <p class="pb-quote-title">YOUR QUOTE</p>
+        <p class="pb-quote-price"><span id="pb-q-price">$0</span> <small>/YEAR</small></p>
+        <div class="pb-quote-stats">
+          <span><b id="pb-q-bldg">0</b> buildings &middot; <b id="pb-q-kids">0</b> students</span>
+          <span>Tutoring sessions used: <b id="pb-q-sessions">0</b></span>
+          <span>Extra charges: <b>$0.00</b></span>
+        </div>
+        <a class="pb-btn pb-btn--yellow pb-btn--wide" href="https://calendly.com/aly-murray/upchieve-partnerships" target="_blank" rel="noopener">BOOK A DEMO</a>
+        <p class="pb-fine">Can&rsquo;t afford us? Email <a href="mailto:partnerships@upchieve.org">partnerships@upchieve.org</a> to join our sponsorship waitlist.</p>
+        <button class="pb-link" id="pb-again" type="button">Play again</button>
+      </div>
+    </aside>
+  </div>
+  <div class="pb-sr" id="pb-live" aria-live="polite"></div>
+</div>
+<script>
+(function () {
+"use strict";
+var root = document.querySelector('.pb:not([data-pb-ready])');
+if (!root) return;
+root.setAttribute('data-pb-ready', '1');
+function $(id) { return root.querySelector('#' + id); }
+
+// Keep in sync with the tiers in the old price calculator on /schools.
+var TIERS = [
+  { upTo: 500, price: 5000 },
+  { upTo: 1500, price: 10000 },
+  { upTo: 2000, price: 15000 },
+  { upTo: 2500, price: 20000 },
+  { upTo: Infinity, price: 25000 }
+];
+function tierOf(n) {
+  for (var i = 0; i < TIERS.length; i++) if (n <= TIERS[i].upTo) return i;
+  return TIERS.length - 1;
+}
+function priceFor(n) { return TIERS[tierOf(n)].price; }
+function money(n, cents) {
+  return '$' + n.toLocaleString('en-US', {
+    minimumFractionDigits: cents ? 2 : 0,
+    maximumFractionDigits: cents ? 2 : 0
+  });
+}
+function num(n) { return Math.round(n).toLocaleString('en-US'); }
+
+var NAMES = [
+  'Lincoln High', 'Maple Middle', 'Eastside Elementary', 'Roosevelt Academy',
+  'Riverside High', 'Oak Hill Middle', 'Washington Prep', 'Central High',
+  'Lakeview Elementary', 'Sunnyvale Middle', 'Hillcrest High', 'Pine Ridge Academy',
+  'Westfield Elementary', 'Northgate High', 'Cedar Grove Middle', 'Harbor View High',
+  'Jefferson Elementary', 'Brookside Academy', 'Mesa Verde High', 'Southside Middle'
+];
+
+var ROLES = [
+  { id: 'principal', name: 'PRINCIPAL', suit: '#C0392B', hair: '#3B2314', skin: '#C68642',
+    stats: [['Buildings', '1'], ['Knows every name', 'YES'], ['Coffee', '|||||']] },
+  { id: 'curriculum', name: 'DIRECTOR OF CURRICULUM', suit: '#1F7A6B', hair: '#1B1B1B', skin: '#8D5524',
+    stats: [['Binders', '47'], ['Standards known', 'ALL'], ['Coffee', '||||||']] },
+  { id: 'super', name: 'SUPERINTENDENT', suit: '#2E3A8C', hair: '#B8B8C8', skin: '#F1C27D',
+    stats: [['Buildings', 'MANY'], ['Board emails', '212'], ['Sleep', '|']] }
+];
+
+var SKIN = ['#8D5524', '#C68642', '#E0AC69', '#F1C27D', '#FFDBAC', '#5C3A21'];
+var HAIR = ['#1B1B1B', '#3B2314', '#6A4E2A', '#B5651D', '#E8C07D', '#2E2E5E'];
+var SHIRT = ['#FF5EA8', '#FFD23F', '#7BE0C8', '#5FA8FF', '#FF8C42', '#9B5DE5', '#00BBF9', '#F15BB5', '#FEE440', '#00F5D4'];
+var PANTS = ['#2B2D42', '#3A4690', '#5C4033', '#1F3A5F'];
+var CARS = ['#E63946', '#F4A261', '#2A9D8F', '#8338EC', '#3A86FF', '#FFBE0B', '#6C757D'];
+
+function pick(a) { return a[(Math.random() * a.length) | 0]; }
+function rand(a, b) { return a + Math.random() * (b - a); }
+function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+// Sprites: each letter maps to a palette key, '.' is transparent.
+var KID = [
+  ['.hhh.', 'hhhhh', '.ese.', '.sss.', 'ttttt', 'sttts', '.ppp.', '.f.f.'],
+  ['.hhh.', 'hhhhh', '.ese.', '.sss.', 'ttttt', 'sttts', '.ppp.', 'f...f']
+];
+var ADULT = [
+  ['..hhh..', '.hhhhh.', '.seses.', '.sssss.', '..sss..', 'ccckccc', 'ccckccc', 'scccccs', '.ccccc.', '.pp.pp.', '.pp.pp.', '.ff.ff.'],
+  ['..hhh..', '.hhhhh.', '.seses.', '.sssss.', '..sss..', 'ccckccc', 'ccckccc', 'scccccs', '.ccccc.', '.pp.pp.', 'pp...pp', 'ff...ff']
+];
+var NOTE = ['..##', '..#.', '..#.', '###.', '###.'];
+
+function drawSprite(g, rows, x, y, u, pal) {
+  // x, y is the bottom center of the sprite.
+  var h = rows.length, w = rows[0].length;
+  var ox = Math.round(x - (w * u) / 2), oy = Math.round(y - h * u);
+  for (var r = 0; r < h; r++) {
+    var row = rows[r];
+    for (var c = 0; c < w; c++) {
+      var k = row[c];
+      if (k === '.') continue;
+      g.fillStyle = pal[k] || '#000';
+      g.fillRect(ox + Math.round(c * u), oy + Math.round(r * u), Math.ceil(u), Math.ceil(u));
+    }
+  }
+}
+
+// Audio: tiny square-wave blips so nothing needs to be downloaded.
+var AC = null, muted = false;
+function audio() {
+  if (muted) return null;
+  if (!AC) {
+    try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
+  }
+  if (AC.state === 'suspended') AC.resume();
+  return AC;
+}
+function tone(freq, dur, type, vol, delay, slideTo) {
+  var a = audio();
+  if (!a) return;
+  var t0 = a.currentTime + (delay || 0);
+  var o = a.createOscillator(), v = a.createGain();
+  o.type = type || 'square';
+  o.frequency.setValueAtTime(freq, t0);
+  if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t0 + dur);
+  v.gain.setValueAtTime(vol || 0.04, t0);
+  v.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  o.connect(v); v.connect(a.destination);
+  o.start(t0); o.stop(t0 + dur + 0.02);
+}
+var lastPop = 0;
+var sfx = {
+  coin: function () { tone(988, 0.08, 'square', 0.04); tone(1319, 0.3, 'square', 0.04, 0.08); },
+  thud: function () { tone(160, 0.22, 'triangle', 0.14, 0, 45); },
+  pop: function () {
+    var now = performance.now();
+    if (now - lastPop < 70) return;
+    lastPop = now;
+    tone(rand(620, 760), 0.05, 'square', 0.02, 0, 1100);
+  },
+  alarm: function () {
+    for (var i = 0; i < 3; i++) { tone(880, 0.16, 'sawtooth', 0.03, i * 0.36); tone(620, 0.16, 'sawtooth', 0.03, i * 0.36 + 0.18); }
+  },
+  buzz: function () { tone(110, 0.22, 'square', 0.05); },
+  powerup: function () {
+    var n = [262, 330, 392, 523, 659, 784, 1047, 1319, 1568, 2093];
+    for (var i = 0; i < n.length; i++) tone(n[i], 0.14, 'square', 0.035, i * 0.11);
+  },
+  blast: function (combo) { tone(Math.min(440 + combo * 40, 1760), 0.08, 'square', 0.03, 0, Math.min(880 + combo * 60, 2600)); },
+  honk: function () { tone(330, 0.12, 'square', 0.025); tone(330, 0.12, 'square', 0.025, 0.16); }
+};
+
+var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+var S = {
+  phase: 'title',
+  role: null,
+  schools: [],
+  kids: [],
+  teachers: [],
+  parts: [],
+  floats: [],
+  meters: { grades: 72, scores: 70, college: 68, dreams: 75 },
+  power: 0,
+  unlimited: false,
+  clock: 21 * 60,
+  clockTarget: null,
+  day: 0,
+  sessions: 0,
+  combo: 0,
+  lastBlast: 0,
+  shake: 0,
+  flash: 0,
+  nudges: 0,
+  seen: {},
+  nextId: 1,
+  W: 0, H: 0, P: 3, t: 0
+};
+
+var BLD = [{ w: 26, h: 14 }, { w: 36, h: 18 }, { w: 44, h: 22 }, { w: 52, h: 24 }, { w: 60, h: 28 }];
+var MEGA = { w: 30, h: 64 };
+function dims(s) { return s.size >= 100000 ? MEGA : BLD[tierOf(s.size)]; }
+
+function setGeometry(w, h) {
+  var oldW = S.W || w, oldH = S.H || h;
+  S.W = w; S.H = h;
+  S.P = clamp(Math.round(Math.min(w / 260, h / 170)), 2, 4);
+  S.G = { horizon: h * 0.34, roadTop: h * 0.86, roadMid: h * 0.93 };
+  var fx = w / oldW, fy = h / oldH;
+  S.kids.forEach(function (k) { k.x *= fx; k.y *= fy; k.tx *= fx; k.ty *= fy; });
+  layout();
+  S.teachers.forEach(parkAtSpot);
+}
+
+function layout() {
+  var n = S.schools.length;
+  if (!n) return;
+  var G = S.G, P = S.P;
+  var left = S.W * 0.03, right = S.W * 0.97;
+  var top = G.horizon + P * 4, bottom = G.roadTop - P * 3;
+  var aw = right - left, ah = bottom - top, best = null;
+  for (var cols = 1; cols <= n; cols++) {
+    var rows = Math.ceil(n / cols);
+    var sc = Math.min(aw / cols / (74 * P), ah / rows / (34 * P));
+    if (!best || sc > best.sc) best = { cols: cols, rows: rows, sc: sc };
+  }
+  var scale = Math.min(1.4, best.sc);
+  var slotW = aw / best.cols, slotH = ah / best.rows;
+  S.schools.forEach(function (s, i) {
+    var r = Math.floor(i / best.cols), c = i % best.cols;
+    var inRow = Math.min(best.cols, n - r * best.cols);
+    s.u = P * scale;
+    s.x = left + (best.cols - inRow) * slotW / 2 + slotW * (c + 0.5) - 6 * s.u;
+    s.y = top + slotH * (r + 1) - slotH * 0.14;
+  });
+}
+
+function recalcNeeds() {
+  var total = 0;
+  S.schools.forEach(function (s) { total += s.size; });
+  var ratio = Math.max(60, total / 320);
+  S.schools.forEach(function (s) { s.need = clamp(Math.round(s.size / ratio), 2, 24); });
+}
+
+function addSchool(size) {
+  var used = {};
+  S.schools.forEach(function (s) { used[s.name] = 1; });
+  var name = null;
+  for (var i = 0; i < NAMES.length; i++) if (!used[NAMES[i]]) { name = NAMES[i]; break; }
+  var s = {
+    id: S.nextId++,
+    name: name || 'School #' + (S.schools.length + 1),
+    size: size || 700,
+    inside: 0, incoming: 0, need: 2,
+    x: 0, y: 0, u: S.P,
+    drop: -S.H, vy: 0, landed: false, hit: 0
+  };
+  S.schools.push(s);
+  recalcNeeds();
+  layout();
+  s.drop = -(s.y + 60 * s.u);
+  if (S.phase === 'unlimited') addStaff(s);
+  return s;
+}
+
+function removeSchool(s) {
+  s.dead = true;
+  S.kids.forEach(function (k) { if (k.target === s) { k.mode = 'wander'; k.target = null; k.pause = 0; } });
+  if (s.landed) eject(s, s.inside);
+  S.schools = S.schools.filter(function (o) { return o !== s; });
+  S.teachers = S.teachers.filter(function (t) { return t.school !== s; });
+  recalcNeeds();
+  layout();
+  S.teachers.forEach(parkAtSpot);
+  if (S.phase !== 'build') sendEveryoneInside();
+}
+
+function makeKid(x, y) {
+  return {
+    x: x, y: y, tx: x, ty: y, mode: 'wander', target: null,
+    speed: rand(16, 30) * S.P / 3, pause: rand(0, 1.5), ph: Math.random() * 10,
+    pal: { h: pick(HAIR), s: pick(SKIN), e: '#1B1B1B', t: pick(SHIRT), p: pick(PANTS), f: '#222' }
+  };
+}
+function groundPoint(k) {
+  k.tx = rand(S.W * 0.04, S.W * 0.96);
+  k.ty = rand(S.G.horizon + S.P * 6, S.G.roadTop - S.P);
+}
+function spawnEdge() {
+  var G = S.G, r = Math.random(), x, y;
+  if (r < 0.4) { x = -12; y = rand(G.horizon + 10, G.roadTop); }
+  else if (r < 0.8) { x = S.W + 12; y = rand(G.horizon + 10, G.roadTop); }
+  else { x = rand(0, S.W); y = S.H + 12; }
+  var k = makeKid(x, y);
+  groundPoint(k);
+  k.pause = 0;
+  S.kids.push(k);
+  return k;
+}
+function eject(s, n) {
+  for (var i = 0; i < n && s.inside > 0; i++) {
+    s.inside--;
+    var k = makeKid(s.x + rand(-4, 4), s.y + 2);
+    k.tx = s.x + rand(-60, 60) * S.P / 3;
+    k.ty = clamp(s.y + rand(8, 50) * S.P / 3, S.G.horizon + 6, S.G.roadTop - 2);
+    k.pause = 0;
+    S.kids.push(k);
+  }
+}
+
+function assignKids() {
+  var wanderers = S.kids.filter(function (k) { return k.mode === 'wander'; });
+  var spawned = 0;
+  S.schools.forEach(function (s) {
+    if (!s.landed) return;
+    var want = Math.min(3, s.need - s.inside - s.incoming);
+    while (want-- > 0) {
+      var k = null, bi = -1, bd = Infinity;
+      for (var i = 0; i < wanderers.length; i++) {
+        var d = Math.abs(wanderers[i].x - s.x) + Math.abs(wanderers[i].y - s.y);
+        if (d < bd) { bd = d; bi = i; }
+      }
+      if (bi >= 0) k = wanderers.splice(bi, 1)[0];
+      else if (spawned < 8) { k = spawnEdge(); spawned++; }
+      if (!k) break;
+      k.mode = 'go'; k.target = s; k.pause = 0;
+      s.incoming++;
+    }
+    if (S.phase === 'build' && s.inside > s.need) eject(s, s.inside - s.need);
+  });
+  if (S.phase === 'build' || S.phase === 'title' || S.phase === 'select') {
+    var goal = S.phase === 'build' ? 26 : 18;
+    if (wanderers.length < goal) spawnEdge();
+  }
+}
+
+function sendEveryoneInside() {
+  var landed = S.schools.filter(function (s) { return !s.dead; });
+  if (!landed.length) return;
+  S.kids.forEach(function (k) {
+    if (k.mode !== 'wander') return;
+    var s = pick(landed);
+    k.mode = 'go'; k.target = s; k.pause = 0;
+    s.incoming++;
+  });
+}
+
+function updateKids(dt) {
+  var keep = [];
+  for (var i = 0; i < S.kids.length; i++) {
+    var k = S.kids[i];
+    var going = k.mode === 'go';
+    var tx = going ? k.target.x : k.tx, ty = going ? k.target.y : k.ty;
+    if (going && (k.target.dead || !k.target.landed)) {
+      if (k.target.dead) { k.mode = 'wander'; k.target = null; groundPoint(k); }
+      keep.push(k);
+      continue;
+    }
+    if (!going && k.pause > 0) { k.pause -= dt; keep.push(k); continue; }
+    var dx = tx - k.x, dy = ty - k.y, d = Math.sqrt(dx * dx + dy * dy);
+    var sp = k.speed * (going ? 2.4 : 1);
+    k.ph += dt * (going ? 14 : 8);
+    if (d < sp * dt + 1) {
+      if (going) {
+        k.target.inside++;
+        k.target.incoming = Math.max(0, k.target.incoming - 1);
+        sfx.pop();
+        burst(k.target.x, k.target.y - 6 * k.target.u, 3, ['#FFFFFF', '#FFD23F'], 60);
+        continue;
+      }
+      k.x = tx; k.y = ty;
+      k.pause = rand(0.3, 2.2);
+      groundPoint(k);
+    } else {
+      k.x += dx / d * sp * dt;
+      k.y += dy / d * sp * dt;
+    }
+    keep.push(k);
+  }
+  S.kids = keep;
+}
+
+function updateSchools(dt) {
+  S.schools.forEach(function (s) {
+    if (s.hit > 0) s.hit -= dt;
+    if (s.landed) return;
+    s.vy += 2600 * dt;
+    s.drop += s.vy * dt;
+    if (s.drop >= 0) {
+      s.drop = 0;
+      if (s.vy > 500) {
+        s.vy = -s.vy * 0.22;
+        sfx.thud();
+        if (!reduced) S.shake = Math.max(S.shake, 0.25);
+        burst(s.x, s.y, 14, ['#C9B79C', '#A89274', '#E8DCC6'], 120);
+      } else {
+        s.vy = 0;
+        s.landed = true;
+      }
+    }
+  });
+}
+
+// Teachers and their cars, only on the map once the power-up is on.
+function carSpot(tc) {
+  var s = tc.school, d = dims(s);
+  return { x: s.x + d.w / 2 * s.u + (8 + tc.i * 12) * S.P * 0.8, y: s.y + S.P };
+}
+function parkAtSpot(tc) {
+  if (tc.state === 'in' || tc.state === 'walkout' || tc.state === 'walkin') {
+    var p = carSpot(tc);
+    tc.cx = p.x; tc.cy = p.y;
+  }
+}
+function isWorkday(m) { return m >= 7 * 60 && m < 16 * 60 + 30; }
+function addStaff(s) {
+  var n = tierOf(s.size) >= 2 && S.schools.length <= 6 ? 2 : 1;
+  var m = S.clock % 1440;
+  for (var i = 0; i < n; i++) {
+    var tc = {
+      school: s, i: i, state: isWorkday(m) ? 'in' : 'away',
+      delay: rand(0, 50), car: pick(CARS), px: 0, py: 0, cx: -80, cy: S.G.roadMid, ph: 0,
+      pal: { h: pick(HAIR), s: pick(SKIN), e: '#1B1B1B', c: pick(['#6D597A', '#355070', '#B56576', '#2A9D8F', '#8D99AE']), k: '#FFD23F', p: '#2B2D42', f: '#111' }
+    };
+    parkAtSpot(tc);
+    S.teachers.push(tc);
+  }
+}
+function moveTo(o, kx, ky, tx, ty, sp, dt) {
+  var dx = tx - o[kx], dy = ty - o[ky], d = Math.sqrt(dx * dx + dy * dy);
+  if (d <= sp * dt) { o[kx] = tx; o[ky] = ty; return true; }
+  o[kx] += dx / d * sp * dt; o[ky] += dy / d * sp * dt;
+  return false;
+}
+function updateTeachers(dt) {
+  var m = S.clock % 1440, walk = 26 * S.P / 3, drive = 110 * S.P / 3, road = S.G.roadMid;
+  S.teachers.forEach(function (tc) {
+    var s = tc.school, spot = carSpot(tc);
+    tc.ph += dt * 8;
+    if (tc.state === 'in' && m >= 16 * 60 + 30 + tc.delay && m < 20 * 60) {
+      tc.state = 'walkout'; tc.px = s.x; tc.py = s.y + 1;
+    } else if (tc.state === 'walkout') {
+      if (moveTo(tc, 'px', 'py', spot.x, spot.y, walk, dt)) { tc.state = 'leave1'; if (Math.random() < 0.3) sfx.honk(); }
+    } else if (tc.state === 'leave1') {
+      if (moveTo(tc, 'cx', 'cy', spot.x, road, drive * 0.6, dt)) tc.state = 'leave2';
+    } else if (tc.state === 'leave2') {
+      if (moveTo(tc, 'cx', 'cy', S.W + 80, road, drive, dt)) tc.state = 'away';
+    } else if (tc.state === 'away' && m >= 7 * 60 + tc.delay && m < 12 * 60) {
+      tc.state = 'arrive1'; tc.cx = -60 - rand(0, 120); tc.cy = road;
+    } else if (tc.state === 'arrive1') {
+      if (moveTo(tc, 'cx', 'cy', spot.x, road, drive, dt)) tc.state = 'arrive2';
+    } else if (tc.state === 'arrive2') {
+      if (moveTo(tc, 'cx', 'cy', spot.x, spot.y, drive * 0.6, dt)) { tc.state = 'walkin'; tc.px = spot.x; tc.py = spot.y; }
+    } else if (tc.state === 'walkin') {
+      if (moveTo(tc, 'px', 'py', s.x, s.y + 1, walk, dt)) tc.state = 'in';
+    }
+  });
+}
+
+function nightness(m) {
+  var h = (m % 1440) / 60;
+  if (h >= 7.5 && h <= 17) return 0;
+  if (h >= 20 || h <= 5) return 1;
+  if (h > 17) return (h - 17) / 3;
+  return (7.5 - h) / 2.5;
+}
+function isParty() {
+  if (S.phase !== 'unlimited') return false;
+  var h = (S.clock % 1440) / 60;
+  return h >= 18 || h < 6.5;
+}
+var DAYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+function clockStr(m) {
+  m = ((m % 1440) + 1440) % 1440;
+  var h = Math.floor(m / 60), mm = Math.floor(m % 60);
+  return (h % 12 || 12) + ':' + (mm < 10 ? '0' : '') + mm + ' ' + (h < 12 ? 'AM' : 'PM');
+}
+
+function burst(x, y, n, colors, spd) {
+  if (reduced) n = Math.ceil(n / 3);
+  for (var i = 0; i < n; i++) {
+    var a = Math.random() * Math.PI * 2, v = rand(0.3, 1) * spd;
+    S.parts.push({ x: x, y: y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - spd * 0.5, life: rand(0.4, 1), c: pick(colors), s: Math.max(2, Math.round(S.P * rand(0.6, 1.3))) });
+  }
+  if (S.parts.length > 700) S.parts.splice(0, S.parts.length - 700);
+}
+function floatText(x, y, text, color, size) {
+  S.floats.push({ x: x, y: y, text: text, c: color || '#FFD23F', size: size || 8, life: 1.2, max: 1.2 });
+  if (S.floats.length > 60) S.floats.shift();
+}
+function updateFx(dt) {
+  S.parts = S.parts.filter(function (p) {
+    p.life -= dt; p.vy += 320 * dt; p.x += p.vx * dt; p.y += p.vy * dt;
+    return p.life > 0;
+  });
+  S.floats = S.floats.filter(function (f) { f.life -= dt; f.y -= 34 * dt; return f.life > 0; });
+  if (S.shake > 0) S.shake -= dt;
+  if (S.flash > 0) S.flash -= dt;
+}
+
+var METER_KEYS = ['grades', 'scores', 'college', 'dreams'];
+function updateMeters(dt) {
+  var m = S.meters;
+  if (S.phase === 'crisis' || S.phase === 'shop') {
+    METER_KEYS.forEach(function (k) { m[k] = Math.max(6, m[k] - rand(3, 11) * dt); });
+  } else if (S.phase === 'unlimited') {
+    var drift = 0.8 * dt * (1 + S.sessions / 200);
+    METER_KEYS.forEach(function (k) { m[k] += drift; });
+  }
+}
+function boostMeters(amount) {
+  METER_KEYS.forEach(function (k) { S.meters[k] += amount * rand(0.7, 1.3); });
+}
+
+var BLAST_MSGS = ['+1 TUTOR', 'UNSTUCK!', 'ESSAY FIXED', 'MATH CLICKED', 'A+', 'FAFSA DONE', 'GOT IT!', 'CHEM SOLVED', '+1 SESSION', 'LAB REPORT OK', 'MOLE DAY!', 'PROOF DONE'];
+function blast(s, px, py) {
+  var d = dims(s), top = s.y - d.h * s.u;
+  S.sessions++;
+  S.combo = S.t - S.lastBlast < 0.6 ? S.combo + 1 : 1;
+  S.lastBlast = S.t;
+  s.hit = 0.16;
+  burst(px, py, 16, ['#FFD23F', '#FFFFFF', '#FF5EA8', '#7BE0C8', '#5FA8FF'], 170 * S.P / 3);
+  var msg = isParty() && Math.random() < 0.5 ? clockStr(S.clock) + ' STILL ON' : pick(BLAST_MSGS);
+  floatText(px, top - 3 * s.u, msg, pick(['#FFD23F', '#7BE0C8', '#FFFFFF']), 8);
+  if (S.combo >= 5 && S.combo % 5 === 0) floatText(s.x, top - 14 * s.u, S.combo + 'x COMBO!', '#FF5EA8', 11);
+  if (S.sessions % 3 === 1) floatText(S.W - 40, 46, '-0', '#A9B0DA', 8);
+  boostMeters((2 + Math.min(S.combo, 20) * 0.12) * (1 + S.sessions / 120));
+  sfx.blast(S.combo);
+  S.idle = 0;
+}
+
+function schoolAt(px, py) {
+  for (var i = S.schools.length - 1; i >= 0; i--) {
+    var s = S.schools[i], d = dims(s), hw = d.w / 2 * s.u;
+    if (px >= s.x - hw && px <= s.x + hw && py >= s.y - (d.h + 6) * s.u && py <= s.y + 3) return s;
+  }
+  return null;
+}
+
+var cv = $('pb-canvas'), g = cv.getContext('2d');
+var PIXEL = '"Press Start 2P", monospace';
+var STARS = [], TUFTS = [], CLOUDS = [];
+(function seed() {
+  for (var i = 0; i < 80; i++) STARS.push({ x: Math.random(), y: Math.random() * 0.33, tw: Math.random() * 6 });
+  for (var j = 0; j < 110; j++) TUFTS.push({ x: Math.random(), y: Math.random() });
+  for (var k = 0; k < 4; k++) CLOUDS.push({ x: Math.random(), y: rand(0.1, 0.24), s: rand(0.8, 1.4), v: rand(0.004, 0.01) });
+})();
+
+function rgb(h) { var n = parseInt(h.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; }
+function mix(a, b, t) {
+  var A = rgb(a), B = rgb(b);
+  return 'rgb(' + Math.round(lerp(A[0], B[0], t)) + ',' + Math.round(lerp(A[1], B[1], t)) + ',' + Math.round(lerp(A[2], B[2], t)) + ')';
+}
+var dkCache = {};
+function dk(hex, n) {
+  var key = hex + (n * 20 | 0);
+  return dkCache[key] || (dkCache[key] = mix(hex, '#0B1030', (n * 20 | 0) / 20 * 0.55));
+}
+var SKY = [[0, '#0B1030', '#1B2350'], [5, '#141A45', '#2E2A63'], [6.5, '#FF9E7A', '#FFD6A0'], [8, '#5FA8FF', '#BFE3FF'],
+  [17, '#5FA8FF', '#BFE3FF'], [18.5, '#FF7EB3', '#FFC38A'], [20, '#141A45', '#2E2A63'], [24, '#0B1030', '#1B2350']];
+function skyAt(m) {
+  var h = (m % 1440) / 60;
+  for (var i = 0; i < SKY.length - 1; i++) {
+    var a = SKY[i], b = SKY[i + 1];
+    if (h >= a[0] && h <= b[0]) {
+      var t = (h - a[0]) / (b[0] - a[0]);
+      return [mix(a[1], b[1], t), mix(a[2], b[2], t)];
+    }
+  }
+  return ['#0B1030', '#1B2350'];
+}
+
+function px(x, y, w, h, c) { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), Math.ceil(w), Math.ceil(h)); }
+
+function drawSky(nt) {
+  var G = S.G, W = S.W, P = S.P;
+  var gloomy = S.phase === 'crisis' || S.phase === 'shop';
+  var c = gloomy ? ['#6E7891', '#AEB5C7'] : skyAt(S.clock);
+  var grad = g.createLinearGradient(0, 0, 0, G.horizon);
+  grad.addColorStop(0, c[0]); grad.addColorStop(1, c[1]);
+  g.fillStyle = grad;
+  g.fillRect(0, 0, W, G.horizon + 2);
+
+  if (nt > 0 && !gloomy) {
+    STARS.forEach(function (s) {
+      var a = nt * (0.5 + 0.5 * Math.sin(S.t * 2 + s.tw));
+      g.globalAlpha = a;
+      px(s.x * W, s.y * S.H, P * 0.7, P * 0.7, '#FFFFFF');
+    });
+    g.globalAlpha = 1;
+  }
+
+  var h = (S.clock % 1440) / 60;
+  if (!gloomy) {
+    var t, x, y;
+    if (h >= 6 && h <= 19) {
+      t = (h - 6) / 13; x = W * (0.08 + 0.84 * t); y = G.horizon - Math.sin(Math.PI * t) * G.horizon * 0.72;
+      px(x - 4 * P, y - 3 * P, 8 * P, 6 * P, '#FFE066');
+      px(x - 3 * P, y - 4 * P, 6 * P, 8 * P, '#FFE066');
+      px(x - 2 * P, y - 2 * P, 3 * P, 2 * P, '#FFF6C9');
+    } else {
+      var hn = h < 6 ? h + 24 : h;
+      t = (hn - 19) / 11; x = W * (0.08 + 0.84 * t); y = G.horizon - Math.sin(Math.PI * t) * G.horizon * 0.72;
+      px(x - 3 * P, y - 3 * P, 6 * P, 6 * P, '#F4F1FF');
+      px(x - 1 * P, y - 3 * P, 4 * P, 4 * P, c[0]);
+    }
+  }
+
+  // A little rocket crosses the night sky, for the Math Blaster fans.
+  if ((nt > 0.7 && S.phase === 'unlimited') || S.phase === 'title' || S.phase === 'select') {
+    var span = W + 300, rx = (S.t * 70) % span - 150, ry = G.horizon * 0.3 + Math.sin(S.t * 0.8) * 10;
+    px(rx, ry, 8 * P, 3 * P, '#E8E8F0');
+    px(rx + 8 * P, ry + P, 2 * P, P, '#FF5EA8');
+    px(rx + 2 * P, ry - P, 3 * P, P, '#5FA8FF');
+    px(rx + 2 * P, ry + 3 * P, 3 * P, P, '#5FA8FF');
+    px(rx - (2 + (S.t * 12 | 0) % 2) * P, ry + P, 2 * P, P, '#FFD23F');
+  }
+
+  if (nt < 1) {
+    g.globalAlpha = gloomy ? 1 : 1 - nt;
+    CLOUDS.forEach(function (cl) {
+      var cx = ((cl.x + S.t * cl.v) % 1.3 - 0.15) * W, cy = cl.y * S.H, s = cl.s * P, col = gloomy ? '#8A90A3' : '#FFFFFF';
+      px(cx, cy, 16 * s, 4 * s, col);
+      px(cx + 3 * s, cy - 3 * s, 8 * s, 3 * s, col);
+      px(cx + 9 * s, cy - 2 * s, 5 * s, 2 * s, col);
+    });
+    g.globalAlpha = 1;
+  }
+}
+
+function drawGround(nt) {
+  var G = S.G, W = S.W, H = S.H, P = S.P, step = P * 4;
+  for (var x = 0; x < W; x += step) {
+    var hh = (Math.sin(x * 0.012) + Math.sin(x * 0.027 + 1.3) + 2) * P * 3.2;
+    px(x, G.horizon - hh, step, hh + 2, dk('#4E9A5B', nt));
+  }
+  px(0, G.horizon, W, G.roadTop - G.horizon, dk('#79C267', nt));
+  var tuft = dk('#5FA653', nt);
+  TUFTS.forEach(function (t) { px(t.x * W, G.horizon + t.y * (G.roadTop - G.horizon), P * 2, P, tuft); });
+  px(0, G.roadTop, W, P * 2, dk('#C9C3B5', nt));
+  px(0, G.roadTop + P * 2, W, H - G.roadTop, dk('#3D3F4A', nt));
+  for (var d = 0; d < W; d += P * 12) px(d, G.roadMid, P * 6, P, dk('#FFD23F', nt));
+}
+
+function windowColor(i) {
+  if (S.phase === 'crisis' || S.phase === 'shop') return '#6B7280';
+  if (isParty()) return 'hsl(' + ((S.t * 140 + i * 47) % 360 | 0) + ',95%,62%)';
+  if (S.phase === 'unlimited') return nightness(S.clock) > 0.3 ? '#FFE58A' : '#FFF3B0';
+  return '#BFE3FF';
+}
+
+function drawSchool(s, nt) {
+  var d = dims(s), u = s.u, W = d.w, H = d.h;
+  var x0 = s.x - W / 2 * u, top = s.y + s.drop - H * u;
+  function R(x, y, w, h, c) { px(x0 + x * u, top + y * u, w * u, h * u, c); }
+  var party = isParty(), crisis = S.phase === 'crisis' || S.phase === 'shop';
+  var brick = dk('#C0533A', nt), mortar = dk('#A8452F', nt), trim = dk('#7A2E1E', nt), cream = dk('#F2E6D0', nt);
+
+  if (s.landed) R(-1, H, W + 2, 1, 'rgba(0,0,0,.18)');
+
+  if (s.size >= 100000) {
+    R(0, 0, W, H, dk('#5C6B8A', nt));
+    R(W / 2, -10, 1, 10, '#DDD');
+    R(W / 2 - 1, -11, 3, 1, S.t % 1 < 0.5 ? '#FF4D4D' : '#661111');
+    for (var my = 3; my < H - 10; my += 4) for (var mx = 3; mx < W - 3; mx += 5) R(mx, my, 3, 2, windowColor(mx + my));
+    R(W / 2 - 3, H - 7, 6, 7, dk('#2B2D42', nt));
+    R(W / 2 - 8, H - 10, 16, 2, cream);
+  } else {
+    R(0, 2, W, H - 2, brick);
+    g.fillStyle = mortar;
+    for (var yy = 5; yy < H; yy += 3) g.fillRect(Math.round(x0), Math.round(top + yy * u), Math.ceil(W * u), Math.max(1, Math.round(u * 0.35)));
+    R(-1, 0, W + 2, 2, trim);
+    var pw = Math.min(W, 16);
+    for (var i = 0; i < 4; i++) R(W / 2 - pw / 2 + i * 2, -1 - i, pw - i * 4, 1, trim);
+    if (tierOf(s.size) === 0) {
+      R(W / 2 - 3, -10, 6, 6, cream);
+      R(W / 2 - 4, -11, 8, 1, trim);
+      R(W / 2 - 1, -9, 2, 2, '#FFD23F');
+    }
+    R(3, -10, 1, 10, '#E5E5E5');
+    for (var f = 0; f < 5; f++) R(4 + f, -10 + (Math.sin(S.t * 6 + f) > 0 ? 0 : 1), 1, 3, crisis ? '#8A8F99' : '#FF5EA8');
+
+    var dx = W / 2, ws = tierOf(s.size) === 0 ? 3 : 4, pitch = ws + 2, wi = 0;
+    [[2, dx - 7], [dx + 7, W - 2]].forEach(function (wing) {
+      var ww = wing[1] - wing[0], cols = Math.max(1, Math.floor((ww + 2) / pitch));
+      var start = wing[0] + (ww - (cols * pitch - 2)) / 2;
+      for (var wy = 4; wy + ws <= H - 3; wy += pitch) {
+        for (var c = 0; c < cols; c++) {
+          var wx = start + c * pitch;
+          R(wx, wy, ws, ws, windowColor(wi));
+          if (party) {
+            var bob = Math.sin(S.t * 12 + wi * 1.7) > 0 ? 0 : 1;
+            R(wx + 1, wy + 1 + bob, ws - 2, ws - 1 - bob, '#1B1033');
+          } else if (!crisis && S.phase !== 'unlimited') {
+            R(wx, wy, 1, 1, '#FFFFFF');
+          }
+          wi++;
+        }
+      }
+    });
+    if (tierOf(s.size) >= 2) { R(dx - 6, H - 9, 1, 9, cream); R(dx + 5, H - 9, 1, 9, cream); }
+    R(dx - 7, H - 12, 14, 3, cream);
+    R(dx - 5, H - 11, 10, 1, dk('#7A7266', nt));
+    R(dx - 3, H - 7, 6, 7, dk('#5B3A1E', nt));
+    R(dx - 2, H - 6, 4, 2, windowColor(99));
+    R(dx - 5, H - 1, 10, 1, dk('#BDB6A6', nt));
+  }
+
+  if (s.hit > 0) {
+    g.globalAlpha = Math.min(0.7, s.hit / 0.16 * 0.7);
+    R(-1, -2, W + 2, H + 2, '#FFFFFF');
+    g.globalAlpha = 1;
+  }
+
+  if (crisis && s.landed) {
+    var cy = -18, cw = Math.min(W, 24), cx = W / 2 - cw / 2;
+    R(cx, cy, cw, 4, '#6B7080');
+    R(cx + 3, cy - 3, cw - 8, 3, '#6B7080');
+    for (var r = 0; r < 6; r++) {
+      var ry = ((S.t * 26 + r * 5) % 12);
+      R(cx + 2 + r * (cw - 4) / 6, cy + 5 + ry, 0.6, 2, '#9BB8E8');
+    }
+  }
+}
+
+function drawCar(x, y, col, nt) {
+  var c = S.P * 0.8, ox = x - 6 * c, oy = y - 6 * c;
+  function R(a, b, w, h, k) { px(ox + a * c, oy + b * c, w * c, h * c, k); }
+  var body = dk(col, nt);
+  R(3, 0, 6, 2, body);
+  R(4, 1, 4, 1, dk('#BFE3FF', nt));
+  R(0, 2, 12, 3, body);
+  R(2, 5, 2, 1, '#111'); R(8, 5, 2, 1, '#111');
+  R(11, 3, 1, 1, nt > 0.4 ? '#FFF3B0' : '#EEE');
+  if (nt > 0.4) { g.globalAlpha = 0.25; R(12, 2.5, 8, 2, '#FFF3B0'); g.globalAlpha = 1; }
+}
+
+function drawPlayer() {
+  var role = S.role || ROLES[2], P = S.P, x = S.W * 0.05 + 4 * P, y = S.G.roadTop + 2 * P;
+  var pal = { h: role.hair, s: role.skin, e: '#1B1B1B', c: role.suit, k: '#FFD23F', p: '#2B2D42', f: '#111' };
+  if (S.unlimited) {
+    var hue = (S.t * 400) % 360 | 0;
+    pal.c = 'hsl(' + hue + ',90%,55%)';
+    pal.h = S.t % 0.2 < 0.1 ? '#FFD23F' : '#FFF6C9';
+    for (var i = 0; i < 10; i++) {
+      var a = S.t * 5 + i * 0.63, r = 9 * P + Math.sin(S.t * 9 + i) * 2 * P;
+      px(x + Math.cos(a) * r, y - 6 * P + Math.sin(a) * r, P, P, i % 2 ? '#FFD23F' : '#FFFFFF');
+    }
+  }
+  drawSprite(g, ADULT[0], x, y, P * 0.75, pal);
+  g.font = Math.max(7, P * 2.4) + 'px ' + PIXEL;
+  g.textAlign = 'center';
+  g.fillStyle = '#FFD23F';
+  g.fillText('P1', x, y - 11 * P);
+}
+
+function drawFloats() {
+  g.textAlign = 'center';
+  g.lineJoin = 'round';
+  S.floats.forEach(function (f) {
+    g.globalAlpha = Math.min(1, f.life / f.max * 1.5);
+    if (f.note) { drawSprite(g, NOTE, f.x, f.y, S.P * 0.8, { '#': f.c }); return; }
+    var size = Math.round(f.size * S.P / 3);
+    g.font = size + 'px ' + PIXEL;
+    g.lineWidth = Math.max(2, size / 3);
+    g.strokeStyle = '#000';
+    g.strokeText(f.text, f.x, f.y);
+    g.fillStyle = f.c;
+    g.fillText(f.text, f.x, f.y);
+  });
+  g.globalAlpha = 1;
+}
+
+function render() {
+  var nt = S.phase === 'crisis' || S.phase === 'shop' ? 0 : nightness(S.clock);
+  g.save();
+  g.setTransform(DPR, 0, 0, DPR, 0, 0);
+  if (S.shake > 0) g.translate(rand(-1, 1) * S.shake * 14, rand(-1, 1) * S.shake * 14);
+  g.imageSmoothingEnabled = false;
+  drawSky(nt);
+  drawGround(nt);
+
+  var list = [];
+  S.schools.forEach(function (s) { list.push({ y: s.y, k: 0, o: s }); });
+  S.kids.forEach(function (k) { list.push({ y: k.y, k: 1, o: k }); });
+  S.teachers.forEach(function (tc) {
+    if (tc.state !== 'away') list.push({ y: tc.cy, k: 2, o: tc });
+    if (tc.state === 'walkout' || tc.state === 'walkin') list.push({ y: tc.py, k: 3, o: tc });
+  });
+  list.sort(function (a, b) { return a.y - b.y; });
+  var ku = S.P * 0.75;
+  list.forEach(function (e) {
+    var o = e.o;
+    if (e.k === 0) drawSchool(o, nt);
+    else if (e.k === 1) {
+      var moving = o.pause <= 0 || o.mode === 'go';
+      drawSprite(g, KID[moving ? (o.ph | 0) % 2 : 0], o.x, o.y - (moving && (o.ph | 0) % 2 ? ku : 0), ku, o.pal);
+    }
+    else if (e.k === 2) drawCar(o.cx, o.cy, o.car, nt);
+    else drawSprite(g, ADULT[(o.ph | 0) % 2], o.px, o.py, S.P * 0.7, o.pal);
+  });
+
+  if (S.phase !== 'title' && S.phase !== 'select') drawPlayer();
+
+  S.parts.forEach(function (p) {
+    g.globalAlpha = Math.min(1, p.life * 2);
+    px(p.x, p.y, p.s, p.s, p.c);
+  });
+  g.globalAlpha = 1;
+  drawFloats();
+
+  if (S.flash > 0) {
+    g.globalAlpha = Math.min(1, S.flash * 2);
+    px(-20, -20, S.W + 40, S.H + 40, '#FFFFFF');
+    g.globalAlpha = 1;
+  }
+  g.restore();
+}
+
+var DPR = 1;
+var MAX_SCHOOLS = 100;
+var METERS = [
+  { k: 'grades', label: 'GRADES' },
+  { k: 'scores', label: 'TEST SCORES' },
+  { k: 'college', label: 'COLLEGE DREAMS' },
+  { k: 'dreams', label: 'DREAMS', cls: 'pb-meter--dreams' }
+];
+var COLLEGE = [[0, 'Undecided'], [30, 'Maybe college?'], [45, 'Community college'], [60, 'State university'], [80, 'Honors college'],
+  [100, 'Top-choice school'], [150, 'Full scholarship'], [220, 'Grad school'], [320, 'PhD'], [450, 'Nobel Prize'], [650, 'Moon University'], [1000, 'Dean of Moon U']];
+var DREAMS = [[0, 'Get through today'], [30, 'Pass the class'], [45, 'Graduate'], [60, 'Nurse'], [80, 'Engineer'], [100, 'Doctor'],
+  [150, 'Astronaut'], [220, 'Astronaut doctor'], [320, 'Mayor'], [450, 'President'], [650, 'President of Mars'], [1000, 'Bigger than Mars']];
+function ladder(L, v) { var out = L[0][1]; for (var i = 0; i < L.length; i++) if (v >= L[i][0]) out = L[i][1]; return out; }
+function gradeText(v) {
+  if (v < 20) return 'F';
+  if (v < 40) return 'D';
+  if (v < 60) return 'C';
+  if (v < 80) return 'B';
+  if (v < 100) return 'A';
+  var n = Math.floor((v - 100) / 40) + 1;
+  return n <= 6 ? 'A' + '+'.repeat(n) : 'A+ x' + n;
+}
+function meterText(k, v) {
+  if (k === 'grades') return gradeText(v);
+  if (k === 'scores') return num(v) + '%';
+  if (k === 'college') return ladder(COLLEGE, v);
+  return ladder(DREAMS, v);
+}
+
+var meterEls = {};
+(function buildMeters() {
+  var wrap = $('pb-meters');
+  METERS.forEach(function (m) {
+    var el = document.createElement('div');
+    el.className = 'pb-meter' + (m.cls ? ' ' + m.cls : '');
+    el.innerHTML = '<div class="pb-meter-top"><span class="pb-meter-label">' + m.label + '</span><span class="pb-meter-lvl" hidden></span></div>' +
+      '<div class="pb-meter-bar"><span class="pb-meter-fill"></span></div><div class="pb-meter-val"></div>';
+    wrap.appendChild(el);
+    meterEls[m.k] = { fill: el.querySelector('.pb-meter-fill'), val: el.querySelector('.pb-meter-val'), lvl: el.querySelector('.pb-meter-lvl') };
+  });
+})();
+function paintMeters() {
+  METERS.forEach(function (m, i) {
+    var v = S.meters[m.k], e = meterEls[m.k];
+    if (S.phase === 'crisis' || S.phase === 'shop') v = Math.max(1, v + Math.sin(S.t * 18 + i * 2) * 3);
+    e.fill.style.width = (v < 100 ? v : v % 100) + '%';
+    e.val.textContent = meterText(m.k, v);
+    if (v >= 100) { e.lvl.hidden = false; e.lvl.textContent = 'x' + (Math.floor(v / 100) + 1); }
+    else e.lvl.hidden = true;
+  });
+}
+
+function paintHud() {
+  var fill = $('pb-power-fill'), n = $('pb-power-num');
+  if (S.phase === 'unlimited') { if (!n.firstElementChild) n.innerHTML = INF; }
+  else {
+    fill.style.width = Math.min(100, S.power) + '%';
+    n.textContent = S.power > 0 ? num(S.power) : 'EMPTY';
+  }
+  if (S.phase === 'unlimited') $('pb-clock').textContent = DAYS[Math.floor(S.clock / 1440) % 7] + ' ' + clockStr(S.clock);
+  $('pb-q-sessions').textContent = num(S.sessions);
+}
+
+var bannerTimer = null;
+function banner(html, ms, alarm) {
+  var b = $('pb-banner');
+  ms = ms || 2600;
+  b.innerHTML = html;
+  b.classList.remove('is-on', 'is-alarm');
+  void b.offsetWidth;
+  b.classList.add('is-on');
+  if (alarm) b.classList.add('is-alarm');
+  clearTimeout(bannerTimer);
+  bannerTimer = setTimeout(function () { b.classList.remove('is-on', 'is-alarm'); }, ms);
+  S.bannerUntil = S.t + ms / 1000;
+}
+function say(text) { $('pb-live').textContent = text; }
+var INF = '<span class="pb-inf">\u221e</span>';
+function setLevel(html) { $('pb-level').innerHTML = html; }
+function focusQuiet(el) { try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); } }
+
+// Deck: the school list is the real pricing calculator.
+function totals() {
+  var kids = 0, price = 0, big = 0;
+  S.schools.forEach(function (s) { kids += s.size; price += priceFor(s.size); big = Math.max(big, s.size); });
+  return { kids: kids, price: price, big: big, n: S.schools.length };
+}
+function renderList() {
+  var ol = $('pb-list');
+  ol.innerHTML = '';
+  S.schools.forEach(function (s) { ol.appendChild(schoolItem(s)); });
+  updateTotals();
+}
+function schoolItem(s) {
+  var li = document.createElement('li');
+  li.className = 'pb-school';
+  li.innerHTML = '<span class="pb-school-name"></span><span class="pb-school-price"></span>' +
+    '<div class="pb-school-ctrl">' +
+    '<button type="button" class="pb-step" data-d="-100" aria-label="Remove 100 students">-</button>' +
+    '<input class="pb-size" type="number" min="1" step="1" inputmode="numeric" id="pb-size-' + s.id + '">' +
+    '<button type="button" class="pb-step" data-d="100" aria-label="Add 100 students">+</button>' +
+    '<span class="pb-kids">kids</span>' +
+    '<button type="button" class="pb-remove" aria-label="Remove school">&times;</button></div>';
+  var name = li.querySelector('.pb-school-name'), input = li.querySelector('.pb-size');
+  name.textContent = s.name;
+  input.value = s.size;
+  input.setAttribute('aria-label', 'Students at ' + s.name);
+  li.querySelector('.pb-remove').setAttribute('aria-label', 'Remove ' + s.name);
+  s.li = li;
+  paintSchoolPrice(s);
+  li.querySelectorAll('.pb-step').forEach(function (b) {
+    b.addEventListener('click', function () { setSize(s, Math.max(1, s.size + Number(b.getAttribute('data-d')))); });
+  });
+  input.addEventListener('input', function () {
+    var v = parseInt(input.value, 10);
+    if (v >= 1) setSize(s, v, true);
+  });
+  input.addEventListener('change', function () { input.value = s.size; });
+  li.querySelector('.pb-remove').addEventListener('click', function () {
+    removeSchool(s);
+    renderList();
+    say(s.name + ' removed.');
+    focusQuiet($('pb-add'));
+  });
+  return li;
+}
+function paintSchoolPrice(s) {
+  if (s.li) s.li.querySelector('.pb-school-price').textContent = money(priceFor(s.size)) + '/yr';
+}
+function setSize(s, v, fromInput) {
+  if (v === s.size) return;
+  var before = tierOf(s.size), grew = v > s.size;
+  s.size = Math.min(v, 999999999);
+  if (!fromInput && s.li) s.li.querySelector('.pb-size').value = s.size;
+  recalcNeeds();
+  layout();
+  S.teachers.forEach(parkAtSpot);
+  paintSchoolPrice(s);
+  updateTotals();
+  var top = s.y - dims(s).h * s.u;
+  if (!fromInput) floatText(s.x, top - 6 * s.u, grew ? '+100 SEATS' : '-100 SEATS', grew ? '#7BE0C8' : '#FFFFFF', 7);
+  if (tierOf(s.size) !== before) {
+    burst(s.x, s.y - dims(s).h * s.u / 2, 12, ['#FFD23F', '#FFFFFF'], 120);
+    sfx.thud();
+  } else if (!fromInput) sfx.blast(grew ? 4 : 1);
+}
+function updateTotals() {
+  var t = totals();
+  $('pb-count').textContent = t.n + ' BLDG';
+  $('pb-students').textContent = num(t.kids);
+  $('pb-price').textContent = money(t.price);
+  $('pb-q-price').textContent = money(t.price);
+  $('pb-q-bldg').textContent = num(t.n);
+  $('pb-q-kids').textContent = num(t.kids);
+  $('pb-add').disabled = $('pb-add5').disabled = t.n >= MAX_SCHOOLS;
+  if (S.phase === 'build') $('pb-next').disabled = t.n === 0;
+  var egg = $('pb-egg'), msg = '';
+  if (t.big >= 10000000) msg = 'Hello, federal government. That\u2019s still one building, so it\u2019s still $25,000.';
+  else if (t.big >= 100000) msg = 'That\u2019s one very large building. Still one building. Still $25,000 a year.';
+  else if (t.n >= MAX_SCHOOLS) msg = 'That\u2019s 100 buildings. Your quote works the same way, but let\u2019s talk: partnerships@upchieve.org';
+  else if (t.n >= 30) msg = 'Big district! Same deal for every building: one flat yearly price.';
+  egg.hidden = !msg;
+  egg.textContent = msg;
+  if (!$('pb-shop').hidden) fillReceipt();
+}
+function addSchools(count) {
+  var room = MAX_SCHOOLS - S.schools.length;
+  count = Math.min(count, room);
+  for (var i = 0; i < count; i++) {
+    (function (delay) {
+      setTimeout(function () {
+        if (S.schools.length >= MAX_SCHOOLS || S.phase === 'title') return;
+        var s = addSchool(700);
+        var ol = $('pb-list'), li = schoolItem(s);
+        li.classList.add('is-new');
+        ol.appendChild(li);
+        ol.scrollTop = ol.scrollHeight;
+        updateTotals();
+        if (S.schools.length === 1 && S.phase === 'build') {
+          setTimeout(function () { banner('+1 SCHOOL!<small>More students keep showing up. Add capacity!</small>', 3000); }, 500);
+        }
+        say(s.name + ' added with 700 students.');
+      }, delay);
+    })(i * 140);
+  }
+  $('pb-add').classList.remove('is-pulse');
+}
+
+function fillReceipt() {
+  var t = totals(), rows = [];
+  function esc(x) { var d = document.createElement('span'); d.textContent = x; return d.innerHTML; }
+  if (S.schools.length <= 8) {
+    S.schools.forEach(function (s) {
+      rows.push('<div><span>' + esc(s.name) + ' (' + num(s.size) + ')</span><span>' + money(priceFor(s.size)) + '</span></div>');
+    });
+  } else {
+    var byTier = {};
+    S.schools.forEach(function (s) { var k = tierOf(s.size); byTier[k] = (byTier[k] || 0) + 1; });
+    Object.keys(byTier).forEach(function (k) {
+      var tier = TIERS[k], lo = k > 0 ? TIERS[k - 1].upTo + 1 : 1;
+      var label = tier.upTo === Infinity ? num(lo) + '+ kids' : num(lo) + '\u2013' + num(tier.upTo) + ' kids';
+      rows.push('<div><span>' + byTier[k] + ' \u00d7 ' + label + '</span><span>' + money(byTier[k] * tier.price) + '</span></div>');
+    });
+  }
+  rows.push('<div class="pb-rule"></div>');
+  rows.push('<div class="pb-strong"><span>' + t.n + (t.n === 1 ? ' building' : ' buildings') + '</span><span>' + money(t.price) + '</span></div>');
+  rows.push('<div><span>Tutoring hours</span><span>UNLIMITED</span></div>');
+  rows.push('<div><span>Overage fees</span><span>$0</span></div>');
+  $('pb-receipt').innerHTML = rows.join('');
+  $('pb-shop-total').textContent = money(t.price);
+  var per = t.kids ? t.price / t.kids : 0;
+  $('pb-shop-per').textContent = per >= 0.01 || !per ? money(per, true) : '$' + per.toPrecision(2);
+}
+
+// Phases
+function resetWorld() {
+  S.schools = []; S.kids = []; S.teachers = []; S.parts = []; S.floats = [];
+  S.meters = { grades: 72, scores: 70, college: 68, dreams: 75 };
+  S.power = 0; S.unlimited = false; S.clock = 21 * 60; S.clockTarget = null;
+  S.sessions = 0; S.combo = 0; S.nudges = 0; S.seen = {}; S.idle = 0;
+  root.classList.remove('is-unlimited', 'is-crisis');
+  $('pb-meters').classList.add('is-idle');
+  $('pb-clock').hidden = true;
+  $('pb-quote').hidden = true;
+  $('pb-shop').hidden = true;
+  var next = $('pb-next');
+  next.hidden = false; next.disabled = true; next.textContent = 'DONE ADDING SCHOOLS'; next.classList.remove('is-pulse');
+  $('pb-hint').textContent = 'Add each school in your district and set how many students it holds.';
+  cv.removeAttribute('tabindex');
+  renderList();
+  paintMeters();
+}
+function goTitle() {
+  resetWorld();
+  S.phase = 'title';
+  S.role = null;
+  setLevel('1 PLAYER');
+  $('pb-select').hidden = true;
+  $('pb-title').hidden = false;
+}
+function goSelect() {
+  sfx.coin();
+  S.phase = 'select';
+  $('pb-title').hidden = true;
+  $('pb-select').hidden = false;
+  focusQuiet($('pb-roles').querySelector('button'));
+}
+function goBuild(role) {
+  S.role = role || ROLES[2];
+  S.phase = 'build';
+  $('pb-title').hidden = true;
+  $('pb-select').hidden = true;
+  S.clockTarget = 33 * 60;
+  setLevel('LEVEL 1: STUDENTS ON THE LOOSE');
+  banner('STUDENTS ON THE LOOSE!<small>Quick! Add your schools.</small>', 3200);
+  $('pb-add').classList.add('is-pulse');
+  say('Level 1. Students are wandering. Add your schools to place them.');
+  focusQuiet($('pb-add'));
+}
+function goCrisis() {
+  S.phase = 'crisis';
+  sendEveryoneInside();
+  root.classList.add('is-crisis');
+  $('pb-meters').classList.remove('is-idle');
+  setLevel('LEVEL 2: DREAMS ARE DROPPING');
+  banner('WARNING: DREAMS DROPPING!<small>Grades, scores, and dreams are falling fast</small>', 3400, true);
+  sfx.alarm();
+  var next = $('pb-next');
+  next.textContent = 'VISIT THE POWER-UP SHOP';
+  next.classList.add('is-pulse');
+  $('pb-hint').textContent = 'Your students need help. The shop has exactly one item.';
+  say('Level 2. Grades, test scores, and dreams are dropping. Visit the power-up shop.');
+}
+function openShop() {
+  S.phase = 'shop';
+  fillReceipt();
+  $('pb-shop').hidden = false;
+  sfx.coin();
+  focusQuiet($('pb-buy'));
+}
+function closeShop() {
+  $('pb-shop').hidden = true;
+  S.phase = 'crisis';
+  focusQuiet($('pb-next'));
+}
+function buy() {
+  $('pb-shop').hidden = true;
+  $('pb-next').hidden = true;
+  S.phase = 'powerup';
+  S.powerAnim = 0;
+  S.flash = 0.35;
+  root.classList.remove('is-crisis');
+  sfx.powerup();
+  setLevel('POWER-UP ACQUIRED');
+  banner('POWER-UP ACQUIRED!', 2000);
+  say('Power-up acquired. Charging.');
+}
+function powerStep(dt) {
+  S.powerAnim += dt;
+  var a = S.powerAnim;
+  S.power = a < 1.3 ? a / 1.3 * 100 : 100 + Math.pow((a - 1.3) / 0.8, 2) * 899;
+  if (a >= 2.1) startUnlimited();
+}
+function startUnlimited() {
+  S.phase = 'unlimited';
+  S.unlimited = true;
+  S.clock = 13 * 60;
+  S.idle = 0;
+  root.classList.add('is-unlimited');
+  S.teachers = [];
+  S.schools.forEach(addStaff);
+  boostMeters(45);
+  S.flash = 0.45;
+  if (!reduced) S.shake = 0.4;
+  S.schools.forEach(function (s) { burst(s.x, s.y - dims(s).h * s.u, 18, ['#FFD23F', '#FF5EA8', '#7BE0C8', '#FFFFFF'], 200); });
+  sfx.coin();
+  setLevel('LEVEL ' + INF + ': UNLIMITED MODE');
+  banner('UNLIMITED!!<small>Tap your schools. As much as you want. Forever.</small>', 3800);
+  $('pb-clock').hidden = false;
+  $('pb-quote').hidden = false;
+  $('pb-hint').textContent = 'Tap any school to send tutors. The power meter never goes down.';
+  cv.setAttribute('tabindex', '0');
+  cv.setAttribute('aria-label', 'District map in unlimited mode. Press space to send tutors to a school.');
+  updateTotals();
+  say('Unlimited tutoring is on. Tap schools, or press space on the map, to send tutors.');
+}
+
+function crossed(prev, cur, minute) {
+  var a = prev % 1440, b = cur % 1440;
+  return b >= a ? a < minute && b >= minute : a < minute || b >= minute;
+}
+function once(key, fn) { if (!S.seen[key]) { S.seen[key] = 1; fn(); } }
+function unlimitedStep(dt) {
+  var prev = S.clock;
+  S.clock += 36 * dt;
+  if (crossed(prev, S.clock, 16 * 60 + 30)) once('out', function () { banner('4:30 PM: TEACHERS CLOCK OUT<small>UPchieve doesn\u2019t.</small>', 3200); });
+  if (crossed(prev, S.clock, 2 * 60)) once('2am', function () { banner('2:00 AM: STILL UNLIMITED<small>The kids are having a study party.</small>', 3200); });
+  if (crossed(prev, S.clock, 7 * 60 + 30)) once('back', function () { banner('7:30 AM: TEACHERS ARE BACK<small>Power left: still ' + INF + '</small>', 3200); });
+  if (Math.floor(prev / 1440) % 7 !== 5 && Math.floor(S.clock / 1440) % 7 === 5) once('sat', function () { banner('SATURDAY<small>Still unlimited. Obviously.</small>', 3000); });
+  updateTeachers(dt);
+  S.idle += dt;
+  if (S.idle > 9 && S.nudges < 3 && S.t > (S.bannerUntil || 0)) {
+    S.nudges++;
+    S.idle = 0;
+    banner('GO ON. TAP A SCHOOL.<small>It\u2019s unlimited. We checked.</small>', 2800);
+  }
+  if (isParty() && S.schools.length && Math.random() < dt * Math.min(6, S.schools.length * 1.5)) {
+    var s = pick(S.schools), d = dims(s);
+    S.floats.push({ note: true, x: s.x + rand(-d.w / 2, d.w / 2) * s.u, y: s.y - d.h * s.u, c: pick(SHIRT), life: 1.4, max: 1.4 });
+  }
+}
+
+function step(dt) {
+  S.t += dt;
+  if (S.clockTarget != null) {
+    S.clock = lerp(S.clock, S.clockTarget, Math.min(1, dt * 2));
+    if (Math.abs(S.clock - S.clockTarget) < 1) { S.clock = S.clockTarget; S.clockTarget = null; }
+  }
+  if (S.phase === 'unlimited') unlimitedStep(dt);
+  else if (S.phase === 'powerup') powerStep(dt);
+  S.assignT = (S.assignT || 0) - dt;
+  if (S.assignT <= 0) { assignKids(); S.assignT = 0.15; }
+  updateKids(dt);
+  updateSchools(dt);
+  updateFx(dt);
+  updateMeters(dt);
+  S.uiT = (S.uiT || 0) - dt;
+  if (S.uiT <= 0) { paintMeters(); paintHud(); S.uiT = 0.1; }
+}
+
+// Static pixel art for the role cards and the shop item.
+var STAR = ['.....#.....', '....###....', '....###....', '###########', '.#########.', '..#######..', '..#######..', '.####.####.', '.###...###.', '##.......##'];
+(function buildRoles() {
+  var wrap = $('pb-roles');
+  ROLES.forEach(function (r) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'pb-role';
+    b.innerHTML = '<canvas width="16" height="16"></canvas><span class="pb-role-name"></span><span class="pb-role-stats"></span>';
+    b.querySelector('.pb-role-name').textContent = r.name;
+    b.querySelector('.pb-role-stats').innerHTML = r.stats.map(function (st) { return '<span>' + st[0] + ' <b>' + st[1] + '</b></span>'; }).join('');
+    var c = b.querySelector('canvas').getContext('2d');
+    c.fillStyle = '#252F66'; c.fillRect(0, 0, 16, 16);
+    drawSprite(c, ADULT[0], 8, 15, 1, { h: r.hair, s: r.skin, e: '#1B1B1B', c: r.suit, k: '#FFD23F', p: '#2B2D42', f: '#111' });
+    b.addEventListener('click', function () { sfx.coin(); goBuild(r); });
+    wrap.appendChild(b);
+  });
+  var ic = $('pb-item-icon').getContext('2d');
+  ic.fillStyle = '#000'; ic.fillRect(0, 0, 24, 24);
+  drawSprite(ic, STAR, 12, 22, 2, { '#': '#FFD23F' });
+  ic.fillStyle = '#FF5EA8'; ic.fillRect(10, 10, 1, 2); ic.fillRect(13, 10, 1, 2);
+})();
+
+// Wiring
+$('pb-start').addEventListener('click', goSelect);
+$('pb-skip').addEventListener('click', function () { goBuild(null); });
+$('pb-add').addEventListener('click', function () { addSchools(1); });
+$('pb-add5').addEventListener('click', function () { addSchools(5); });
+$('pb-next').addEventListener('click', function () {
+  if (S.phase === 'build') goCrisis();
+  else if (S.phase === 'crisis') openShop();
+});
+$('pb-buy').addEventListener('click', buy);
+$('pb-shop-close').addEventListener('click', closeShop);
+$('pb-again').addEventListener('click', function () { goTitle(); focusQuiet($('pb-start')); });
+$('pb-mute').addEventListener('click', function () {
+  muted = !muted;
+  this.textContent = muted ? 'SOUND: OFF' : 'SOUND: ON';
+  this.setAttribute('aria-pressed', String(muted));
+});
+root.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' && !$('pb-shop').hidden) closeShop();
+});
+
+function pointerPos(e) {
+  var r = cv.getBoundingClientRect();
+  return { x: e.clientX - r.left, y: e.clientY - r.top };
+}
+cv.addEventListener('pointerdown', function (e) {
+  var p = pointerPos(e), s = schoolAt(p.x, p.y);
+  if (S.phase === 'unlimited') {
+    if (s) blast(s, p.x, p.y);
+    else burst(p.x, p.y, 5, ['#FFFFFF', '#FFD23F'], 70);
+  } else if (S.phase === 'crisis' && s) {
+    floatText(p.x, p.y - 10, 'NO POWER!', '#FF4D4D', 9);
+    sfx.buzz();
+  } else if (S.phase === 'build' && s) {
+    floatText(s.x, s.y - dims(s).h * s.u - 8, num(s.size) + ' KIDS', '#FFFFFF', 8);
+  }
+});
+cv.addEventListener('keydown', function (e) {
+  if (S.phase !== 'unlimited' || !S.schools.length) return;
+  if (e.key === ' ' || e.key === 'Enter') {
+    e.preventDefault();
+    var s = pick(S.schools);
+    blast(s, s.x, s.y - dims(s).h * s.u / 2);
+  }
+});
+
+function resize() {
+  var r = $('pb-screen').getBoundingClientRect();
+  var w = Math.max(200, r.width), h = Math.max(200, r.height);
+  DPR = Math.min(2, window.devicePixelRatio || 1);
+  cv.width = Math.round(w * DPR);
+  cv.height = Math.round(h * DPR);
+  setGeometry(w, h);
+}
+if (window.ResizeObserver) new ResizeObserver(resize).observe($('pb-screen'));
+else window.addEventListener('resize', resize);
+resize();
+
+var visible = true, last = 0;
+if (window.IntersectionObserver) {
+  new IntersectionObserver(function (es) { visible = es[0].isIntersecting; }).observe(root);
+}
+function frame(ts) {
+  requestAnimationFrame(frame);
+  if (!visible || document.hidden) { last = ts; return; }
+  var dt = Math.min(0.05, (ts - (last || ts)) / 1000);
+  last = ts;
+  step(dt);
+  render();
+}
+goTitle();
+requestAnimationFrame(frame);
+
+})();
+</script>
+
+<p class="preview-note">Preview of the embed for upchieve.org/schools. Prices use the same per-building tiers as the current calculator.</p>
