@@ -29,11 +29,11 @@ function money(n) { return '$' + Math.round(n).toLocaleString('en-US'); }
 function num(n) { return Math.round(n).toLocaleString('en-US'); }
 
 var NAMES = [
-  'Lincoln High', 'Maple Middle', 'Eastside Elementary', 'Roosevelt Academy',
-  'Riverside High', 'Oak Hill Middle', 'Washington Prep', 'Central High',
-  'Lakeview Elementary', 'Sunnyvale Middle', 'Hillcrest High', 'Pine Ridge Academy',
-  'Westfield Elementary', 'Northgate High', 'Cedar Grove Middle', 'Harbor View High',
-  'Jefferson Elementary', 'Brookside Academy', 'Mesa Verde High', 'Southside Middle'
+  'Lincoln High', 'Maple Middle', 'Roosevelt Academy', 'Riverside High',
+  'Oak Hill Middle', 'Washington Prep', 'Central High', 'Sunnyvale Middle',
+  'Hillcrest High', 'Pine Ridge Academy', 'Northgate High', 'Cedar Grove Middle',
+  'Harbor View High', 'Brookside Academy', 'Mesa Verde High', 'Southside Middle',
+  'Westfield High', 'Lakeview Middle', 'Jefferson Prep', 'Kennedy High'
 ];
 
 var SKIN = ['#8D5524', '#C68642', '#E0AC69', '#F1C27D', '#FFDBAC', '#5C3A21'];
@@ -119,6 +119,9 @@ var sfx = {
   blast: function (combo) { tone(Math.min(520 + combo * 35, 1900), 0.08, 'square', 0.028, 0, Math.min(1000 + combo * 50, 2800)); },
   chime: function () { tone(1319, 0.12, 'square', 0.035); tone(1760, 0.3, 'square', 0.035, 0.1); },
   honk: function () { tone(330, 0.12, 'square', 0.022); tone(330, 0.12, 'square', 0.022, 0.16); },
+  rocket: function () { tone(120, 1.4, 'sawtooth', 0.03, 0, 900); noiseHit(0, 0.05, 'bandpass', 600, 1.2); },
+  poof: function () { noiseHit(0, 0.1, 'lowpass', 1400, 0.3); tone(880, 0.08, 'square', 0.03, 0.05); tone(1319, 0.16, 'square', 0.03, 0.12); },
+  pew: function () { noiseHit(0, 0.04, 'highpass', 3000, 0.25); tone(rand(900, 1400), 0.2, 'triangle', 0.02, 0, 300); },
   buzz: function () { tone(120, 0.22, 'square', 0.05); tone(90, 0.22, 'square', 0.04, 0.05); },
   charge: function () {
     tone(90, 1.9, 'sawtooth', 0.035, 0, 1800);
@@ -161,6 +164,10 @@ function beatPos() {
   return (S.t - (S.uStart || 0)) / (STEP * 4);
 }
 
+var IMG = {};
+Object.keys(ART).forEach(function (k) { var im = new Image(); im.src = ART[k]; IMG[k] = im; });
+function imgReady(k) { return IMG[k] && IMG[k].complete && IMG[k].naturalWidth > 0; }
+
 var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 var S = {
@@ -184,7 +191,12 @@ var S = {
   seen: {},
   nextId: 1,
   ptr: { x: 0, y: 0, inside: false, mouse: false },
-  hero: { x: 0, y: 0, pulse: 0, hit: 0 },
+  hero: { x: 0, y: 0, hs: 1, pulse: 0, hit: 0 },
+  dog: { x: 0, y: 0, w: 100, on: false, glasses: 0, jump: 0 },
+  zone: { right: 0, top: 0, meter: 9999 },
+  rocket: null,
+  wavelets: [],
+  rainbow: 0,
   wave: null,
   beat: -1,
   W: 0, H: 0, k: 1, t: 0

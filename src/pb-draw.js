@@ -1,10 +1,14 @@
 var cv = $('pb-canvas'), g = cv.getContext('2d');
 var UI_FONT = '"Work Sans", system-ui, -apple-system, sans-serif';
-var STARS = [], TUFTS = [], CLOUDS = [];
+var STARS = [], TUFTS = [], CLOUDS = [], DOODLES = [];
 (function seed() {
   for (var i = 0; i < 90; i++) STARS.push({ x: Math.random(), y: Math.random(), tw: Math.random() * 6 });
   for (var j = 0; j < 70; j++) TUFTS.push({ x: Math.random(), y: Math.random(), f: Math.random() < 0.3 ? pick(['#FFFFFF', '#FFC94D', '#F48FB1', '#B9A6F5']) : null });
   for (var k = 0; k < 5; k++) CLOUDS.push({ x: Math.random(), y: rand(0.12, 0.6), s: rand(0.8, 1.3), v: rand(0.004, 0.009) });
+  var dc = ['#B9A6F5', '#FFB896', '#8FDCC4', '#7FB8FF', '#F7A8C8'];
+  [[0.06, 0.2], [0.2, 0.5], [0.33, 0.12], [0.62, 0.42], [0.78, 0.16], [0.9, 0.55], [0.47, 0.72]].forEach(function (p, i) {
+    DOODLES.push({ x: p[0], y: p[1], r: rand(7, 12), c: dc[i % dc.length], rot: rand(0, 1), tw: Math.random() * 6 });
+  });
 })();
 
 function rgb(h) { var n = parseInt(h.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; }
@@ -43,11 +47,32 @@ function rr(x, y, w, h, r) {
 }
 function circle(x, y, r) { g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); }
 function ellipse(x, y, rx, ry) { g.beginPath(); g.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); }
+var STK = 0;
 function paint(fill, stroke, lw) {
+  if (STK) {
+    if (fill && fill.indexOf('rgba(0,0,0') === 0) return;
+    g.fillStyle = '#FFFFFF'; g.fill();
+    g.lineJoin = 'round'; g.lineWidth = (lw || 0) + STK; g.strokeStyle = '#FFFFFF'; g.stroke();
+    return;
+  }
   if (fill) { g.fillStyle = fill; g.fill(); }
   if (stroke) { g.lineWidth = lw || 2; g.strokeStyle = stroke; g.stroke(); }
 }
-function line(x1, y1, x2, y2) { g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.stroke(); }
+function line(x1, y1, x2, y2) {
+  g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2);
+  if (!STK) { g.stroke(); return; }
+  var lw = g.lineWidth, ss = g.strokeStyle;
+  g.lineWidth = lw + STK; g.strokeStyle = '#FFFFFF'; g.stroke();
+  g.lineWidth = lw; g.strokeStyle = ss;
+}
+function sparklePath(x, y, r, rot) {
+  g.beginPath();
+  for (var i = 0; i < 8; i++) {
+    var a = rot + i * Math.PI / 4, rad = i % 2 ? r * 0.26 : r;
+    g.lineTo(x + Math.cos(a) * rad, y + Math.sin(a) * rad);
+  }
+  g.closePath();
+}
 function starPath(x, y, r, rot) {
   g.beginPath();
   for (var i = 0; i < 10; i++) {
@@ -276,8 +301,19 @@ function drawSchool(s, nt, ghost) {
   g.scale(sc * (1 + 0.14 * sq), sc * (1 - 0.2 * sq));
   if (ghost) g.globalAlpha = 0.55;
   ellipse(0, 2, d.w * 0.6, 7); paint('rgba(0,0,0,.18)');
+  if (!ghost) {
+    STK = 12;
+    if (d.mega) drawTower(d.w, d.h, nt); else drawHouse(s, d.w, d.h, tierOf(s.size), nt);
+    STK = 0;
+  }
   if (d.mega) drawTower(d.w, d.h, nt);
   else drawHouse(s, d.w, d.h, tierOf(s.size), nt);
+  if (S.phase === 'unlimited' && !ghost) {
+    g.globalAlpha = 0.55 + 0.45 * Math.pow(1 - beatFrac(), 2);
+    rr(-d.w / 2 - 7, -d.h - 9, d.w + 14, d.h + 12, 9);
+    paint(null, 'hsl(' + ((S.t * 160 + s.id * 50) % 360 | 0) + ',90%,62%)', 4);
+    g.globalAlpha = 1;
+  }
   if (s.hit > 0) {
     g.globalAlpha = Math.min(0.65, s.hit / 0.18 * 0.65);
     rr(-d.w / 2 - 3, -d.h - 8, d.w + 6, d.h + 10, 6); paint('#FFFFFF');
@@ -353,30 +389,9 @@ function drawCar(tc, nt) {
   g.restore();
 }
 
-function drawHero(nt) {
-  var h = S.hero, k = S.k * 1.35, t = S.t, ph = S.phase;
-  var bounce = ph === 'unlimited' ? Math.pow(1 - beatFrac(), 2) * 7 : ph === 'crisis' ? Math.abs(Math.sin(t * 9)) * 2 : 0;
-  var shakeX = ph === 'charge' ? rand(-1, 1) * 2.5 * Math.min(1, (S.chargeT || 0)) : 0;
-  g.save();
-  g.translate(h.x + shakeX, h.y);
-  g.scale(k, k);
-  ellipse(0, 0, 18, 4); paint('rgba(0,0,0,.22)');
-  if (ph === 'charge' || ph === 'unlimited') {
-    var power = ph === 'charge' ? Math.min(1, (S.chargeT || 0) / 2) : 0.7 + 0.3 * Math.pow(1 - beatFrac(), 2);
-    var aura = g.createRadialGradient(0, -40, 4, 0, -40, 70);
-    var hue = (t * 200) % 360 | 0;
-    aura.addColorStop(0, ph === 'charge' ? 'rgba(255,236,150,' + (0.3 + power * 0.6) + ')' : 'hsla(' + hue + ',95%,65%,.55)');
-    aura.addColorStop(1, 'rgba(255,236,150,0)');
-    g.fillStyle = aura;
-    g.fillRect(-80, -120, 160, 150);
-    if (ph === 'unlimited') {
-      for (var sp = 0; sp < 8; sp++) {
-        var a = t * 3 + sp * 0.785, rr2 = 36 + Math.sin(t * 6 + sp) * 4;
-        starPath(Math.cos(a) * rr2, -42 + Math.sin(a) * rr2, 3.4, t * 4); paint(POP[sp % POP.length]);
-      }
-    }
-  }
-  g.translate(0, -bounce);
+// The admin in the bottom-left corner: holds a stamp, panics, charges up, then dances with UPdog.
+function heroFigure(ph, t) {
+  var skin = '#8D5524';
   g.lineCap = 'round';
   rr(-9, -24, 7, 23, 3); paint('#2B2D42');
   rr(2, -24, 7, 23, 3); paint('#2B2D42');
@@ -385,18 +400,17 @@ function drawHero(nt) {
   g.beginPath(); g.moveTo(-6, -55); g.lineTo(0, -44); g.lineTo(6, -55); g.closePath(); paint('#FFFFFF');
   g.beginPath(); g.moveTo(-2, -50); g.lineTo(2, -50); g.lineTo(3, -34); g.lineTo(0, -31); g.lineTo(-3, -34); g.closePath(); paint('#F48FB1');
   rr(4, -44, 8, 9, 2); paint('#FFFCE2', OUTLINE, 1);
-  g.fillStyle = '#154BB7'; g.font = '700 5px ' + UI_FONT; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('UP', 8, -39.5);
-  var skin = '#C68642';
+  if (!STK) { g.fillStyle = '#154BB7'; g.font = '700 5px ' + UI_FONT; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('UP', 8, -39.5); }
   g.strokeStyle = skin; g.lineWidth = 6;
   if (ph === 'crisis') {
     line(-12, -50, -20, -64); line(12, -50, 20, -64);
     circle(-20, -66, 3.5); paint(skin); circle(20, -66, 3.5); paint(skin);
   } else if (ph === 'charge') {
-    line(-12, -50, -26, -52); line(12, -50, 26, -52);
+    line(-12, -50, -26, -54); line(12, -50, 26, -54);
   } else if (ph === 'unlimited') {
     var up = beatFrac() < 0.5;
-    line(-12, -50, -20, -36); line(12, -50, 20, up ? -72 : -64);
-    circle(20, up ? -74 : -66, 4); paint(skin);
+    line(-12, -50, -22, up ? -66 : -40); line(12, -50, 22, up ? -40 : -66);
+    circle(-22, up ? -68 : -38, 4); paint(skin); circle(22, up ? -38 : -68, 4); paint(skin);
   } else {
     line(-12, -50, -17, -30);
     line(12, -50, 22, -44);
@@ -404,8 +418,10 @@ function drawHero(nt) {
     rr(14, -48, 16, 6, 2); paint('#E85D8F', OUTLINE, 1.2);
   }
   circle(0, -67, 12); paint(skin, OUTLINE, 2);
-  g.fillStyle = '#2B1D14';
-  g.beginPath(); g.arc(0, -69, 12.5, Math.PI * 1.02, Math.PI * 1.98); g.closePath(); g.fill();
+  g.fillStyle = '#1B1B1B';
+  g.beginPath(); g.arc(0, -69, 12.5, Math.PI * 1.02, Math.PI * 1.98); g.closePath();
+  if (STK) paint('#1B1B1B'); else g.fill();
+  if (STK) return;
   if (ph === 'unlimited' || (ph === 'charge' && (S.chargeT || 0) > 1.2)) {
     g.fillStyle = '#111111';
     g.fillRect(-10, -69, 8, 4); g.fillRect(2, -69, 8, 4); g.fillRect(-2, -68, 4, 1.6); g.fillRect(-12, -69, 2, 1.6); g.fillRect(10, -69, 2, 1.6);
@@ -424,16 +440,106 @@ function drawHero(nt) {
   if (ph === 'crisis') g.arc(0, -58, 3.2, Math.PI * 1.15, Math.PI * 1.85);
   else g.arc(0, -62, 4, Math.PI * 0.15, Math.PI * 0.85);
   g.stroke();
+}
+function drawHero() {
+  var h = S.hero, k = h.hs, t = S.t, ph = S.phase;
+  var bounce = ph === 'unlimited' ? Math.pow(1 - beatFrac(), 2) * 8 : ph === 'crisis' ? Math.abs(Math.sin(t * 9)) * 2 : 0;
+  var shakeX = ph === 'charge' ? rand(-1, 1) * 2.5 * Math.min(1, (S.chargeT || 0)) : 0;
+  g.save();
+  g.translate(h.x + shakeX, h.y);
+  g.scale(k, k);
+  ellipse(0, 0, 18, 4); paint('rgba(0,0,0,.22)');
+  if (ph === 'charge' || ph === 'unlimited') {
+    var power = ph === 'charge' ? Math.min(1, (S.chargeT || 0) / 2) : 0.7 + 0.3 * Math.pow(1 - beatFrac(), 2);
+    var aura = g.createRadialGradient(0, -40, 4, 0, -40, 70);
+    var hue = (t * 200) % 360 | 0;
+    aura.addColorStop(0, ph === 'charge' ? 'rgba(255,236,150,' + (0.3 + power * 0.6) + ')' : 'hsla(' + hue + ',95%,65%,.55)');
+    aura.addColorStop(1, 'rgba(255,236,150,0)');
+    g.fillStyle = aura;
+    g.fillRect(-80, -120, 160, 150);
+  }
+  g.translate(0, -bounce - (h.jump || 0));
+  STK = 7; heroFigure(ph, t); STK = 0;
+  heroFigure(ph, t);
+  if (ph === 'unlimited') {
+    for (var sp = 0; sp < 8; sp++) {
+      var a = t * 3 + sp * 0.785, r2 = 38 + Math.sin(t * 6 + sp) * 4;
+      starPath(Math.cos(a) * r2, -42 + Math.sin(a) * r2, 3.4, t * 4); paint(POP[sp % POP.length]);
+    }
+  }
   g.restore();
 }
 
+// UPdog: stays by the admin once he delivers the power-up, and gets his shades when it kicks in.
+function easeBounce(t) {
+  if (t < 1 / 2.75) return 7.5625 * t * t;
+  if (t < 2 / 2.75) { t -= 1.5 / 2.75; return 7.5625 * t * t + 0.75; }
+  if (t < 2.5 / 2.75) { t -= 2.25 / 2.75; return 7.5625 * t * t + 0.9375; }
+  t -= 2.625 / 2.75; return 7.5625 * t * t + 0.984375;
+}
+function drawDog() {
+  var d = S.dog;
+  if (!d.on || !imgReady('dog')) return;
+  var w = d.w, s = w / ART_META.dog[0], h = ART_META.dog[1] * s;
+  var dancing = S.phase === 'unlimited', bf = dancing ? beatFrac() : 0;
+  var bounce = dancing ? Math.pow(1 - bf, 2) * 12 * S.k : 0;
+  var tilt = dancing ? (Math.floor(beatPos()) % 2 ? 0.1 : -0.1) * (1 - bf * 0.6) : 0;
+  ellipse(d.x, d.y + 2, w * 0.42, 6 * S.k); paint('rgba(0,0,0,.2)');
+  g.save();
+  g.translate(d.x, d.y - bounce - (d.jump || 0));
+  g.rotate(tilt);
+  g.drawImage(IMG.dog, -w / 2, -h, w, h);
+  if (d.glasses > 0 && imgReady('glasses')) {
+    var e = easeBounce(Math.min(1, d.glasses));
+    g.drawImage(IMG.glasses, -w / 2 + ART_META.glassesAt[0] * s, -h + ART_META.glassesAt[1] * s - (1 - e) * 160 * S.k, ART_META.glasses[0] * s, ART_META.glasses[1] * s);
+  }
+  g.restore();
+}
+function drawRocket() {
+  var r = S.rocket;
+  if (!r || !imgReady('rocket')) return;
+  var w = 190 * S.k, h = w * ART_META.rocket[1] / ART_META.rocket[0];
+  g.save();
+  g.translate(r.x, r.y);
+  g.rotate(r.ang + 0.7);
+  g.drawImage(IMG.rocket, -w / 2, -h / 2, w, h);
+  g.restore();
+}
+function drawRainbow(nt) {
+  var a = S.rainbow * (1 - nt * 0.85);
+  if (a <= 0.02) return;
+  var cols = ['#E85D8F', '#FF9F6E', '#FFC94D', '#5CC9A7', '#5FA8FF', '#9B87F5'];
+  var bw = 10 * S.k, cx = S.W * 0.52, cy = S.G.horizon + 10 * S.k, R = Math.min(S.W * 0.4, S.G.horizon * 1.05);
+  var inner = R - (cols.length - 1) * bw;
+  g.save();
+  g.globalAlpha = a;
+  g.lineCap = 'round';
+  g.beginPath(); g.arc(cx, cy, (R + inner) / 2, Math.PI, 0); g.lineWidth = cols.length * bw + 10 * S.k; g.strokeStyle = '#FFFFFF'; g.stroke();
+  cols.forEach(function (c, i) {
+    g.beginPath(); g.arc(cx, cy, R - i * bw, Math.PI, 0); g.lineWidth = bw + 0.5; g.strokeStyle = c; g.stroke();
+  });
+  g.restore();
+}
+function drawDoodles(nt) {
+  var party = S.phase === 'unlimited', pulse = party ? Math.pow(1 - beatFrac(), 2) : 0;
+  DOODLES.forEach(function (d) {
+    var r = d.r * S.k * (0.85 + 0.15 * Math.sin(S.t * 1.5 + d.tw) + pulse * 0.5);
+    var rot = d.rot + (party ? S.t * 1.2 : Math.sin(S.t * 0.6 + d.tw) * 0.2);
+    g.globalAlpha = 0.9;
+    sparklePath(d.x * S.W, d.y * S.G.horizon, r, rot); paint(nt > 0.5 ? '#FFFCE2' : d.c);
+  });
+  g.globalAlpha = 1;
+}
+
 function pill(text, x, y, size, fg, bg) {
-  g.font = '700 ' + size + 'px ' + UI_FONT;
+  g.font = 'italic 800 ' + size + 'px ' + UI_FONT;
   var w = g.measureText(text).width + size * 1.3, h = size * 1.9;
   x = clamp(x, w / 2 + 6, S.W - w / 2 - 6);
   g.save();
   g.shadowColor = 'rgba(28,34,43,.22)'; g.shadowBlur = 6; g.shadowOffsetY = 2;
-  rr(x - w / 2, y - h / 2, w, h, 7); paint(bg);
+  rr(x - w / 2, y - h / 2, w, h, 8);
+  g.lineWidth = 6; g.strokeStyle = '#FFFFFF'; g.stroke();
+  g.fillStyle = bg; g.fill();
   g.restore();
   g.fillStyle = fg;
   g.textAlign = 'center'; g.textBaseline = 'middle';
@@ -457,6 +563,7 @@ function drawFloats() {
     g.globalAlpha = Math.min(1, f.life / 0.4);
     g.save();
     g.translate(f.x, f.y);
+    g.rotate(f.rot || 0);
     g.scale(pop, pop);
     var st = FLOAT_STYLES[f.style];
     if (st) {
@@ -514,7 +621,13 @@ function render() {
   g.save();
   g.setTransform(DPR, 0, 0, DPR, 0, 0);
   if (S.shake > 0) g.translate(rand(-1, 1) * S.shake * 16, rand(-1, 1) * S.shake * 16);
+  if (S.punch > 0) {
+    var z = 1 + 0.05 * S.punch;
+    g.translate(S.W / 2, S.H / 2); g.scale(z, z); g.translate(-S.W / 2, -S.H / 2);
+  }
   drawSky(nt);
+  drawRainbow(nt);
+  drawDoodles(nt);
   drawGround(nt);
 
   var list = [];
@@ -529,12 +642,28 @@ function render() {
   list.forEach(function (e) {
     var o = e.o;
     if (e.k === 0) drawSchool(o, nt, false);
-    else if (e.k === 1) drawPerson(o, o.x, o.y, S.k * depth(o.y) * 1.3, o.pause <= 0 || o.mode === 'go');
+    else if (e.k === 1) {
+      var ksc = S.k * depth(o.y) * 1.3, ky = o.y - (o.hop || 0), km = o.pause <= 0 || o.mode !== 'wander';
+      STK = 3.5; drawPerson(o, o.x, ky, ksc, km); STK = 0;
+      drawPerson(o, o.x, ky, ksc, km);
+    }
     else if (e.k === 2) drawCar(o, nt);
     else drawPerson(o, o.px, o.py, S.k * depth(o.py) * 1.3, true);
   });
 
-  drawHero(nt);
+  drawHero();
+  drawDog();
+  drawRocket();
+  if (S.toss) {
+    var tt = S.toss.t, tx = lerp(S.toss.x0, S.toss.x1, tt), ty = lerp(S.toss.y0, S.toss.y1, tt) - Math.sin(tt * Math.PI) * 90 * S.k;
+    starPath(tx, ty, 26 * S.k, S.t * 10); g.lineJoin = 'round';
+    paint(null, '#FFFFFF', 8 * S.k); paint('#FFC94D', OUTLINE, 2);
+  }
+  S.wavelets.forEach(function (w) {
+    g.globalAlpha = w.life / 0.4;
+    circle(w.x, w.y, w.r); paint(null, '#FFFFFF', 5 * S.k);
+  });
+  g.globalAlpha = 1;
   if (S.wave) {
     g.globalAlpha = Math.max(0, S.wave.life / S.wave.max);
     circle(S.hero.x, S.hero.y - 50 * S.k, S.wave.r); paint(null, '#FFFFFF', 14 * S.k * g.globalAlpha + 2);

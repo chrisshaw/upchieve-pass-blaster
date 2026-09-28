@@ -17,21 +17,28 @@ function setGeometry(w, h) {
   S.W = w; S.H = h;
   S.k = w >= h ? clamp(w / 1000, 0.55, 1.2) : clamp(w / 560, 0.5, 1);
   S.G = w >= h
-    ? { horizon: h * 0.36, roadTop: h * 0.87, roadMid: h * 0.935 }
-    : { horizon: h * 0.3, roadTop: h * 0.88, roadMid: h * 0.94 };
+    ? { horizon: h * 0.36, roadTop: h * 0.86, roadMid: h * 0.93 }
+    : { horizon: h * 0.3, roadTop: h * 0.86, roadMid: h * 0.93 };
+  S.hero.hs = S.k * 1.9;
+  S.hero.x = 14 + 30 * S.hero.hs;
+  S.hero.y = S.G.roadTop + 6 * S.k;
+  S.dog.w = 150 * S.k;
+  S.dog.x = S.hero.x + 38 * S.hero.hs + S.dog.w / 2;
+  S.dog.y = S.hero.y;
+  S.zone = { right: S.dog.x + S.dog.w / 2 + 10, top: S.hero.y - 200 * S.k, meter: S.W - 74 };
   S.kids.forEach(function (k) { k.x *= fx; k.y *= fy; k.tx *= fx; k.ty *= fy; });
   S.schools.forEach(function (s) { s.x *= fx; s.y *= fy; placeSchool(s, s.x, s.y); });
   S.teachers.forEach(function (tc) { tc.px *= fx; tc.py *= fy; tc.cx *= fx; tc.cy *= fy; parkAtSpot(tc); });
-  S.hero.x = 34 + 30 * S.k;
-  S.hero.y = S.G.roadTop + 6 * S.k;
 }
 
+// Keep schools off the admin and UPdog in the bottom-left and the Dreams meter on the right.
 function placeSchool(s, x, y) {
   var d = dims(s);
   s.y = clamp(y, S.G.horizon + 34 * S.k, S.G.roadTop - 8);
   s.sc = S.k * depth(s.y) * 1.2;
   var hw = d.w * s.sc / 2 + 6;
-  s.x = clamp(x, hw, S.W - hw);
+  s.x = clamp(x, hw, S.zone.meter - hw);
+  if (s.y > S.zone.top && s.x - hw < S.zone.right) s.x = Math.min(S.zone.right + hw, S.zone.meter - hw);
 }
 
 function recalcNeeds() {
@@ -172,6 +179,15 @@ function updateKids(dt) {
     var k = S.kids[i], going = k.mode === 'go';
     if (going && k.target.dead) { k.mode = 'wander'; k.target = null; groundPoint(k); going = false; }
     if (going && !k.target.landed) { keep.push(k); continue; }
+    if (k.mode === 'cheer') {
+      k.cheer -= dt;
+      k.ph += dt * 14;
+      k.hop = Math.abs(Math.sin(k.ph * 0.9)) * 16 * S.k;
+      k.x += k.vx * dt;
+      if (k.cheer <= 0) { k.mode = 'go'; k.hop = 0; k.target.incoming++; }
+      keep.push(k);
+      continue;
+    }
     if (!going && k.pause > 0) { k.pause -= dt; keep.push(k); continue; }
     var tx = going ? k.target.x : k.tx, ty = going ? k.target.y : k.ty;
     var dx = tx - k.x, dy = ty - k.y, d = Math.sqrt(dx * dx + dy * dy);
@@ -300,7 +316,7 @@ function burst(x, y, n, colors, spd, shape) {
   if (S.parts.length > 700) S.parts.splice(0, S.parts.length - 700);
 }
 function floatText(x, y, text, style, size) {
-  S.floats.push({ x: x, y: y, text: text, style: style || 'win', size: size || 15, life: 1.2, max: 1.2 });
+  S.floats.push({ x: x, y: y, text: text, style: style || 'win', size: size || 15, life: 1.3, max: 1.3, rot: rand(-0.12, 0.12) });
   if (S.floats.length > 14) S.floats.shift();
 }
 function updateFx(dt) {
@@ -310,6 +326,7 @@ function updateFx(dt) {
   });
   S.floats = S.floats.filter(function (f) { f.life -= dt; f.y -= 38 * dt; return f.life > 0; });
   if (S.wave) { S.wave.r += S.wave.v * dt; S.wave.life -= dt; if (S.wave.life <= 0) S.wave = null; }
+  S.wavelets = S.wavelets.filter(function (w) { w.r += 260 * S.k * dt; w.life -= dt; return w.life > 0; });
   if (S.hero.pulse > 0) S.hero.pulse = Math.max(0, S.hero.pulse - dt * 4);
   if (S.shake > 0) S.shake -= dt;
   if (S.flash > 0) S.flash -= dt;
@@ -337,6 +354,22 @@ function updateDreams(dt) {
   else if (S.phase === 'unlimited') addDreams(0.012 * dt);
 }
 
+function cheer(s) {
+  var n = S.kids.filter(function (k) { return k.mode === 'cheer'; }).length;
+  if (n > 24 || s.inside < 1) return;
+  s.inside--;
+  var k = makeKid(s.x + rand(-8, 8) * s.sc, s.y + 4);
+  k.mode = 'cheer'; k.target = s; k.cheer = rand(0.7, 1.1); k.vx = rand(-40, 40) * S.k; k.ph = 0;
+  S.kids.push(k);
+}
+function firework() {
+  var x = rand(S.W * 0.15, S.W * 0.85), y = rand(S.H * 0.08, S.G.horizon - 20 * S.k), cols = [pick(POP), pick(POP), '#FFFFFF'];
+  for (var i = 0; i < 22; i++) {
+    var a = i / 22 * Math.PI * 2, v = rand(120, 190) * S.k;
+    S.parts.push({ x: x, y: y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: rand(0.7, 1), c: pick(cols), s: rand(3, 5) * S.k, shape: 'star', rot: 0, vr: rand(-6, 6), grav: 90 });
+  }
+  if (Math.random() < 0.5) sfx.pew();
+}
 function blast(s, px, py) {
   S.sessions++;
   S.combo = S.t - S.lastBlast < 0.6 ? S.combo + 1 : 1;
@@ -350,6 +383,9 @@ function blast(s, px, py) {
   else floatText(px, schoolTop(s), pick(WINS) + ' ✨', 'win', 15);
   if (S.combo >= 5 && S.combo % 5 === 0) floatText(px, py - 46 * S.k, S.combo + 'x STREAK!', 'big', 20);
   addDreams(0.1 * (1 + Math.min(S.combo, 20) * 0.03));
+  cheer(s);
+  if (S.combo > 3) cheer(s);
+  S.wavelets.push({ x: s.x, y: s.y - dims(s).h * s.sc * 0.5, r: 10 * S.k, life: 0.4 });
   sfx.blast(S.combo);
   S.idle = 0;
 }
@@ -373,5 +409,5 @@ function chargeFx(intensity) {
   }
 }
 function heroAt(px, py) {
-  return Math.abs(px - S.hero.x) < 30 * S.k && py < S.hero.y + 4 && py > S.hero.y - 110 * S.k;
+  return Math.abs(px - S.hero.x) < 22 * S.hero.hs && py < S.hero.y + 4 && py > S.hero.y - 84 * S.hero.hs;
 }

@@ -5,13 +5,15 @@
   <div class="pb-screen" id="pb-screen">
     <canvas id="pb-canvas" tabindex="0" role="img" aria-label="A school district map. Click the map to add a school."></canvas>
 
-    <div class="pb-topc">
-      <p class="pb-status" id="pb-status"></p>
-      <div class="pb-meter pb-dreams" id="pb-dreams" hidden>
-        <span class="pb-meter-label">Dreams</span>
-        <span class="pb-bar"><span class="pb-fill" id="pb-dreams-fill"></span></span>
-        <span class="pb-meter-num" id="pb-dreams-mult">&times;1</span>
-      </div>
+    <div class="pb-status" id="pb-status" aria-hidden="true">
+      <p class="pb-status-main" id="pb-status-main"></p>
+      <p class="pb-status-sub" id="pb-status-sub"></p>
+    </div>
+
+    <div class="pb-meter pb-dreams" id="pb-dreams" hidden>
+      <span class="pb-meter-num" id="pb-dreams-mult">&times;1</span>
+      <span class="pb-vbar"><span class="pb-vfill" id="pb-dreams-fill"></span></span>
+      <span class="pb-meter-label">Dreams</span>
     </div>
 
     <div class="pb-corner">
@@ -27,12 +29,10 @@
     </div>
 
     <div class="pb-pu" id="pb-pu" hidden>
-      <button class="pb-orb" id="pb-orb" type="button" aria-describedby="pb-tip" aria-label="UPchieve power-up. Click to charge up.">
+      <button class="pb-orb" id="pb-orb" type="button" aria-describedby="pb-tip" aria-label="UPchieve power-up from UPdog. Click to power up.">
         <span class="pb-orb-rays" aria-hidden="true"></span>
-        <svg viewBox="0 0 100 100" aria-hidden="true">
-          <path d="M50 5 L62 36 L96 38 L69 59 L79 93 L50 74 L21 93 L31 59 L4 38 L38 36 Z" fill="#FFC94D" stroke="#1C222B" stroke-width="5" stroke-linejoin="round"/>
-          <text x="50" y="62" text-anchor="middle" font-family="Work Sans, sans-serif" font-weight="800" font-size="24" fill="#154BB7">UP</text>
-        </svg>
+        <img class="pb-orb-img" id="pb-orb-img" alt="">
+        <span class="pb-orb-cta" aria-hidden="true">Power up!</span>
       </button>
       <div class="pb-tip" id="pb-tip" role="tooltip">
         <p class="pb-tip-name">UPchieve power-up</p>

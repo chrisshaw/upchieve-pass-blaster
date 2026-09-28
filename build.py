@@ -6,10 +6,11 @@ fonts = '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=W
 css = (src / 'pb.css').read_text()
 html = (src / 'pb.html').read_text()
 js = '\n'.join((src / f).read_text() for f in ['pb-core.js', 'pb-world.js', 'pb-draw.js', 'pb-ui.js'])
-import base64
-dog = src / 'updog.png'
-updog = 'data:image/png;base64,' + base64.b64encode(dog.read_bytes()).decode() if dog.exists() else ''
-js = "var UPDOG = '" + updog + "';\n" + js
+import base64, json
+# Art from the UPchieve Illustrations library in Figma, inlined so the snippet has no outside files.
+art = {p.stem: 'data:image/webp;base64,' + base64.b64encode(p.read_bytes()).decode() for p in sorted((src / 'assets').glob('*.webp'))}
+meta = json.loads((src / 'assets' / 'meta.json').read_text())
+js = 'var ART = ' + json.dumps(art) + ';\nvar ART_META = ' + json.dumps(meta) + ';\n' + js
 js = '(function () {\n"use strict";\n' + js + '\n})();\n'
 # Escape non-ASCII so the snippet works whatever encoding the host page declares.
 def esc(ch):
