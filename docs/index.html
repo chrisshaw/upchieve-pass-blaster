@@ -1267,12 +1267,12 @@ function rr(x, y, w, h, r) {
 }
 function circle(x, y, r) { g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); }
 function ellipse(x, y, rx, ry) { g.beginPath(); g.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); }
-var STK = 0;
+var STK = 0, STK_STYLE = '#FFFFFF';
 function paint(fill, stroke, lw) {
   if (STK) {
     if (fill && fill.indexOf('rgba(0,0,0') === 0) return;
-    g.fillStyle = '#FFFFFF'; g.fill();
-    g.lineJoin = 'round'; g.lineWidth = (lw || 0) + STK; g.strokeStyle = '#FFFFFF'; g.stroke();
+    g.fillStyle = STK_STYLE; g.fill();
+    g.lineJoin = 'round'; g.lineWidth = (lw || 0) + STK; g.strokeStyle = STK_STYLE; g.stroke();
     return;
   }
   if (fill) { g.fillStyle = fill; g.fill(); }
@@ -1282,7 +1282,7 @@ function line(x1, y1, x2, y2) {
   g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2);
   if (!STK) { g.stroke(); return; }
   var lw = g.lineWidth, ss = g.strokeStyle;
-  g.lineWidth = lw + STK; g.strokeStyle = '#FFFFFF'; g.stroke();
+  g.lineWidth = lw + STK; g.strokeStyle = STK_STYLE; g.stroke();
   g.lineWidth = lw; g.strokeStyle = ss;
 }
 function sparklePath(x, y, r, rot) {
@@ -1514,6 +1514,13 @@ function drawPartyLights(s, i) {
   g.globalAlpha = 1;
 }
 
+var RAINBOW = ['#154BB7', '#5CC9A7', '#FFC94D', '#FF9F6E', '#F48FB1', '#9B87F5'];
+function rainbowAcross(W, H, t) {
+  var shift = (t % 1) * W, x0 = -W / 2 - shift;
+  var gr = g.createLinearGradient(x0, -H - 40, x0 + W * 2, 10);
+  for (var i = 0; i <= 12; i++) gr.addColorStop(i / 12, RAINBOW[i % RAINBOW.length]);
+  return gr;
+}
 function drawSchool(s, nt, ghost) {
   var d = dims(s), sc = s.sc, sq = s.squash || 0;
   g.save();
@@ -1521,19 +1528,17 @@ function drawSchool(s, nt, ghost) {
   g.scale(sc * (1 + 0.14 * sq), sc * (1 - 0.2 * sq));
   if (ghost) g.globalAlpha = 0.55;
   ellipse(0, 2, d.w * 0.6, 7); paint('rgba(0,0,0,.18)');
-  if (!ghost) {
-    STK = 12;
-    if (d.mega) drawTower(d.w, d.h, nt); else drawHouse(s, d.w, d.h, tierOf(s.size), nt);
+  var shape = function () { if (d.mega) drawTower(d.w, d.h, nt); else drawHouse(s, d.w, d.h, tierOf(s.size), nt); };
+  if (!ghost && S.phase === 'unlimited') {
+    // The die-cut outline powers up: brand colors flow across it and it thickens on every beat.
+    STK_STYLE = rainbowAcross(d.w, d.h, S.t * 0.6 + s.id * 0.13);
+    STK = 16 + 10 * Math.pow(1 - beatFrac(), 2); shape();
+    STK_STYLE = '#FFFFFF'; STK = 6; shape();
     STK = 0;
+  } else if (!ghost) {
+    STK = 12; shape(); STK = 0;
   }
-  if (d.mega) drawTower(d.w, d.h, nt);
-  else drawHouse(s, d.w, d.h, tierOf(s.size), nt);
-  if (S.phase === 'unlimited' && !ghost) {
-    g.globalAlpha = 0.55 + 0.45 * Math.pow(1 - beatFrac(), 2);
-    rr(-d.w / 2 - 7, -d.h - 9, d.w + 14, d.h + 12, 9);
-    paint(null, 'hsl(' + ((S.t * 160 + s.id * 50) % 360 | 0) + ',90%,62%)', 4);
-    g.globalAlpha = 1;
-  }
+  shape();
   if (s.hit > 0) {
     g.globalAlpha = Math.min(0.65, s.hit / 0.18 * 0.65);
     rr(-d.w / 2 - 3, -d.h - 8, d.w + 6, d.h + 10, 6); paint('#FFFFFF');
