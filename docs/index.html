@@ -812,13 +812,13 @@ function setGeometry(w, h) {
   S.dog.w = 150 * S.k;
   S.dog.x = S.hero.x + 38 * S.hero.hs + S.dog.w / 2;
   S.dog.y = S.hero.y;
-  S.zone = { right: S.dog.x + S.dog.w / 2 + 10, top: S.hero.y - 200 * S.k, meter: S.W - 74 };
+  S.zone = { right: S.hero.x + 24 * S.hero.hs, top: S.hero.y - 60 * S.k, meter: S.W - 74 };
   S.kids.forEach(function (k) { k.x *= fx; k.y *= fy; k.tx *= fx; k.ty *= fy; });
   S.schools.forEach(function (s) { s.x *= fx; s.y *= fy; placeSchool(s, s.x, s.y); });
   S.teachers.forEach(function (tc) { tc.px *= fx; tc.py *= fy; tc.cx *= fx; tc.cy *= fy; parkAtSpot(tc); });
 }
 
-// Keep schools off the admin and UPdog in the bottom-left and the Dreams meter on the right.
+// Keep schools out from under the admin's feet and clear of the Dreams meter. UPdog lands in front of whatever is there.
 function placeSchool(s, x, y) {
   var d = dims(s);
   s.y = clamp(y, S.G.horizon + 34 * S.k, S.G.roadTop - 8);
@@ -967,12 +967,14 @@ function updateKids(dt) {
     if (going && k.target.dead) { k.mode = 'wander'; k.target = null; groundPoint(k); going = false; }
     if (going && !k.target.landed) { keep.push(k); continue; }
     if (k.mode === 'cheer') {
+      var hs = k.target, out = Math.min(1, (k.age += dt) / 0.18);
       k.cheer -= dt;
-      k.ph += dt * 14;
-      k.hop = Math.abs(Math.sin(k.ph * 0.9)) * 16 * S.k;
-      k.x += k.vx * dt;
-      if (k.cheer <= 0) { k.mode = 'go'; k.hop = 0; k.target.incoming++; }
-      keep.push(k);
+      k.ph += dt * 10;
+      k.x = hs.x + k.ox * out;
+      k.y = hs.y + 2 + k.oy * out;
+      k.hop = out < 1 ? Math.sin(out * Math.PI) * 14 * S.k : Math.pow(1 - beatFrac(), 2) * 12 * S.k;
+      if (k.cheer > 0 && !hs.dead) { keep.push(k); continue; }
+      if (!hs.dead) { hs.inside++; burst(k.x, k.y - 12 * S.k, 5, ['#FFFFFF', '#FFC94D'], 70, 'dot'); }
       continue;
     }
     if (!going && k.pause > 0) { k.pause -= dt; keep.push(k); continue; }
@@ -1141,12 +1143,16 @@ function updateDreams(dt) {
   else if (S.phase === 'unlimited') addDreams(0.012 * dt);
 }
 
+// A few kids pop out the front door, dance on the beat in a row, then pop back in.
 function cheer(s) {
-  var n = S.kids.filter(function (k) { return k.mode === 'cheer'; }).length;
-  if (n > 24 || s.inside < 1) return;
+  var dancers = S.kids.filter(function (k) { return k.mode === 'cheer'; });
+  var here = dancers.filter(function (k) { return k.target === s; }).length;
+  if (dancers.length > 24 || here >= 3 || s.inside < 1) return;
   s.inside--;
-  var k = makeKid(s.x + rand(-8, 8) * s.sc, s.y + 4);
-  k.mode = 'cheer'; k.target = s; k.cheer = rand(0.7, 1.1); k.vx = rand(-40, 40) * S.k; k.ph = 0;
+  var k = makeKid(s.x, s.y + 2);
+  k.mode = 'cheer'; k.target = s; k.cheer = 1.5; k.age = 0; k.ph = 0;
+  k.ox = [0, -1, 1][here] * 20 * s.sc;
+  k.oy = 10 * s.sc;
   S.kids.push(k);
 }
 function firework() {
@@ -1537,9 +1543,10 @@ function drawSchool(s, nt, ghost) {
 function drawPerson(p, x, y, sc, moving) {
   var adult = p.adult, sw = moving ? Math.sin(p.ph) : 0, bob = moving ? Math.abs(Math.sin(p.ph)) * 1.5 : 0;
   var L = adult ? 11 : 8, bh = adult ? 14 : 10, bw = adult ? 12 : 11, hr = adult ? 5.8 : 5.6;
+  var dancing = p.mode === 'cheer', odd = dancing && Math.floor(beatPos()) % 2;
   g.save();
   g.translate(x, y);
-  g.scale(sc, sc);
+  g.scale(odd ? -sc : sc, sc);
   ellipse(0, 0, 7, 2.2); paint('rgba(0,0,0,.2)');
   g.translate(0, -bob);
   g.lineCap = 'round';
@@ -1555,8 +1562,13 @@ function drawPerson(p, x, y, sc, moving) {
     rr(-2, top + 7, 4, 4, 1); paint('#FFFFFF');
   }
   g.strokeStyle = p.skin; g.lineWidth = 2.6;
-  line(-bw / 2 + 1, top + 3, -bw / 2 - 1.5 - sw * 1.5, top + bh - 1);
-  line(bw / 2 - 1, top + 3, bw / 2 + 1.5 + sw * 1.5, top + bh - 1);
+  if (dancing) {
+    line(-bw / 2 + 1, top + 3, -bw / 2 - 4, top - 7);
+    line(bw / 2 - 1, top + 3, bw / 2 + 5, top + (odd ? -1 : -8));
+  } else {
+    line(-bw / 2 + 1, top + 3, -bw / 2 - 1.5 - sw * 1.5, top + bh - 1);
+    line(bw / 2 - 1, top + 3, bw / 2 + 1.5 + sw * 1.5, top + bh - 1);
+  }
   var hy = top - hr + 1;
   circle(0, hy, hr); paint(p.skin, OUTLINE, 1.3);
   g.fillStyle = p.hair;
@@ -2173,7 +2185,7 @@ function placePu(badge) {
   var pu = $('pb-pu');
   pu.style.left = S.dog.x + 'px';
   pu.style.top = S.dog.y + 'px';
-  pu.style.setProperty('--pb-orb-w', (badge ? S.dog.w : S.dog.w * 1.25) + 'px');
+  pu.style.setProperty('--pb-orb-w', (badge ? S.dog.w * 0.6 : S.dog.w * 1.25) + 'px');
 }
 function deliver() {
   sfx.poof();

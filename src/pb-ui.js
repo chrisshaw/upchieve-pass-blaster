@@ -287,7 +287,7 @@ function placePu(badge) {
   var pu = $('pb-pu');
   pu.style.left = S.dog.x + 'px';
   pu.style.top = S.dog.y + 'px';
-  pu.style.setProperty('--pb-orb-w', (badge ? S.dog.w : S.dog.w * 1.25) + 'px');
+  pu.style.setProperty('--pb-orb-w', (badge ? S.dog.w * 0.6 : S.dog.w * 1.25) + 'px');
 }
 function deliver() {
   sfx.poof();

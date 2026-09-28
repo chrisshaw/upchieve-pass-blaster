@@ -336,9 +336,10 @@ function drawSchool(s, nt, ghost) {
 function drawPerson(p, x, y, sc, moving) {
   var adult = p.adult, sw = moving ? Math.sin(p.ph) : 0, bob = moving ? Math.abs(Math.sin(p.ph)) * 1.5 : 0;
   var L = adult ? 11 : 8, bh = adult ? 14 : 10, bw = adult ? 12 : 11, hr = adult ? 5.8 : 5.6;
+  var dancing = p.mode === 'cheer', odd = dancing && Math.floor(beatPos()) % 2;
   g.save();
   g.translate(x, y);
-  g.scale(sc, sc);
+  g.scale(odd ? -sc : sc, sc);
   ellipse(0, 0, 7, 2.2); paint('rgba(0,0,0,.2)');
   g.translate(0, -bob);
   g.lineCap = 'round';
@@ -354,8 +355,13 @@ function drawPerson(p, x, y, sc, moving) {
     rr(-2, top + 7, 4, 4, 1); paint('#FFFFFF');
   }
   g.strokeStyle = p.skin; g.lineWidth = 2.6;
-  line(-bw / 2 + 1, top + 3, -bw / 2 - 1.5 - sw * 1.5, top + bh - 1);
-  line(bw / 2 - 1, top + 3, bw / 2 + 1.5 + sw * 1.5, top + bh - 1);
+  if (dancing) {
+    line(-bw / 2 + 1, top + 3, -bw / 2 - 4, top - 7);
+    line(bw / 2 - 1, top + 3, bw / 2 + 5, top + (odd ? -1 : -8));
+  } else {
+    line(-bw / 2 + 1, top + 3, -bw / 2 - 1.5 - sw * 1.5, top + bh - 1);
+    line(bw / 2 - 1, top + 3, bw / 2 + 1.5 + sw * 1.5, top + bh - 1);
+  }
   var hy = top - hr + 1;
   circle(0, hy, hr); paint(p.skin, OUTLINE, 1.3);
   g.fillStyle = p.hair;

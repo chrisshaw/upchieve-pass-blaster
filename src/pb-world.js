@@ -25,13 +25,13 @@ function setGeometry(w, h) {
   S.dog.w = 150 * S.k;
   S.dog.x = S.hero.x + 38 * S.hero.hs + S.dog.w / 2;
   S.dog.y = S.hero.y;
-  S.zone = { right: S.dog.x + S.dog.w / 2 + 10, top: S.hero.y - 200 * S.k, meter: S.W - 74 };
+  S.zone = { right: S.hero.x + 24 * S.hero.hs, top: S.hero.y - 60 * S.k, meter: S.W - 74 };
   S.kids.forEach(function (k) { k.x *= fx; k.y *= fy; k.tx *= fx; k.ty *= fy; });
   S.schools.forEach(function (s) { s.x *= fx; s.y *= fy; placeSchool(s, s.x, s.y); });
   S.teachers.forEach(function (tc) { tc.px *= fx; tc.py *= fy; tc.cx *= fx; tc.cy *= fy; parkAtSpot(tc); });
 }
 
-// Keep schools off the admin and UPdog in the bottom-left and the Dreams meter on the right.
+// Keep schools out from under the admin's feet and clear of the Dreams meter. UPdog lands in front of whatever is there.
 function placeSchool(s, x, y) {
   var d = dims(s);
   s.y = clamp(y, S.G.horizon + 34 * S.k, S.G.roadTop - 8);
@@ -180,12 +180,14 @@ function updateKids(dt) {
     if (going && k.target.dead) { k.mode = 'wander'; k.target = null; groundPoint(k); going = false; }
     if (going && !k.target.landed) { keep.push(k); continue; }
     if (k.mode === 'cheer') {
+      var hs = k.target, out = Math.min(1, (k.age += dt) / 0.18);
       k.cheer -= dt;
-      k.ph += dt * 14;
-      k.hop = Math.abs(Math.sin(k.ph * 0.9)) * 16 * S.k;
-      k.x += k.vx * dt;
-      if (k.cheer <= 0) { k.mode = 'go'; k.hop = 0; k.target.incoming++; }
-      keep.push(k);
+      k.ph += dt * 10;
+      k.x = hs.x + k.ox * out;
+      k.y = hs.y + 2 + k.oy * out;
+      k.hop = out < 1 ? Math.sin(out * Math.PI) * 14 * S.k : Math.pow(1 - beatFrac(), 2) * 12 * S.k;
+      if (k.cheer > 0 && !hs.dead) { keep.push(k); continue; }
+      if (!hs.dead) { hs.inside++; burst(k.x, k.y - 12 * S.k, 5, ['#FFFFFF', '#FFC94D'], 70, 'dot'); }
       continue;
     }
     if (!going && k.pause > 0) { k.pause -= dt; keep.push(k); continue; }
@@ -354,12 +356,16 @@ function updateDreams(dt) {
   else if (S.phase === 'unlimited') addDreams(0.012 * dt);
 }
 
+// A few kids pop out the front door, dance on the beat in a row, then pop back in.
 function cheer(s) {
-  var n = S.kids.filter(function (k) { return k.mode === 'cheer'; }).length;
-  if (n > 24 || s.inside < 1) return;
+  var dancers = S.kids.filter(function (k) { return k.mode === 'cheer'; });
+  var here = dancers.filter(function (k) { return k.target === s; }).length;
+  if (dancers.length > 24 || here >= 3 || s.inside < 1) return;
   s.inside--;
-  var k = makeKid(s.x + rand(-8, 8) * s.sc, s.y + 4);
-  k.mode = 'cheer'; k.target = s; k.cheer = rand(0.7, 1.1); k.vx = rand(-40, 40) * S.k; k.ph = 0;
+  var k = makeKid(s.x, s.y + 2);
+  k.mode = 'cheer'; k.target = s; k.cheer = 1.5; k.age = 0; k.ph = 0;
+  k.ox = [0, -1, 1][here] * 20 * s.sc;
+  k.oy = 10 * s.sc;
   S.kids.push(k);
 }
 function firework() {
