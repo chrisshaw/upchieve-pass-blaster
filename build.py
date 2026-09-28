@@ -40,4 +40,24 @@ page = f'''<meta charset="utf-8">
 <p class="preview-note">Preview of the embed for upchieve.org/schools. Prices use the same per-building tiers as the current calculator.</p>
 '''
 (Path(__file__).parent / 'pass-blaster.html').write_text(page)
+
+# A full HTML document for GitHub Pages, which serves docs/ as the site root.
+site = f'''<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pass Blaster</title>
+<meta name="description" content="Pass Blaster, an arcade-style pricing calculator for UPchieve school partnerships.">
+<style>
+  body {{ margin: 0; background: #DEF4F0; color: #1C222B; padding: 32px 16px 40px; font-family: "Work Sans", system-ui, sans-serif; }}
+</style>
+</head>
+<body>
+{embed}
+</body>
+</html>
+'''
+(Path(__file__).parent / 'docs').mkdir(exist_ok=True)
+(Path(__file__).parent / 'docs' / 'index.html').write_text(site)
 print(len(embed), 'bytes embed')
