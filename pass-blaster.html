@@ -963,14 +963,13 @@ function updateKids(dt) {
     if (going && k.target.dead) { k.mode = 'wander'; k.target = null; groundPoint(k); going = false; }
     if (going && !k.target.landed) { keep.push(k); continue; }
     if (k.mode === 'cheer') {
-      var hs = k.target, out = Math.min(1, (k.age += dt) / 0.18);
+      k.age += dt;
       k.cheer -= dt;
-      k.ph += dt * 10;
-      k.x = hs.x + k.ox * out;
-      k.y = hs.y + 2 + k.oy * out;
-      k.hop = out < 1 ? Math.sin(out * Math.PI) * 14 * S.k : Math.pow(1 - beatFrac(), 2) * 12 * S.k;
-      if (k.cheer > 0 && !hs.dead) { keep.push(k); continue; }
-      if (!hs.dead) { hs.inside++; burst(k.x, k.y - 12 * S.k, 5, ['#FFFFFF', '#FFC94D'], 70, 'dot'); }
+      if (k.target.dead) continue;
+      placeDancer(k);
+      if (k.cheer > 0) { keep.push(k); continue; }
+      k.target.inside++;
+      burst(k.x, k.y - 12 * S.k, 5, ['#FFFFFF', '#FFC94D'], 70, 'dot');
       continue;
     }
     if (!going && k.pause > 0) { k.pause -= dt; keep.push(k); continue; }
@@ -1139,17 +1138,32 @@ function updateDreams(dt) {
   else if (S.phase === 'unlimited') addDreams(0.012 * dt);
 }
 
-// A few kids pop out the front door, dance on the beat in a row, then pop back in.
+// Clicking a school pops a dance crew out all at once: three in a row by the door and one
+// on the roof. Clicking again while they're out keeps the party going.
+var DANCE_SPOTS = [{ ox: -22, oy: 11 }, { ox: 0, oy: 13 }, { ox: 22, oy: 11 }, { roof: true }];
+function placeDancer(k) {
+  var s = k.target, d = dims(s);
+  if (k.roof) {
+    k.x = s.x + (d.w / 2 - 11) * s.sc;
+    k.y = s.y - (d.mega ? d.h : d.h + 7) * s.sc;
+  } else {
+    k.x = s.x + k.ox * s.sc;
+    k.y = s.y + k.oy * s.sc;
+  }
+}
 function cheer(s) {
-  var dancers = S.kids.filter(function (k) { return k.mode === 'cheer'; });
-  var here = dancers.filter(function (k) { return k.target === s; }).length;
-  if (dancers.length > 24 || here >= 3 || s.inside < 1) return;
-  s.inside--;
-  var k = makeKid(s.x, s.y + 2);
-  k.mode = 'cheer'; k.target = s; k.cheer = 1.5; k.age = 0; k.ph = 0;
-  k.ox = [0, -1, 1][here] * 20 * s.sc;
-  k.oy = 10 * s.sc;
-  S.kids.push(k);
+  var crew = S.kids.filter(function (k) { return k.mode === 'cheer' && k.target === s; });
+  if (crew.length) { crew.forEach(function (k) { k.cheer = Math.max(k.cheer, 1.3); }); return; }
+  DANCE_SPOTS.forEach(function (spot, i) {
+    if (s.inside < 1) return;
+    s.inside--;
+    var k = makeKid(s.x, s.y);
+    k.mode = 'cheer'; k.target = s; k.cheer = 1.8; k.age = 0; k.slot = i;
+    k.roof = !!spot.roof; k.ox = spot.ox || 0; k.oy = spot.oy || 0;
+    placeDancer(k);
+    S.kids.push(k);
+  });
+  burst(s.x, s.y - dims(s).h * s.sc * 0.5, 10, POP, 150 * S.k, 'star');
 }
 function firework() {
   var x = rand(S.W * 0.15, S.W * 0.85), y = rand(S.H * 0.08, S.G.horizon - 20 * S.k), cols = [pick(POP), pick(POP), '#FFFFFF'];
@@ -1173,7 +1187,6 @@ function blast(s, px, py) {
   if (S.combo >= 5 && S.combo % 5 === 0) floatText(px, py - 46 * S.k, S.combo + 'x STREAK!', 'big', 20);
   addDreams(0.1 * (1 + Math.min(S.combo, 20) * 0.03));
   cheer(s);
-  if (S.combo > 3) cheer(s);
   S.wavelets.push({ x: s.x, y: s.y - dims(s).h * s.sc * 0.5, r: 10 * S.k, life: 0.4 });
   sfx.blast(S.combo);
   S.idle = 0;
@@ -1536,19 +1549,27 @@ function drawSchool(s, nt, ghost) {
   g.restore();
 }
 
+// Dancers stay planted: feet wide, hips swaying on the beat, arms pumping, a knee bend on each beat.
 function drawPerson(p, x, y, sc, moving) {
+  var dancing = p.mode === 'cheer';
+  if (dancing) moving = false;
   var adult = p.adult, sw = moving ? Math.sin(p.ph) : 0, bob = moving ? Math.abs(Math.sin(p.ph)) * 1.5 : 0;
   var L = adult ? 11 : 8, bh = adult ? 14 : 10, bw = adult ? 12 : 11, hr = adult ? 5.8 : 5.6;
-  var dancing = p.mode === 'cheer', odd = dancing && Math.floor(beatPos()) % 2;
+  var bp = dancing ? beatPos() : 0, bf = bp - Math.floor(bp), pump = dancing && (bp * 2) % 1 < 0.5;
   g.save();
   g.translate(x, y);
-  g.scale(odd ? -sc : sc, sc);
+  g.scale(sc, sc);
   ellipse(0, 0, 7, 2.2); paint('rgba(0,0,0,.2)');
+  if (dancing) {
+    var pop = clamp(Math.min(p.age / 0.15, p.cheer / 0.15), 0, 1);
+    g.scale(pop, pop * (1 - 0.08 * Math.pow(1 - bf, 3)));
+    g.rotate(Math.sin(bp * Math.PI) * 0.22 * (p.slot % 2 ? -1 : 1));
+  }
   g.translate(0, -bob);
   g.lineCap = 'round';
   g.strokeStyle = p.pants; g.lineWidth = 3.4;
-  line(-2.6, -L, -2.6 + sw * 3, -1);
-  line(2.6, -L, 2.6 - sw * 3, -1);
+  line(-2.6, -L, dancing ? -4.5 : -2.6 + sw * 3, -1);
+  line(2.6, -L, dancing ? 4.5 : 2.6 - sw * 3, -1);
   var top = -L - bh;
   if (p.pack) { rr(-bw / 2 - 3, top + 1, 5, bh - 3, 2); paint(p.pack, OUTLINE, 1); }
   rr(-bw / 2, top, bw, bh + 1, 3.5); paint(p.shirt, OUTLINE, 1.3);
@@ -1559,8 +1580,8 @@ function drawPerson(p, x, y, sc, moving) {
   }
   g.strokeStyle = p.skin; g.lineWidth = 2.6;
   if (dancing) {
-    line(-bw / 2 + 1, top + 3, -bw / 2 - 4, top - 7);
-    line(bw / 2 - 1, top + 3, bw / 2 + 5, top + (odd ? -1 : -8));
+    line(-bw / 2 + 1, top + 3, -bw / 2 - 4, top - (pump ? 9 : 3));
+    line(bw / 2 - 1, top + 3, bw / 2 + 4, top - (pump ? 3 : 9));
   } else {
     line(-bw / 2 + 1, top + 3, -bw / 2 - 1.5 - sw * 1.5, top + bh - 1);
     line(bw / 2 - 1, top + 3, bw / 2 + 1.5 + sw * 1.5, top + bh - 1);
@@ -1841,7 +1862,8 @@ function render() {
 
   var list = [];
   S.schools.forEach(function (s) { list.push({ y: s.y, k: 0, o: s }); });
-  S.kids.forEach(function (k) { list.push({ y: k.y, k: 1, o: k }); });
+  // Roof dancers sort just after their school so they stand on top of it, not behind it.
+  S.kids.forEach(function (k) { list.push({ y: k.roof ? k.target.y + 0.1 : k.y, k: 1, o: k }); });
   S.teachers.forEach(function (tc) {
     if (tc.state !== 'away') list.push({ y: tc.cy, k: 2, o: tc });
     if (tc.state === 'walkout' || tc.state === 'walkin') list.push({ y: tc.py, k: 3, o: tc });
@@ -1852,7 +1874,7 @@ function render() {
     var o = e.o;
     if (e.k === 0) drawSchool(o, nt, false);
     else if (e.k === 1) {
-      var ksc = S.k * depth(o.y) * 1.3, ky = o.y - (o.hop || 0), km = o.pause <= 0 || o.mode !== 'wander';
+      var ksc = S.k * depth(o.roof ? o.target.y : o.y) * 1.3, ky = o.y - (o.hop || 0), km = o.pause <= 0 || o.mode !== 'wander';
       STK = 3.5; drawPerson(o, o.x, ky, ksc, km); STK = 0;
       drawPerson(o, o.x, ky, ksc, km);
     }

@@ -333,19 +333,27 @@ function drawSchool(s, nt, ghost) {
   g.restore();
 }
 
+// Dancers stay planted: feet wide, hips swaying on the beat, arms pumping, a knee bend on each beat.
 function drawPerson(p, x, y, sc, moving) {
+  var dancing = p.mode === 'cheer';
+  if (dancing) moving = false;
   var adult = p.adult, sw = moving ? Math.sin(p.ph) : 0, bob = moving ? Math.abs(Math.sin(p.ph)) * 1.5 : 0;
   var L = adult ? 11 : 8, bh = adult ? 14 : 10, bw = adult ? 12 : 11, hr = adult ? 5.8 : 5.6;
-  var dancing = p.mode === 'cheer', odd = dancing && Math.floor(beatPos()) % 2;
+  var bp = dancing ? beatPos() : 0, bf = bp - Math.floor(bp), pump = dancing && (bp * 2) % 1 < 0.5;
   g.save();
   g.translate(x, y);
-  g.scale(odd ? -sc : sc, sc);
+  g.scale(sc, sc);
   ellipse(0, 0, 7, 2.2); paint('rgba(0,0,0,.2)');
+  if (dancing) {
+    var pop = clamp(Math.min(p.age / 0.15, p.cheer / 0.15), 0, 1);
+    g.scale(pop, pop * (1 - 0.08 * Math.pow(1 - bf, 3)));
+    g.rotate(Math.sin(bp * Math.PI) * 0.22 * (p.slot % 2 ? -1 : 1));
+  }
   g.translate(0, -bob);
   g.lineCap = 'round';
   g.strokeStyle = p.pants; g.lineWidth = 3.4;
-  line(-2.6, -L, -2.6 + sw * 3, -1);
-  line(2.6, -L, 2.6 - sw * 3, -1);
+  line(-2.6, -L, dancing ? -4.5 : -2.6 + sw * 3, -1);
+  line(2.6, -L, dancing ? 4.5 : 2.6 - sw * 3, -1);
   var top = -L - bh;
   if (p.pack) { rr(-bw / 2 - 3, top + 1, 5, bh - 3, 2); paint(p.pack, OUTLINE, 1); }
   rr(-bw / 2, top, bw, bh + 1, 3.5); paint(p.shirt, OUTLINE, 1.3);
@@ -356,8 +364,8 @@ function drawPerson(p, x, y, sc, moving) {
   }
   g.strokeStyle = p.skin; g.lineWidth = 2.6;
   if (dancing) {
-    line(-bw / 2 + 1, top + 3, -bw / 2 - 4, top - 7);
-    line(bw / 2 - 1, top + 3, bw / 2 + 5, top + (odd ? -1 : -8));
+    line(-bw / 2 + 1, top + 3, -bw / 2 - 4, top - (pump ? 9 : 3));
+    line(bw / 2 - 1, top + 3, bw / 2 + 4, top - (pump ? 3 : 9));
   } else {
     line(-bw / 2 + 1, top + 3, -bw / 2 - 1.5 - sw * 1.5, top + bh - 1);
     line(bw / 2 - 1, top + 3, bw / 2 + 1.5 + sw * 1.5, top + bh - 1);
@@ -638,7 +646,8 @@ function render() {
 
   var list = [];
   S.schools.forEach(function (s) { list.push({ y: s.y, k: 0, o: s }); });
-  S.kids.forEach(function (k) { list.push({ y: k.y, k: 1, o: k }); });
+  // Roof dancers sort just after their school so they stand on top of it, not behind it.
+  S.kids.forEach(function (k) { list.push({ y: k.roof ? k.target.y + 0.1 : k.y, k: 1, o: k }); });
   S.teachers.forEach(function (tc) {
     if (tc.state !== 'away') list.push({ y: tc.cy, k: 2, o: tc });
     if (tc.state === 'walkout' || tc.state === 'walkin') list.push({ y: tc.py, k: 3, o: tc });
@@ -649,7 +658,7 @@ function render() {
     var o = e.o;
     if (e.k === 0) drawSchool(o, nt, false);
     else if (e.k === 1) {
-      var ksc = S.k * depth(o.y) * 1.3, ky = o.y - (o.hop || 0), km = o.pause <= 0 || o.mode !== 'wander';
+      var ksc = S.k * depth(o.roof ? o.target.y : o.y) * 1.3, ky = o.y - (o.hop || 0), km = o.pause <= 0 || o.mode !== 'wander';
       STK = 3.5; drawPerson(o, o.x, ky, ksc, km); STK = 0;
       drawPerson(o, o.x, ky, ksc, km);
     }

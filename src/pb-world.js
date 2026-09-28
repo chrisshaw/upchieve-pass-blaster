@@ -180,14 +180,13 @@ function updateKids(dt) {
     if (going && k.target.dead) { k.mode = 'wander'; k.target = null; groundPoint(k); going = false; }
     if (going && !k.target.landed) { keep.push(k); continue; }
     if (k.mode === 'cheer') {
-      var hs = k.target, out = Math.min(1, (k.age += dt) / 0.18);
+      k.age += dt;
       k.cheer -= dt;
-      k.ph += dt * 10;
-      k.x = hs.x + k.ox * out;
-      k.y = hs.y + 2 + k.oy * out;
-      k.hop = out < 1 ? Math.sin(out * Math.PI) * 14 * S.k : Math.pow(1 - beatFrac(), 2) * 12 * S.k;
-      if (k.cheer > 0 && !hs.dead) { keep.push(k); continue; }
-      if (!hs.dead) { hs.inside++; burst(k.x, k.y - 12 * S.k, 5, ['#FFFFFF', '#FFC94D'], 70, 'dot'); }
+      if (k.target.dead) continue;
+      placeDancer(k);
+      if (k.cheer > 0) { keep.push(k); continue; }
+      k.target.inside++;
+      burst(k.x, k.y - 12 * S.k, 5, ['#FFFFFF', '#FFC94D'], 70, 'dot');
       continue;
     }
     if (!going && k.pause > 0) { k.pause -= dt; keep.push(k); continue; }
@@ -356,17 +355,32 @@ function updateDreams(dt) {
   else if (S.phase === 'unlimited') addDreams(0.012 * dt);
 }
 
-// A few kids pop out the front door, dance on the beat in a row, then pop back in.
+// Clicking a school pops a dance crew out all at once: three in a row by the door and one
+// on the roof. Clicking again while they're out keeps the party going.
+var DANCE_SPOTS = [{ ox: -22, oy: 11 }, { ox: 0, oy: 13 }, { ox: 22, oy: 11 }, { roof: true }];
+function placeDancer(k) {
+  var s = k.target, d = dims(s);
+  if (k.roof) {
+    k.x = s.x + (d.w / 2 - 11) * s.sc;
+    k.y = s.y - (d.mega ? d.h : d.h + 7) * s.sc;
+  } else {
+    k.x = s.x + k.ox * s.sc;
+    k.y = s.y + k.oy * s.sc;
+  }
+}
 function cheer(s) {
-  var dancers = S.kids.filter(function (k) { return k.mode === 'cheer'; });
-  var here = dancers.filter(function (k) { return k.target === s; }).length;
-  if (dancers.length > 24 || here >= 3 || s.inside < 1) return;
-  s.inside--;
-  var k = makeKid(s.x, s.y + 2);
-  k.mode = 'cheer'; k.target = s; k.cheer = 1.5; k.age = 0; k.ph = 0;
-  k.ox = [0, -1, 1][here] * 20 * s.sc;
-  k.oy = 10 * s.sc;
-  S.kids.push(k);
+  var crew = S.kids.filter(function (k) { return k.mode === 'cheer' && k.target === s; });
+  if (crew.length) { crew.forEach(function (k) { k.cheer = Math.max(k.cheer, 1.3); }); return; }
+  DANCE_SPOTS.forEach(function (spot, i) {
+    if (s.inside < 1) return;
+    s.inside--;
+    var k = makeKid(s.x, s.y);
+    k.mode = 'cheer'; k.target = s; k.cheer = 1.8; k.age = 0; k.slot = i;
+    k.roof = !!spot.roof; k.ox = spot.ox || 0; k.oy = spot.oy || 0;
+    placeDancer(k);
+    S.kids.push(k);
+  });
+  burst(s.x, s.y - dims(s).h * s.sc * 0.5, 10, POP, 150 * S.k, 'star');
 }
 function firework() {
   var x = rand(S.W * 0.15, S.W * 0.85), y = rand(S.H * 0.08, S.G.horizon - 20 * S.k), cols = [pick(POP), pick(POP), '#FFFFFF'];
@@ -390,7 +404,6 @@ function blast(s, px, py) {
   if (S.combo >= 5 && S.combo % 5 === 0) floatText(px, py - 46 * S.k, S.combo + 'x STREAK!', 'big', 20);
   addDreams(0.1 * (1 + Math.min(S.combo, 20) * 0.03));
   cheer(s);
-  if (S.combo > 3) cheer(s);
   S.wavelets.push({ x: s.x, y: s.y - dims(s).h * s.sc * 0.5, r: 10 * S.k, life: 0.4 });
   sfx.blast(S.combo);
   S.idle = 0;
