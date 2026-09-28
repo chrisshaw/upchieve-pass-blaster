@@ -10,7 +10,7 @@ Play it: https://chrisshaw.github.io/upchieve-pass-blaster/
 python3 build.py
 ```
 
-This writes two files from `src/`:
+This writes three files from `src/`:
 
 - `pass-blaster-embed.html`: paste the whole thing into a Squarespace Code block.
 - `pass-blaster.html`: the standalone preview page.
