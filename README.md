@@ -4,22 +4,41 @@ A game that replaces the price calculator on upchieve.org/schools. You stamp you
 
 Play it: https://chrisshaw.github.io/upchieve-pass-blaster/
 
+## Put it on upchieve.org/schools
+
+1. In the Squarespace editor, add a Code block where the game should go.
+2. Paste this into it:
+
+   ```html
+   <div id="pass-blaster"></div>
+   <script src="https://chrisshaw.github.io/upchieve-pass-blaster/embed.js"></script>
+   ```
+
+3. Remove the old calculator. In the Code block that holds the "Affordable pricing" section, delete the `<div class="fs-card fs-card--calc">…</div>` card. That block's script already handles the card being gone.
+
+The snippet loads the game from this repo's GitHub Pages site, so pushing a new build updates the live page (Pages caches for about 10 minutes). That also means the page depends on this repo staying public with Pages turned on. If that's a problem, paste the whole of `pass-blaster-embed.html` into the Code block instead: it's the same game with nothing loaded from outside, about 155KB.
+
 ## Build
 
 ```bash
 python3 build.py
 ```
 
-This writes three files from `src/`:
+This writes four files from `src/`:
 
-- `pass-blaster-embed.html`: paste the whole thing into a Squarespace Code block.
+- `docs/embed.js`: what the Squarespace snippet loads.
+- `docs/index.html`: the GitHub Pages site.
+- `pass-blaster-embed.html`: the self-contained snippet.
 - `pass-blaster.html`: the standalone preview page.
-- `docs/index.html`: the GitHub Pages site. Commit it after building so the live page updates.
+
+Commit `docs/` after building so the live page and the Squarespace embed update.
 
 ## Gotchas
 
 - The price tiers in `src/pb-core.js` (`TIERS`) are a copy of the old calculator's. Change both if pricing changes.
-- `build.py` escapes every non-ASCII character in the JS, so the snippet works no matter what encoding the host page declares.
-- The art in `src/assets/` comes from the UPchieve Illustrations library in Figma. `build.py` inlines it, so the snippet has no outside files.
+- The embed expects one game per page: it mounts into the element with `id="pass-blaster"`.
+- Its styles are scoped under `.pb` and reset buttons and headings, since Squarespace themes style those globally.
+- `build.py` escapes every non-ASCII character in the JS, so the embed works no matter what encoding the host page declares.
+- The art in `src/assets/` comes from the UPchieve Illustrations library in Figma. `build.py` inlines it, so the game loads no image files.
 
 `archive/` holds v1 and v2 for comparison.

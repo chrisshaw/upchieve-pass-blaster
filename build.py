@@ -60,4 +60,23 @@ site = f'''<!doctype html>
 '''
 (Path(__file__).parent / 'docs').mkdir(exist_ok=True)
 (Path(__file__).parent / 'docs' / 'index.html').write_text(site)
+
+# A loader for the Squarespace Code block: the snippet there stays two lines and this file,
+# served by GitHub Pages, carries the fonts, styles, markup, and game.
+loader = (
+    "(function () {\n"
+    "var host = document.getElementById('pass-blaster');\n"
+    "if (!host || host.getAttribute('data-pb-mounted')) return;\n"
+    "host.setAttribute('data-pb-mounted', '1');\n"
+    "if (!document.querySelector('link[data-pb-fonts]')) {\n"
+    "  var l = document.createElement('link'); l.rel = 'stylesheet'; l.setAttribute('data-pb-fonts', '');\n"
+    "  l.href = " + json.dumps(fonts.split('href="')[1].split('"')[0]) + "; document.head.appendChild(l);\n"
+    "}\n"
+    "var st = document.createElement('style'); st.textContent = " + json.dumps(css) + "; document.head.appendChild(st);\n"
+    "host.innerHTML = " + json.dumps(html) + ";\n"
+    + js +
+    "})();\n"
+)
+loader = ''.join(esc(ch) for ch in loader)
+(Path(__file__).parent / 'docs' / 'embed.js').write_text(loader)
 print(len(embed), 'bytes embed')
