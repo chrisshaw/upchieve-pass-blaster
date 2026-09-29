@@ -528,8 +528,15 @@
   box-shadow:0 0 0 2.5px var(--pb-ink), 0 6px 14px rgba(28,34,43,.25);
   color:var(--pb-ink);
   transform:translate(-50%, -50%) rotate(calc(-1 * var(--pb-tilt, 0rad)));
+  pointer-events:auto;
+  touch-action:none;
+  cursor:grab;
+  transition:transform .15s ease-out;
 }
-.pb-choose.is-picked .pb-split-knob{ opacity:0; transition:opacity .2s; }
+.pb-split-knob::before{ content:""; position:absolute; inset:-16px; border-radius:50%; }
+.pb-split-knob:hover, .pb-choose.is-dragging .pb-split-knob{ transform:translate(-50%, -50%) rotate(calc(-1 * var(--pb-tilt, 0rad))) scale(1.1); }
+.pb-choose.is-dragging, .pb-choose.is-dragging .pb-split-knob{ cursor:grabbing; }
+.pb-choose.is-picked .pb-split-knob{ opacity:0; transition:opacity .2s; pointer-events:none; }
 
 /* Cozy mode: a soft serif, paper cards with stitched edges, gingham on the tab, and nothing that
    pulses, throbs, shivers, or races. */

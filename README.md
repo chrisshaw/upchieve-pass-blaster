@@ -2,7 +2,7 @@
 
 A game that replaces the price calculator on upchieve.org/schools. You stamp your schools, pick each one's size, hand the admin the power-up, and click forever.
 
-It opens on a chooser: the same town painted two ways, split by a slanted divider. Hover a side and it grows to about three quarters of the frame; click or tap it to play that version.
+It opens on a chooser: the same town painted two ways, split by a slanted divider. Hover a side and it grows to about three quarters of the frame; click or tap it to play that version. The knob on the divider works like a before/after slider's: drag it to see more of either side, drag it most of the way across (or flick it) to play that side, or tap it to swing over and peek at the other side, which is the phone's stand-in for hover.
 
 - **Party mode** is the original: disco lights, fireworks, a fast chiptune loop.
 - **Cozy mode** is the same game and the same prices at a slower pace, in a meadow of old-fashioned schoolhouses. There's no countdown, no streaks, and nothing bounces to the beat. The crisis is a gray, rainy spell, UPdog floats down under a hot-air balloon, and the power-up is a quiet moment: the admin floats up with eyes closed while UPdog's star, turned into a will-o'-wisp, winds around the Tutoring bar and fills it. Then a ring of warm light spreads out and wakes each school, and the admin and UPdog clink mugs. After that every school has a wisp and a few leaves circling it, and the wisp now and then visits a window to help a kid inside, day and night. Fireflies come out at dusk, and a few gather around each powered school. Clicking a school sends its wisp spiraling and brings its kids out to clink mugs and raise them to you.
@@ -23,7 +23,7 @@ Play it: https://chrisshaw.github.io/upchieve-pass-blaster/
 
 3. Remove the old calculator. In the Code block that holds the "Affordable pricing" section, delete the `<div class="fs-card fs-card--calc">…</div>` card. That block's script already handles the card being gone.
 
-The snippet loads the game from this repo's GitHub Pages site, so pushing a new build updates the live page (Pages caches for about 10 minutes). That also means the page depends on this repo staying public with Pages turned on. If that's a problem, paste the whole of `pass-blaster-embed.html` into the Code block instead: it's the same game with nothing loaded from outside, about 250KB.
+The snippet loads the game from this repo's GitHub Pages site, so pushing a new build updates the live page (Pages caches for about 10 minutes). That also means the page depends on this repo staying public with Pages turned on. If that's a problem, paste the whole of `pass-blaster-embed.html` into the Code block instead: it's the same game with nothing loaded from outside, about 255KB.
 
 ## Build
 

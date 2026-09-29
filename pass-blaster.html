@@ -539,8 +539,15 @@
   box-shadow:0 0 0 2.5px var(--pb-ink), 0 6px 14px rgba(28,34,43,.25);
   color:var(--pb-ink);
   transform:translate(-50%, -50%) rotate(calc(-1 * var(--pb-tilt, 0rad)));
+  pointer-events:auto;
+  touch-action:none;
+  cursor:grab;
+  transition:transform .15s ease-out;
 }
-.pb-choose.is-picked .pb-split-knob{ opacity:0; transition:opacity .2s; }
+.pb-split-knob::before{ content:""; position:absolute; inset:-16px; border-radius:50%; }
+.pb-split-knob:hover, .pb-choose.is-dragging .pb-split-knob{ transform:translate(-50%, -50%) rotate(calc(-1 * var(--pb-tilt, 0rad))) scale(1.1); }
+.pb-choose.is-dragging, .pb-choose.is-dragging .pb-split-knob{ cursor:grabbing; }
+.pb-choose.is-picked .pb-split-knob{ opacity:0; transition:opacity .2s; pointer-events:none; }
 
 /* Cozy mode: a soft serif, paper cards with stitched edges, gingham on the tab, and nothing that
    pulses, throbs, shivers, or races. */
@@ -3794,13 +3801,60 @@ function introStep(dt) {
   focusQuiet(cv);
 }
 
+var knob = $('pb-split').querySelector('.pb-split-knob'), knobUpAt = -1e9;
+function onKnob(el) { return !!el && (el === knob || knob.contains(el)); }
 ['party', 'cozy'].forEach(function (m) {
   var b = $('pb-pick-' + m);
   b.addEventListener('pointerenter', function (e) { if (e.pointerType !== 'touch') lean(m); });
-  b.addEventListener('pointerleave', function (e) { if (e.pointerType !== 'touch') lean(null); });
+  // Moving onto the knob keeps the lean, or the divider would slide out from under the pointer.
+  b.addEventListener('pointerleave', function (e) { if (e.pointerType !== 'touch' && !onKnob(e.relatedTarget)) lean(null); });
   b.addEventListener('focus', function () { lean(m); });
   b.addEventListener('blur', function () { lean(null); });
-  b.addEventListener('click', function () { pickMode(m); });
+  // A tap on the knob swings the divider away, and the browser's click can then land on the side
+  // underneath it; that isn't a pick.
+  b.addEventListener('click', function () { if (performance.now() - knobUpAt > 500) pickMode(m); });
+});
+
+// The knob is a real handle, like a before/after slider's. Drag it to paint more of the town either
+// way; let go most of the way across (or flick it) to pick that side. A tap swings it to peek at the
+// other side, which is how you get the hover preview on a phone.
+var DRAG = null;
+function knobShare(e) { var r = $('pb-choose').getBoundingClientRect(); return (e.clientX - r.left) / r.width; }
+knob.addEventListener('pointerdown', function (e) {
+  if (CH.picked || S.phase !== 'choose') return;
+  e.preventDefault();
+  try { knob.setPointerCapture(e.pointerId); } catch (err) {}
+  DRAG = { id: e.pointerId, x0: e.clientX, off: CH.split - knobShare(e), moved: false, v: 0, t: performance.now() };
+  $('pb-choose').classList.add('is-dragging');
+});
+knob.addEventListener('pointermove', function (e) {
+  if (!DRAG || e.pointerId !== DRAG.id || CH.picked) return;
+  if (!DRAG.moved && Math.abs(e.clientX - DRAG.x0) < 6) return;
+  DRAG.moved = true;
+  var sp = clamp(knobShare(e) + DRAG.off, 0.04, 0.96), now = performance.now(), dt = (now - DRAG.t) / 1000;
+  if (dt > 0) DRAG.v = lerp(DRAG.v, (sp - CH.split) / dt, 0.5);
+  DRAG.t = now;
+  CH.split = CH.target = sp; CH.v = 0;
+  paintChooser();
+});
+function dropKnob(e, cancel) {
+  if (!DRAG || e.pointerId !== DRAG.id) return;
+  var D = DRAG;
+  DRAG = null;
+  knobUpAt = performance.now();
+  $('pb-choose').classList.remove('is-dragging');
+  if (cancel || CH.picked) return;
+  if (!D.moved) { lean(CH.target >= 0.5 ? 'cozy' : 'party'); return; }
+  var sp = CH.split, v = performance.now() - D.t > 90 ? 0 : D.v;
+  if (sp > 0.82 || (sp > 0.6 && v > 1.2)) { CH.v = v; pickMode('party'); }
+  else if (sp < 0.18 || (sp < 0.4 && v < -1.2)) { CH.v = v; pickMode('cozy'); }
+}
+knob.addEventListener('pointerup', function (e) { dropKnob(e, false); });
+knob.addEventListener('pointercancel', function (e) { dropKnob(e, true); });
+knob.addEventListener('pointerleave', function (e) {
+  var to = e.relatedTarget;
+  if (DRAG || e.pointerType === 'touch' || (to && to.closest && to.closest('.pb-pick'))) return;
+  lean(null);
 });
 
 var DPR = 1;
