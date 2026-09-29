@@ -28,6 +28,13 @@ function priceFor(n) { return TIERS[tierOf(n)].price; }
 function money(n) { return '$' + Math.round(n).toLocaleString('en-US'); }
 function num(n) { return Math.round(n).toLocaleString('en-US'); }
 
+var NAMES_COZY = [
+  'Willow Creek Elementary', 'Maple Hollow Middle', 'Juniper Hill High', 'Bramble Brook Academy',
+  'Honeysuckle Middle', 'Fernwood High', 'Mossy Oak Elementary', 'Thistle Grove School',
+  'Birchwood Academy', 'Cedar Hollow High', 'Hazelnut Hill Middle', 'Clover Field Elementary',
+  'Wildflower Prep', 'Acorn Ridge High', 'Blackberry Lane Middle', 'Foxglove Academy',
+  'Pinecone Point High', 'Primrose Middle', 'Heather Glen School', 'Orchard Hill High'
+];
 var NAMES = [
   'Lincoln High', 'Maple Middle', 'Roosevelt Academy', 'Riverside High',
   'Oak Hill Middle', 'Washington Prep', 'Central High', 'Sunnyvale Middle',
@@ -220,14 +227,15 @@ var SFX_COZY = {
   rocket: function () { wind(2.4, 300, 700, 0.04); [392, 523, 659].forEach(function (f, i) { tone(f, 0.5, 'sine', 0.025, 0.3 + i * 0.22); }); },
   poof: function () { noiseHit(0, 0.05, 'lowpass', 1200, 0.2); tone(1047, 0.25, 'sine', 0.035, 0.05); tone(1568, 0.35, 'sine', 0.03, 0.14); },
   buzz: function () { tone(196, 0.22, 'sine', 0.08, 0, 130); },
+  // A slow breath in: a soft swell and a few rising harp notes.
   charge: function () {
-    wind(2.2, 250, 2400, 0.07);
-    for (var i = 0; i < 14; i++) tone(mtof(60 + PENTA[i % 5] + 12 * Math.floor(i / 5)), 0.5, 'sine', 0.03, 0.15 + i * 0.12);
+    wind(3.6, 200, 700, 0.03, 0.6);
+    for (var i = 0; i < 8; i++) tone(mtof(60 + PENTA[i % 5] + 12 * Math.floor(i / 5)), 1.1, 'sine', 0.025, 0.9 + i * 0.4);
   },
+  // And out: one warm chord and a single bell as the light spreads.
   boom: function () {
-    wind(1.6, 1800, 300, 0.12);
-    bell(0, 0.07); bell(0.32, 0.06); bell(0.64, 0.05);
-    [262, 330, 392, 494, 587].forEach(function (f, i) { tone(f, 1.6, 'triangle', 0.025, 0.1 + i * 0.05); });
+    bell(0, 0.05);
+    [262, 330, 392, 494, 587].forEach(function (f, i) { tone(f, 2.6, 'sine', 0.022, 0.05 + i * 0.12); });
   },
   clink: function () {
     var now = performance.now();
@@ -251,7 +259,7 @@ Object.keys(SFX_PARTY).concat(['clink']).forEach(function (k) {
 // Cozy mode plays a slow lo-fi loop instead (IV-iii-ii-I sevenths, swung hats), with soft drums at night.
 var music = { on: false, next: 0, step: 0, t0: 0 };
 var STEP = 60 / 138 / 4;
-var COZY_STEP = 60 / 84 / 4;
+var COZY_STEP = 60 / 72 / 4;
 function stepLen() { return MODE === 'cozy' ? COZY_STEP : STEP; }
 var PROG = [[48, 52, 55, 60], [43, 47, 50, 55], [45, 48, 52, 57], [41, 45, 48, 53]];
 var COZY_PROG = [[53, 57, 60, 64], [52, 55, 59, 62], [50, 53, 57, 60], [48, 52, 55, 59]];
@@ -331,6 +339,6 @@ var S = {
   wave: null,
   beat: -1,
   // Cozy mode: how gray and rainy it is (0-1), how hard the wind blows, and the leaves and fireflies it carries.
-  gloom: 0, windy: 0, cloudShift: 0, leaves: [], flies: [],
+  gloom: 0, windy: 0, cloudShift: 0, leaves: [], flies: [], bloom: null,
   W: 0, H: 0, k: 1, t: 0
 };

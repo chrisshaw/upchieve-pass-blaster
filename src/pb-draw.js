@@ -312,12 +312,7 @@ function drawSchool(s, nt, ghost) {
   var shape = cozy
     ? function () { if (d.mega) drawCozyTower(s, d.w, d.h, nt); else drawSchoolhouse(s, d.w, d.h, tierOf(s.size), nt); }
     : function () { if (d.mega) drawTower(d.w, d.h, nt); else drawHouse(s, d.w, d.h, tierOf(s.size), nt); };
-  if (!ghost && S.phase === 'unlimited' && cozy) {
-    STK_STYLE = goldAcross(d.w, d.h, S.t * 0.2 + s.id * 0.13);
-    STK = 12 + 6 * Math.pow(1 - beatFrac(), 2); shape();
-    STK_STYLE = '#FFFFFF'; STK = 6; shape();
-    STK = 0;
-  } else if (!ghost && S.phase === 'unlimited') {
+  if (!ghost && S.phase === 'unlimited' && !cozy) {
     // The die-cut outline powers up: brand colors flow across it and it thickens on every beat.
     STK_STYLE = rainbowAcross(d.w, d.h, S.t * 0.6 + s.id * 0.13);
     STK = 16 + 10 * Math.pow(1 - beatFrac(), 2); shape();
@@ -328,12 +323,12 @@ function drawSchool(s, nt, ghost) {
   }
   shape();
   if (s.hit > 0) {
-    g.globalAlpha = Math.min(0.65, s.hit / 0.18 * 0.65);
+    g.globalAlpha = Math.min(0.65, s.hit / 0.18 * 0.65) * (cozy ? 0.35 : 1);
     rr(-d.w / 2 - 3, -d.h - 8, d.w + 6, d.h + 10, 6); paint('#FFFFFF');
   }
   g.globalAlpha = 1;
   if (cozy) {
-    if (S.gloom > 0.02 && s.landed && !ghost) drawDrizzle(d, s);
+    if (S.gloom > 0.02 && s.landed && !ghost && !s.blessed) drawDrizzle(d, s);
   } else if (isGloomy() && s.landed && !ghost) {
     var cy = -d.h - 64;
     g.fillStyle = '#8E94A3';
@@ -375,6 +370,7 @@ function drawPerson(p, x, y, sc, moving) {
   rr(-bw / 2, top, bw, bh + 1, 3.5); paint(p.shirt, OUTLINE, 1.3);
   if (MODE === 'cozy') {
     if (!p.scarf) p.scarf = pick(SCARVES);
+    scarfTail(bw / 2 - 2, top + 1, 7, 2.2, p.scarf, p.ph || 0);
     rr(-bw / 2 + 0.5, top - 0.6, bw - 1, 3.2, 1.6); paint(p.scarf, OUTLINE, 0.8);
   }
   if (adult) {
@@ -403,6 +399,7 @@ function drawPerson(p, x, y, sc, moving) {
 }
 
 function drawCar(tc, nt) {
+  if (MODE === 'cozy') { drawBike(tc, nt); return; }
   var sc = S.k * depth(tc.cy) * 1.2, col = dk(tc.car, nt);
   g.save();
   g.translate(tc.cx, tc.cy);
@@ -484,6 +481,7 @@ function heroFigure(ph, t) {
   g.stroke();
 }
 function drawHero() {
+  if (MODE === 'cozy') { drawCozyHero(); return; }
   var h = S.hero, k = h.hs, t = S.t, ph = S.phase;
   var bounce = ph === 'unlimited' ? Math.pow(1 - beatFrac(), 2) * 8 : ph === 'crisis' ? Math.abs(Math.sin(t * 9)) * 2 : 0;
   var shakeX = ph === 'charge' ? rand(-1, 1) * 2.5 * Math.min(1, (S.chargeT || 0)) : 0;
@@ -495,7 +493,7 @@ function drawHero() {
     var power = ph === 'charge' ? Math.min(1, (S.chargeT || 0) / 2) : 0.7 + 0.3 * Math.pow(1 - beatFrac(), 2);
     var aura = g.createRadialGradient(0, -40, 4, 0, -40, 70);
     var hue = (t * 200) % 360 | 0;
-    aura.addColorStop(0, ph === 'charge' ? 'rgba(255,236,150,' + (0.3 + power * 0.6) + ')' : MODE === 'cozy' ? 'rgba(255,196,110,' + (0.3 + power * 0.25) + ')' : 'hsla(' + hue + ',95%,65%,.55)');
+    aura.addColorStop(0, ph === 'charge' ? 'rgba(255,236,150,' + (0.3 + power * 0.6) + ')' : 'hsla(' + hue + ',95%,65%,.55)');
     aura.addColorStop(1, 'rgba(255,236,150,0)');
     g.fillStyle = aura;
     g.fillRect(-80, -120, 160, 150);
@@ -503,12 +501,7 @@ function drawHero() {
   g.translate(0, -bounce - (h.jump || 0));
   STK = 7; heroFigure(ph, t); STK = 0;
   heroFigure(ph, t);
-  if (ph === 'unlimited' && MODE === 'cozy') {
-    for (var lf = 0; lf < 7; lf++) {
-      var la = t * 1.6 + lf * 0.9, lr = 40 + Math.sin(t * 2 + lf) * 6;
-      leafShape(Math.cos(la) * lr, -46 + Math.sin(la) * lr * 0.5, 4.4, la + 1.5, t * 3 + lf, LEAVES[lf % LEAVES.length]);
-    }
-  } else if (ph === 'unlimited') {
+  if (ph === 'unlimited') {
     for (var sp = 0; sp < 8; sp++) {
       var a = t * 3 + sp * 0.785, r2 = 38 + Math.sin(t * 6 + sp) * 4;
       starPath(Math.cos(a) * r2, -42 + Math.sin(a) * r2, 3.4, t * 4); paint(POP[sp % POP.length]);
@@ -525,6 +518,7 @@ function easeBounce(t) {
   t -= 2.625 / 2.75; return 7.5625 * t * t + 0.984375;
 }
 function drawDog() {
+  if (MODE === 'cozy') { drawCozyDog(); return; }
   var d = S.dog;
   if (!d.on || !imgReady('dog')) return;
   var w = d.w, s = w / ART_META.dog[0], h = ART_META.dog[1] * s;
@@ -536,11 +530,7 @@ function drawDog() {
   g.translate(d.x, d.y - bounce - (d.jump || 0));
   g.rotate(tilt);
   g.drawImage(IMG.dog, -w / 2, -h, w, h);
-  if (d.glasses > 0 && MODE === 'cozy') {
-    g.scale(s, s);
-    g.translate(-ART_META.dog[0] / 2, -ART_META.dog[1]);
-    dogScarf(s, (1 - easeBounce(Math.min(1, d.glasses))) * 160 * S.k);
-  } else if (d.glasses > 0 && imgReady('glasses')) {
+  if (d.glasses > 0 && imgReady('glasses')) {
     var e = easeBounce(Math.min(1, d.glasses));
     g.drawImage(IMG.glasses, -w / 2 + ART_META.glassesAt[0] * s, -h + ART_META.glassesAt[1] * s - (1 - e) * 160 * S.k, ART_META.glasses[0] * s, ART_META.glasses[1] * s);
   }
@@ -607,6 +597,7 @@ var FLOAT_STYLES = {
   big: ['#154BB7', '#FFFFFF']
 };
 function drawFloats() {
+  if (MODE === 'cozy') { drawCozyFloats(); return; }
   var ks = clamp(S.k, 0.85, 1.2);
   g.lineJoin = 'round';
   S.floats.forEach(function (f) {
@@ -661,7 +652,7 @@ function drawCursor(nt) {
     var r = srect(over);
     g.save();
     g.setLineDash([8, 6]); g.lineDashOffset = -S.t * 30;
-    rr(r.x - 6, r.y - 6, r.w + 12, r.h + 12, 10); paint(null, '#154BB7', 3);
+    rr(r.x - 6, r.y - 6, r.w + 12, r.h + 12, 10); paint(null, MODE === 'cozy' ? '#A0452C' : '#154BB7', MODE === 'cozy' ? 2 : 3);
     g.restore();
     return;
   }
@@ -669,7 +660,8 @@ function drawCursor(nt) {
   var ghost = { size: SIZES[DEFAULT_TIER].size, x: p.x, y: p.y + 24 * S.k, drop: 0, squash: 0, hit: 0, sc: 1, wall: WALLS[(S.nextId - 1) % WALLS.length] };
   placeSchool(ghost, ghost.x, ghost.y);
   drawSchool(ghost, nt, true);
-  pill('Click to add a school', p.x, ghost.y + 24 * S.k, Math.round(clamp(16 * S.k, 14, 18)), '#FFFFFF', '#154BB7');
+  if (MODE === 'cozy') cozyTag('Click to add a schoolhouse', p.x, ghost.y + 24 * S.k, Math.round(clamp(15 * S.k, 14, 17)), '#FFF8EC', '#A0452C');
+  else pill('Click to add a school', p.x, ghost.y + 24 * S.k, Math.round(clamp(16 * S.k, 14, 18)), '#FFFFFF', '#154BB7');
 }
 
 function render() {
@@ -722,14 +714,14 @@ function drawScene() {
     else drawPerson(o, o.px, o.py, S.k * depth(o.py) * 1.3, true);
   });
 
-  if (cozy) drawFlies(nt);
+  if (cozy) { drawSpirits(nt); drawBloom(); drawFlies(nt); }
   drawHero();
   drawDog();
   drawRocket();
   if (cozy) { drawRain(); drawLeaves(nt); }
   if (S.toss) {
     var tt = S.toss.t, tx = lerp(S.toss.x0, S.toss.x1, tt), ty = lerp(S.toss.y0, S.toss.y1, tt) - Math.sin(tt * Math.PI) * 90 * S.k;
-    starPath(tx, ty, 26 * S.k, S.t * 10); g.lineJoin = 'round';
+    starPath(tx, ty, 26 * S.k, S.t * (cozy ? 1.5 : 10)); g.lineJoin = 'round';
     paint(null, '#FFFFFF', 8 * S.k); paint('#FFC94D', OUTLINE, 2);
   }
   S.wavelets.forEach(function (w) {

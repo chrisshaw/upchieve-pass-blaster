@@ -4,10 +4,10 @@ if (!host || host.getAttribute('data-pb-mounted')) return;
 host.setAttribute('data-pb-mounted', '1');
 if (!document.querySelector('link[data-pb-fonts]')) {
   var l = document.createElement('link'); l.rel = 'stylesheet'; l.setAttribute('data-pb-fonts', '');
-  l.href = "https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700;1,800&display=swap"; document.head.appendChild(l);
+  l.href = "https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700;1,800&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600;1,9..144,700&display=swap"; document.head.appendChild(l);
 }
-var st = document.createElement('style'); st.textContent = "/* Palette and type follow the upchieve.org/schools page (the .fs-* section styles).\n   The sticker look (white die-cut borders, outlined italic type, ink-bordered cards) follows its illustrations. */\n.pb{\n  --pb-ink:#1C222B;\n  --pb-ink-2:#101010;\n  --pb-muted:#4A5261;\n  --pb-accent:#154BB7;\n  --pb-yellow:#FFF0C3;\n  --pb-blue:#E3F2FD;\n  --pb-label:#FFFCE2;\n  --pb-price:#DCEAFB;\n  --pb-card:#FFFFFF;\n  --pb-go:#1E9E6A;\n  --pb-alarm:#C2255C;\n  --pb-cozy:#A0452C;\n  --pb-line:#C9CDD6;\n  --pb-rainbow:linear-gradient(90deg,#154BB7,#5CC9A7,#FFC94D,#FF9F6E,#F48FB1,#9B87F5,#154BB7);\n  --pb-shadow:0 1px 1px rgba(28,34,43,.10), 0 2px 5px rgba(28,34,43,.07);\n  --pb-lift:0 8px 24px rgba(28,34,43,.16);\n  --pb-card-edge:0 0 0 2px var(--pb-ink), 0 6px 14px rgba(28,34,43,.18);\n  --pb-halo:\n    0 3px 0 #fff, 3px 0 0 #fff, 0 -3px 0 #fff, -3px 0 0 #fff,\n    2px 2px 0 #fff, -2px 2px 0 #fff, 2px -2px 0 #fff, -2px -2px 0 #fff,\n    3px 2px 0 #fff, -3px 2px 0 #fff, 3px -2px 0 #fff, -3px -2px 0 #fff;\n  --pb-halo-big:\n    0 5px 0 #fff, 5px 0 0 #fff, 0 -5px 0 #fff, -5px 0 0 #fff,\n    4px 4px 0 #fff, -4px 4px 0 #fff, 4px -4px 0 #fff, -4px -4px 0 #fff,\n    5px 2px 0 #fff, -5px 2px 0 #fff, 5px -2px 0 #fff, -5px -2px 0 #fff,\n    2px 5px 0 #fff, -2px 5px 0 #fff, 2px -5px 0 #fff, -2px -5px 0 #fff,\n    0 9px 14px rgba(28,34,43,.22);\n  --pb-font:\"Work Sans\", system-ui, -apple-system, \"Segoe UI\", sans-serif;\n  container-type:inline-size;\n  position:relative;\n  max-width:1180px;\n  margin:0 auto;\n  color:var(--pb-ink);\n  font-family:var(--pb-font);\n  font-size:16px;\n  line-height:1.35;\n  -webkit-font-smoothing:antialiased;\n}\n.pb *, .pb *::before, .pb *::after{ box-sizing:border-box; }\n.pb [hidden]{ display:none !important; }\n.pb p, .pb h3, .pb ul{ margin:0 !important; padding:0; }\n.pb ul{ list-style:none; }\n.pb h3{ text-transform:none; letter-spacing:normal; }\n.pb em{ font-style:italic; color:var(--pb-accent); }\n.pb button, .pb select{\n  font:inherit;\n  color:inherit;\n  cursor:pointer;\n  border:0;\n  border-radius:0;\n  background:none;\n  box-shadow:none;\n  margin:0;\n  padding:0;\n  min-width:0;\n  min-height:0;\n  line-height:inherit;\n  text-transform:none;\n  text-shadow:none;\n  letter-spacing:normal;\n}\n.pb button:focus-visible, .pb select:focus-visible, .pb a:focus-visible, .pb canvas:focus-visible{\n  outline:3px solid var(--pb-accent);\n  outline-offset:3px;\n}\n\n/* Folder tab, same shape as the section tabs on the page */\n.pb-tabrow{ display:flex; padding-left:clamp(12px, 3cqi, 28px); }\n.pb-tab{\n  display:flex;\n  padding:8px calc(18px + 56px) 0 18px;\n  border-radius:6px 0 0 0;\n  background:var(--pb-yellow);\n  clip-path:polygon(0 0, calc(100% - 56px) 0, 100% 100%, 0 100%);\n}\n.pb-tab-label{\n  display:flex;\n  align-items:baseline;\n  gap:10px;\n  padding:9px 18px;\n  border-radius:6px;\n  background:var(--pb-label);\n  box-shadow:var(--pb-shadow);\n  font-weight:600;\n  font-size:clamp(16px, 2.2cqi, 20px);\n  line-height:1.2;\n  color:var(--pb-ink-2);\n  white-space:nowrap;\n}\n.pb-tab-label small{ font-size:14px; font-weight:500; color:var(--pb-muted); }\n@container (max-width: 520px){ .pb-tab-label small{ display:none; } }\n\n.pb-screen{\n  position:relative;\n  width:100%;\n  max-width:100%;\n  aspect-ratio:2 / 3;\n  border-radius:0 12px 12px 12px;\n  overflow:hidden;\n  background:var(--pb-blue);\n  box-shadow:0 0 0 8px var(--pb-yellow), var(--pb-lift);\n  user-select:none;\n  -webkit-user-select:none;\n  transition:box-shadow .12s;\n}\n@container (min-width: 600px){ .pb-screen{ aspect-ratio:16 / 10; } }\n.pb-screen > canvas{\n  position:absolute;\n  inset:0;\n  width:100%;\n  height:100%;\n  display:block;\n  touch-action:manipulation;\n}\n/* Unlimited mode: the whole frame glows and pulses on the beat */\n.pb.is-unlimited .pb-screen::after{\n  content:\"\";\n  position:absolute;\n  inset:0;\n  z-index:8;\n  padding:7px;\n  border-radius:inherit;\n  background:var(--pb-rainbow);\n  background-size:200% 100%;\n  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);\n  -webkit-mask-composite:xor;\n  mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);\n  mask-composite:exclude;\n  animation:pb-rainbow 1.2s linear infinite;\n  pointer-events:none;\n}\n.pb.is-unlimited .pb-screen{ box-shadow:0 0 0 8px var(--pb-yellow), 0 0 30px 6px rgba(255,201,77,.45), var(--pb-lift); }\n.pb.is-beat .pb-screen{ box-shadow:0 0 0 8px var(--pb-yellow), 0 0 46px 14px rgba(255,201,77,.8), var(--pb-lift); }\n\n/* The one place for instructions and status: outlined sticker type, no box */\n.pb-status{\n  position:absolute;\n  z-index:3;\n  top:12px;\n  left:10px;\n  right:56px;\n  display:grid;\n  justify-items:center;\n  gap:4px;\n  text-align:center;\n  pointer-events:none;\n}\n@container (min-width: 600px){\n  .pb-status{ top:16px; left:50%; right:auto; width:min(760px, calc(100% - 2 * clamp(60px, 19cqi, 240px))); transform:translateX(-50%); }\n}\n.pb-status-main{\n  font-size:clamp(24px, 3.5cqi, 40px);\n  font-weight:800;\n  font-style:italic;\n  line-height:1.08;\n  color:var(--pb-accent);\n  text-shadow:var(--pb-halo-big);\n  text-wrap:balance;\n  transform:rotate(-1.5deg);\n}\n.pb-status-sub{\n  max-width:34em;\n  font-size:clamp(16px, 2cqi, 21px);\n  font-weight:600;\n  line-height:1.3;\n  color:var(--pb-ink-2);\n  text-shadow:var(--pb-halo);\n  text-wrap:balance;\n}\n.pb-status-sub:empty{ display:none; }\n.pb-status.is-alarm .pb-status-main{ color:var(--pb-alarm); }\n.pb-status.is-new .pb-status-main{ animation:pb-slap .45s cubic-bezier(.2,1.5,.4,1) both; }\n.pb-status.is-new .pb-status-sub{ animation:pb-rise .35s ease-out .08s both; }\n.pb-status b{ font-weight:800; color:var(--pb-go); font-variant-numeric:tabular-nums; }\n\n/* Meters: white cards with an ink edge, like the \"avg school\" label on the page */\n.pb-meter{\n  display:flex;\n  align-items:center;\n  gap:8px;\n  padding:6px 12px;\n  border-radius:10px;\n  background:var(--pb-card);\n  box-shadow:var(--pb-card-edge);\n  white-space:nowrap;\n}\n.pb-meter-label{ font-size:16px; font-weight:800; font-style:italic; line-height:1; color:var(--pb-accent); }\n.pb-bar{ position:relative; width:clamp(80px, 13cqi, 150px); height:14px; border-radius:99px; background:var(--pb-price); overflow:hidden; }\n.pb-fill{ position:absolute; inset:0 auto 0 0; width:0; border-radius:99px; background:#FFC94D; }\n.pb-meter-num{ min-width:2ch; font-size:17px; font-weight:800; line-height:1; color:var(--pb-ink-2); font-variant-numeric:tabular-nums; text-align:center; }\n.pb-meter-num.is-bump{ animation:pb-bump .45s ease-out; }\n\n.pb-dreams{\n  position:absolute;\n  z-index:4;\n  right:12px;\n  top:70px;\n  bottom:124px;\n  flex-direction:column;\n  justify-content:flex-start;\n  width:66px;\n  padding:10px 6px;\n  gap:8px;\n  animation:pb-pop .35s ease-out;\n}\n@container (max-width: 599px){ .pb-dreams{ top:104px; bottom:96px; width:54px; } }\n.pb.is-unlimited .pb-dreams, .pb.is-crisis .pb-dreams{ bottom:90px; }\n.pb-vbar{ position:relative; flex:1; width:20px; border-radius:99px; background:var(--pb-price); overflow:hidden; }\n.pb-vfill{ position:absolute; left:0; right:0; bottom:0; height:78%; border-radius:99px; background:var(--pb-accent); }\n.pb-dreams .pb-meter-label{ font-size:15px; }\n.pb-dreams .pb-meter-num{ font-size:18px; }\n.pb.is-crisis .pb-vfill{ background:var(--pb-alarm); }\n.pb.is-crisis .pb-dreams{ animation:pb-shiver .22s linear infinite; }\n.pb.is-unlimited .pb-vfill{ background:linear-gradient(0deg,#154BB7,#5CC9A7,#FFC94D,#FF9F6E,#F48FB1,#9B87F5,#154BB7); background-size:100% 200%; animation:pb-rainbow-v 1.4s linear infinite; }\n\n/* Power meter, under the admin in the bottom-left corner */\n.pb-power{\n  position:absolute;\n  z-index:5;\n  left:10px;\n  bottom:10px;\n  transform-origin:left center;\n  transition:transform .5s cubic-bezier(.3,1.4,.5,1);\n}\n.pb-power.is-shake{ animation:pb-shake .4s linear; }\n.pb-power.is-charging{\n  z-index:9;\n  transform:translate(var(--pb-dx, 0px), var(--pb-dy, 0px)) scale(2.2);\n  box-shadow:var(--pb-card-edge), 0 0 34px 8px rgba(255,201,77,.85);\n}\n.pb-power.is-charging .pb-fill{ background:linear-gradient(90deg,#FFC94D,#FFF1B3,#FFC94D); background-size:200% 100%; animation:pb-rainbow .4s linear infinite; }\n.pb.is-unlimited .pb-power .pb-fill{ width:100% !important; background:var(--pb-rainbow); background-size:200% 100%; animation:pb-rainbow 1s linear infinite; }\n.pb.is-unlimited .pb-power .pb-meter-num{ font-size:26px; color:var(--pb-accent); }\n\n.pb-corner{\n  position:absolute;\n  z-index:6;\n  top:10px;\n  right:10px;\n  display:flex;\n  flex-direction:column;\n  align-items:flex-end;\n  gap:6px;\n}\n@container (min-width: 600px){ .pb-corner{ top:14px; right:14px; flex-direction:row; align-items:center; } }\n.pb-clock{\n  padding:6px 10px;\n  border-radius:10px;\n  background:var(--pb-card);\n  box-shadow:var(--pb-card-edge);\n  font-size:15px;\n  font-weight:700;\n  white-space:nowrap;\n  font-variant-numeric:tabular-nums;\n  pointer-events:none;\n}\n.pb .pb-icon{\n  width:40px;\n  height:40px;\n  border-radius:50%;\n  background:var(--pb-card);\n  box-shadow:var(--pb-card-edge);\n  font-size:19px;\n  line-height:40px;\n  text-align:center;\n  color:var(--pb-ink-2);\n}\n.pb .pb-icon:hover{ background:var(--pb-blue); }\n\n/* The power-up: UPdog hugging the star, dropped off by the rocket. Price shows on hover. */\n.pb-pu{ position:absolute; z-index:6; left:0; top:0; width:0; height:0; }\n.pb .pb-orb{\n  position:absolute;\n  left:0;\n  bottom:0;\n  width:var(--pb-orb-w, 170px);\n  transform:translateX(-50%);\n  animation:pb-orb-bob 1.4s ease-in-out infinite;\n}\n.pb-orb-img{ position:relative; display:block; width:100%; height:auto; filter:drop-shadow(0 6px 10px rgba(28,34,43,.25)); }\n.pb .pb-orb:hover .pb-orb-img{ filter:drop-shadow(0 0 14px rgba(255,201,77,1)) drop-shadow(0 6px 10px rgba(28,34,43,.25)); }\n.pb-orb-rays{\n  position:absolute;\n  left:50%;\n  top:50%;\n  width:160%;\n  aspect-ratio:1;\n  transform:translate(-50%, -50%);\n  border-radius:50%;\n  background:repeating-conic-gradient(from 0deg, rgba(255,214,107,.8) 0 10deg, rgba(255,214,107,0) 10deg 30deg);\n  -webkit-mask:radial-gradient(circle, #000 28%, transparent 68%);\n  mask:radial-gradient(circle, #000 28%, transparent 68%);\n  animation:pb-rays 4s linear infinite;\n}\n.pb-orb-cta{\n  position:absolute;\n  left:50%;\n  bottom:calc(100% + 2px);\n  transform:translateX(-50%) rotate(-4deg);\n  font-size:clamp(22px, 3cqi, 32px);\n  font-weight:800;\n  font-style:italic;\n  line-height:1;\n  white-space:nowrap;\n  color:var(--pb-accent);\n  text-shadow:var(--pb-halo-big);\n  animation:pb-cta 0.9s ease-in-out infinite;\n}\n.pb-pu.is-arrive .pb-orb{ animation:pb-orb-in .55s cubic-bezier(.2,1.6,.4,1) both, pb-orb-bob 1.4s ease-in-out .55s infinite; }\n.pb-pu.is-wiggle .pb-orb{ animation:pb-wiggle .6s ease-in-out, pb-orb-bob 1.4s ease-in-out .6s infinite; }\n.pb-pu.is-badge .pb-orb{ animation:none; }\n.pb-pu.is-badge .pb-orb-img, .pb-pu.is-badge .pb-orb-rays, .pb-pu.is-badge .pb-orb-cta{ visibility:hidden; }\n\n.pb-tip{\n  position:absolute;\n  left:calc(var(--pb-orb-w, 170px) / 2 + 10px);\n  bottom:24px;\n  display:grid;\n  gap:4px;\n  width:240px;\n  padding:12px 14px;\n  border-radius:12px;\n  background:var(--pb-card);\n  box-shadow:var(--pb-card-edge);\n  opacity:0;\n  visibility:hidden;\n  transform:translateY(6px) rotate(1.5deg);\n  transition:opacity .15s, transform .15s, visibility 0s .15s;\n}\n.pb-pu:hover .pb-tip, .pb-pu:focus-within .pb-tip{ opacity:1; visibility:visible; transform:rotate(1.5deg); transition:opacity .15s, transform .15s; }\n.pb-tip-name{ font-size:13px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--pb-accent); }\n.pb-tip-desc{ font-size:15px; font-weight:500; line-height:1.3; }\n.pb-tip-price{ padding:6px 10px; border-radius:8px; background:var(--pb-price); font-size:24px; font-weight:700; line-height:1.2; color:var(--pb-ink-2); font-variant-numeric:tabular-nums; }\n.pb-tip-price small{ font-size:15px; font-weight:600; }\n.pb .pb-textbtn{ justify-self:start; font-weight:600; font-size:15px; color:var(--pb-accent); text-decoration:underline; text-underline-offset:3px; }\n@media (hover: none){\n  .pb-pu.is-arrive .pb-tip{ opacity:1; visibility:visible; transform:rotate(1.5deg); width:auto; padding:6px 10px; }\n  .pb-pu.is-arrive .pb-tip-desc, .pb-pu.is-arrive .pb-tip-name{ display:none; }\n  .pb-pu.is-arrive .pb-tip-price{ font-size:17px; padding:2px 8px; }\n}\n\n/* Done: a round green sticker in the corner that becomes the countdown */\n.pb .pb-done{\n  position:absolute;\n  z-index:5;\n  right:18px;\n  bottom:18px;\n  width:clamp(78px, 10cqi, 98px);\n  aspect-ratio:1;\n  border-radius:50%;\n  background:var(--pb-go);\n  color:#fff;\n  box-shadow:0 0 0 5px #fff, 0 0 0 7px var(--pb-ink), 0 10px 18px rgba(28,34,43,.25);\n  animation:pb-pop .35s ease-out;\n}\n.pb .pb-done:hover{ filter:brightness(1.08); }\n.pb .pb-done:active{ transform:scale(.96); }\n.pb-done-face{ display:grid; place-items:center; line-height:1; }\n.pb-done-face b{ font-size:clamp(28px, 4cqi, 36px); font-weight:800; }\n.pb-done-face small{ font-size:15px; font-weight:800; font-style:italic; margin-top:2px; }\n.pb-done-ring{ position:absolute; inset:-14px; width:calc(100% + 28px); height:calc(100% + 28px); transform:rotate(-90deg); pointer-events:none; }\n.pb-done-ring circle{ fill:none; stroke:#FFC94D; stroke-width:6; stroke-linecap:round; stroke-dasharray:289; stroke-dashoffset:289; }\n.pb .pb-done.is-counting{ animation:pb-throb .5s ease-in-out infinite; box-shadow:0 0 0 5px #fff, 0 0 0 7px var(--pb-ink), 0 0 34px 12px rgba(30,158,106,.55); }\n.pb-done.is-counting .pb-done-face b{ font-size:clamp(40px, 6cqi, 52px); }\n\n/* Size picker: a sticker card of chips, anchored to the school */\n.pb-pop{\n  position:absolute;\n  z-index:7;\n  width:max-content;\n  max-width:min(420px, calc(100% - 16px));\n  padding:10px 12px 14px;\n  border-radius:12px;\n  background:var(--pb-card);\n  box-shadow:var(--pb-card-edge);\n  transform:rotate(-1deg);\n  animation:pb-pop-plain .16s ease-out;\n}\n.pb-pop-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:8px; }\n.pb-pop-title{ font-size:16px; font-weight:600; line-height:1.3; color:var(--pb-ink-2); }\n.pb-pop-title b{ font-weight:800; font-style:italic; color:var(--pb-accent); }\n.pb .pb-pop-del{ flex:none; width:26px; height:26px; margin:-3px -4px 0 0; border-radius:50%; font-size:20px; line-height:26px; color:var(--pb-alarm); }\n.pb .pb-pop-del:hover{ background:#FDE7EE; }\n.pb-chips{ display:flex; flex-wrap:wrap; gap:6px; }\n.pb .pb-chip{\n  padding:6px 12px;\n  border-radius:999px;\n  background:var(--pb-card);\n  box-shadow:inset 0 0 0 2px var(--pb-ink);\n  font-size:15px;\n  font-weight:700;\n  line-height:1.2;\n  white-space:nowrap;\n  color:var(--pb-ink-2);\n}\n.pb .pb-chip:hover{ background:var(--pb-blue); }\n.pb .pb-chip.is-on{ background:var(--pb-accent); color:#fff; box-shadow:inset 0 0 0 2px var(--pb-accent); }\n.pb .pb-pop-copy{ margin-top:8px; font-size:13px; font-weight:600; color:var(--pb-accent); text-decoration:underline; text-underline-offset:3px; }\n.pb-pop-timer{ position:absolute; left:12px; right:12px; bottom:6px; height:3px; border-radius:99px; background:var(--pb-accent); transform-origin:left center; opacity:.5; }\n.pb-pop-tail{ position:absolute; width:14px; height:14px; background:var(--pb-card); box-shadow:2px 2px 0 0 var(--pb-ink); transform:rotate(45deg); bottom:-7px; left:50%; margin-left:-7px; }\n.pb-pop.is-below .pb-pop-tail{ bottom:auto; top:-7px; box-shadow:-2px -2px 0 0 var(--pb-ink); }\n@container (max-width: 599px){\n  .pb .pb-chip{ padding:5px 10px; font-size:14px; }\n  .pb-pop-title{ font-size:14px; }\n}\n\n/* Invoice */\n.pb-invoice{\n  position:absolute;\n  inset:0;\n  z-index:10;\n  display:flex;\n  align-items:center;\n  justify-content:center;\n  padding:12px;\n  background:rgba(28,34,43,.35);\n}\n.pb-invoice-card{\n  display:grid;\n  gap:12px;\n  width:100%;\n  max-width:500px;\n  max-height:100%;\n  overflow:auto;\n  padding:20px;\n  border-radius:12px;\n  background:var(--pb-card);\n  box-shadow:var(--pb-card-edge);\n}\n.pb-invoice-head{ display:flex; justify-content:space-between; align-items:center; gap:8px; }\n.pb-invoice-head h3{ font-size:22px; font-weight:800; font-style:italic; line-height:1.2; color:var(--pb-accent); }\n.pb .pb-x{ width:40px; height:40px; border-radius:50%; font-size:26px; line-height:40px; text-align:center; }\n.pb .pb-x:hover{ background:var(--pb-blue); }\n.pb-lines{ display:grid; gap:6px; }\n.pb-line{\n  display:grid;\n  grid-template-columns:minmax(0,1fr) auto auto 32px;\n  align-items:center;\n  gap:8px;\n  padding:8px 10px;\n  border:1px solid #E6E8EE;\n  border-radius:8px;\n  font-size:16px;\n}\n.pb-line-name{ font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }\n.pb .pb-line select{ padding:5px 6px; border:1px solid var(--pb-line); border-radius:6px; background:#FCFCFD; font-size:15px; max-width:170px; }\n.pb-line-price{ font-weight:700; font-variant-numeric:tabular-nums; text-align:right; }\n.pb .pb-line .pb-x{ width:32px; height:32px; font-size:22px; line-height:32px; color:var(--pb-alarm); }\n@container (max-width: 480px){\n  .pb-line{ grid-template-columns:minmax(0,1fr) auto 32px; }\n  .pb .pb-line select{ grid-column:1 / -1; grid-row:2; max-width:none; }\n}\n.pb .pb-addline{ justify-self:start; font-weight:600; font-size:16px; text-decoration:underline; text-underline-offset:3px; color:var(--pb-accent); }\n.pb-price-box{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; padding:10px 12px; border-radius:8px; background:var(--pb-price); }\n.pb-price-box > span{ font-size:16px; font-weight:600; }\n.pb-price-box strong{ font-size:30px; font-weight:700; line-height:1.15; color:var(--pb-ink-2); font-variant-numeric:tabular-nums; }\n.pb-includes{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:4px 12px; }\n.pb-includes li{ display:flex; gap:8px; font-size:16px; font-weight:500; }\n.pb-includes li::before{ content:\"\\2714\"; flex:none; }\n.pb-inv-note{ font-size:15px; font-style:italic; }\n.pb-fine{ font-size:15px; }\n.pb-fine a{ color:var(--pb-accent) !important; font-weight:500; }\n\n/* Mode chooser: two halves of one frame, split by a slanted die-cut divider */\n.pb-choose{ position:absolute; inset:0; z-index:2; }\n.pb .pb-pick{ position:absolute; inset:0; display:block; width:100%; height:100%; }\n.pb .pb-pick:focus-visible{ outline:none; }\n.pb-pick-label{\n  position:absolute;\n  top:31%;\n  left:25%;\n  display:grid;\n  justify-items:center;\n  gap:6px;\n  width:max-content;\n  max-width:min(280px, 42cqi);\n  padding:12px 18px 14px;\n  border-radius:14px;\n  background:var(--pb-card);\n  box-shadow:0 0 0 5px #fff, 0 0 0 7px var(--pb-ink), 0 10px 18px rgba(28,34,43,.25);\n  text-align:center;\n  transform:translate(-50%, -50%);\n  transition:opacity .2s, box-shadow .15s;\n  pointer-events:none;\n}\n.pb-pick-label b{ font-size:clamp(22px, 3.4cqi, 34px); font-weight:800; font-style:italic; line-height:1.05; color:var(--pb-accent); }\n.pb-pick-label small{ font-size:clamp(14px, 1.7cqi, 17px); font-weight:600; line-height:1.3; color:var(--pb-ink-2); text-wrap:balance; }\n.pb-pick-label i{ margin-top:4px; padding:6px 16px; border-radius:99px; background:var(--pb-accent); color:#fff; font-size:15px; font-weight:800; font-style:normal; line-height:1.2; }\n@container (max-width: 599px){\n  .pb-pick-label{ gap:4px; max-width:40cqi; padding:9px 10px 11px; }\n  .pb-pick-label b{ font-size:20px; }\n  .pb-pick-label small{ font-size:13px; }\n  .pb-pick-label i{ padding:4px 12px; font-size:14px; }\n}\n.pb-pick-cozy .pb-pick-label b{ color:var(--pb-cozy); }\n.pb-pick-cozy .pb-pick-label i{ background:var(--pb-cozy); }\n.pb-pick:focus-visible .pb-pick-label{ box-shadow:0 0 0 5px #fff, 0 0 0 7px var(--pb-ink), 0 0 0 11px var(--pb-accent); }\n.pb-choose.is-picked .pb-pick{ pointer-events:none; }\n.pb-choose.is-picked .pb-pick-label{ opacity:0; }\n.pb-split{\n  position:absolute;\n  left:0;\n  top:-20%;\n  width:8px;\n  height:140%;\n  margin-left:-4px;\n  background:#fff;\n  box-shadow:0 0 0 2px var(--pb-ink);\n  pointer-events:none;\n}\n.pb-split-knob{\n  position:absolute;\n  left:50%;\n  top:50%;\n  display:grid;\n  place-items:center;\n  width:46px;\n  height:46px;\n  border-radius:50%;\n  background:#fff;\n  box-shadow:0 0 0 2.5px var(--pb-ink), 0 6px 14px rgba(28,34,43,.25);\n  color:var(--pb-ink);\n  transform:translate(-50%, -50%) rotate(calc(-1 * var(--pb-tilt, 0rad)));\n}\n.pb-choose.is-picked .pb-split-knob{ opacity:0; transition:opacity .2s; }\n\n/* Cozy mode: warm brick type, a slow gold glow instead of the racing rainbow, and no shivering */\n.pb.is-cozy .pb-status-main, .pb.is-cozy .pb-meter-label, .pb.is-cozy .pb-orb-cta{ color:var(--pb-cozy); }\n.pb.is-cozy .pb-status.is-alarm .pb-status-main{ color:#5E5A86; }\n.pb.is-cozy.is-crisis .pb-dreams{ animation:none; }\n.pb.is-cozy.is-crisis .pb-vfill{ background:#8C95A4; }\n.pb.is-cozy.is-unlimited .pb-screen::after{ background:linear-gradient(90deg,#FFD27A,#FFB35C,#F2CC60,#FFE7A3,#FFD27A); background-size:200% 100%; animation-duration:6s; }\n.pb.is-cozy.is-unlimited .pb-screen{ box-shadow:0 0 0 8px var(--pb-yellow), 0 0 26px 4px rgba(255,190,110,.4), var(--pb-lift); }\n.pb.is-cozy.is-beat .pb-screen{ box-shadow:0 0 0 8px var(--pb-yellow), 0 0 34px 9px rgba(255,190,110,.6), var(--pb-lift); }\n.pb.is-cozy.is-unlimited .pb-vfill{ background:linear-gradient(0deg,#C2452D,#E07A3F,#F2CC60,#FFE7A3,#C2452D); background-size:100% 200%; animation-duration:5s; }\n.pb.is-cozy .pb-power.is-charging{ box-shadow:var(--pb-card-edge), 0 0 34px 8px rgba(255,190,110,.85); }\n.pb.is-cozy.is-unlimited .pb-power .pb-fill{ background:linear-gradient(90deg,#E07A3F,#F2CC60,#FFE7A3,#F2CC60,#E07A3F); background-size:200% 100%; animation-duration:4s; }\n.pb.is-cozy.is-unlimited .pb-power .pb-meter-num{ color:var(--pb-cozy); }\n.pb.is-cozy .pb-orb-rays{ background:repeating-conic-gradient(from 0deg, rgba(255,200,120,.7) 0 12deg, rgba(255,200,120,0) 12deg 30deg); animation-duration:10s; }\n\n.pb-inf{ font-family:system-ui, -apple-system, \"Segoe UI\", sans-serif; font-weight:700; }\n.pb-sr{ position:absolute !important; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }\n\n@keyframes pb-slap{ 0%{ transform:scale(1.4) rotate(-7deg); opacity:0; } 60%{ opacity:1; } 100%{ transform:scale(1) rotate(-1.5deg); opacity:1; } }\n@keyframes pb-rise{ 0%{ transform:translateY(8px); opacity:0; } 100%{ transform:none; opacity:1; } }\n@keyframes pb-pop{ 0%{ transform:scale(.8); opacity:0; } 70%{ transform:scale(1.04); opacity:1; } 100%{ transform:scale(1); } }\n@keyframes pb-pop-plain{ 0%{ transform:scale(.9) rotate(-1deg); opacity:0; } 100%{ transform:rotate(-1deg); opacity:1; } }\n@keyframes pb-bump{ 0%{ transform:scale(1.8); } 100%{ transform:scale(1); } }\n@keyframes pb-orb-in{ 0%{ transform:translateX(-50%) scale(0) rotate(-30deg); } 100%{ transform:translateX(-50%) scale(1); } }\n@keyframes pb-orb-bob{ 0%, 100%{ transform:translateX(-50%); } 50%{ transform:translate(-50%, -10px); } }\n@keyframes pb-wiggle{ 20%{ transform:translateX(-50%) rotate(-10deg) scale(1.08); } 40%{ transform:translateX(-50%) rotate(10deg) scale(1.08); } 60%{ transform:translateX(-50%) rotate(-5deg); } 80%{ transform:translateX(-50%) rotate(3deg); } 100%{ transform:translateX(-50%); } }\n@keyframes pb-cta{ 0%, 100%{ transform:translateX(-50%) rotate(-4deg) scale(1); } 50%{ transform:translateX(-50%) rotate(-4deg) scale(1.1); } }\n@keyframes pb-rays{ to{ transform:translate(-50%, -50%) rotate(360deg); } }\n@keyframes pb-throb{ 50%{ transform:scale(1.08); } }\n@keyframes pb-rainbow{ to{ background-position:200% 0; } }\n@keyframes pb-rainbow-v{ to{ background-position:0 200%; } }\n@keyframes pb-shiver{ 25%{ transform:translateX(-2px); } 75%{ transform:translateX(2px); } }\n@keyframes pb-shake{ 20%{ transform:translateX(-6px); } 40%{ transform:translateX(6px); } 60%{ transform:translateX(-4px); } 80%{ transform:translateX(3px); } }\n@media (prefers-reduced-motion: reduce){\n  .pb *, .pb *::before, .pb *::after{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition:none !important; }\n}\n"; document.head.appendChild(st);
-host.innerHTML = "<div class=\"pb\" id=\"pb-root\">\n  <div class=\"pb-tabrow\">\n    <span class=\"pb-tab\"><span class=\"pb-tab-label\">Pass Blaster <small id=\"pb-tab-sub\">the price calculator, but fun</small></span></span>\n  </div>\n  <div class=\"pb-screen\" id=\"pb-screen\">\n    <canvas id=\"pb-canvas\" tabindex=\"0\" role=\"img\" aria-label=\"A school district map. Click the map to add a school.\"></canvas>\n\n    <div class=\"pb-choose\" id=\"pb-choose\" hidden>\n      <button class=\"pb-pick pb-pick-party\" id=\"pb-pick-party\" type=\"button\" aria-label=\"Play party mode: unlimited power, zero chill\">\n        <span class=\"pb-pick-label\" id=\"pb-pick-party-label\"><b>Party mode</b><small>Unlimited power. Zero chill.</small><i>Play &#9656;</i></span>\n      </button>\n      <button class=\"pb-pick pb-pick-cozy\" id=\"pb-pick-cozy\" type=\"button\" aria-label=\"Play cozy mode: unlimited help, extra cozy\">\n        <span class=\"pb-pick-label\" id=\"pb-pick-cozy-label\"><b>Cozy mode</b><small>Unlimited help. Extra cozy.</small><i>Play &#9656;</i></span>\n      </button>\n      <span class=\"pb-split\" id=\"pb-split\" aria-hidden=\"true\"><span class=\"pb-split-knob\"><svg viewBox=\"0 0 26 14\" width=\"26\" height=\"14\"><path d=\"M8 2 3 7l5 5M18 2l5 5-5 5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></span></span>\n    </div>\n\n    <div class=\"pb-status\" id=\"pb-status\" aria-hidden=\"true\">\n      <p class=\"pb-status-main\" id=\"pb-status-main\"></p>\n      <p class=\"pb-status-sub\" id=\"pb-status-sub\"></p>\n    </div>\n\n    <div class=\"pb-meter pb-dreams\" id=\"pb-dreams\" hidden>\n      <span class=\"pb-meter-num\" id=\"pb-dreams-mult\">&times;1</span>\n      <span class=\"pb-vbar\"><span class=\"pb-vfill\" id=\"pb-dreams-fill\"></span></span>\n      <span class=\"pb-meter-label\">Dreams</span>\n    </div>\n\n    <div class=\"pb-corner\">\n      <span class=\"pb-clock\" id=\"pb-clock\" hidden></span>\n      <button class=\"pb-icon\" id=\"pb-again\" type=\"button\" aria-label=\"Play again\" hidden>&#8635;</button>\n      <button class=\"pb-icon\" id=\"pb-mute\" type=\"button\" aria-label=\"Mute sound\" aria-pressed=\"false\">&#128266;</button>\n    </div>\n\n    <div class=\"pb-meter pb-power\" id=\"pb-power\">\n      <span class=\"pb-meter-label\" id=\"pb-power-label\">Power</span>\n      <span class=\"pb-bar\"><span class=\"pb-fill\" id=\"pb-power-fill\"></span></span>\n      <span class=\"pb-meter-num\" id=\"pb-power-num\">0</span>\n    </div>\n\n    <div class=\"pb-pu\" id=\"pb-pu\" hidden>\n      <button class=\"pb-orb\" id=\"pb-orb\" type=\"button\" aria-describedby=\"pb-tip\" aria-label=\"UPchieve power-up from UPdog. Click to power up.\">\n        <span class=\"pb-orb-rays\" aria-hidden=\"true\"></span>\n        <img class=\"pb-orb-img\" id=\"pb-orb-img\" alt=\"\">\n        <span class=\"pb-orb-cta\" aria-hidden=\"true\">Power up!</span>\n      </button>\n      <div class=\"pb-tip\" id=\"pb-tip\" role=\"tooltip\">\n        <p class=\"pb-tip-name\">UPchieve power-up</p>\n        <p class=\"pb-tip-desc\">Unlimited tutoring for every student in every school</p>\n        <p class=\"pb-tip-price\"><span id=\"pb-tip-price\">$0</span><small>/year</small></p>\n        <button class=\"pb-textbtn\" id=\"pb-tip-invoice\" type=\"button\">See the invoice</button>\n      </div>\n    </div>\n\n    <button class=\"pb-done\" id=\"pb-done\" type=\"button\" hidden aria-label=\"Done adding schools\">\n      <svg class=\"pb-done-ring\" viewBox=\"0 0 100 100\" aria-hidden=\"true\"><circle cx=\"50\" cy=\"50\" r=\"46\" id=\"pb-done-ring\"/></svg>\n      <span class=\"pb-done-face\" id=\"pb-done-face\"><b>&#10003;</b><small>Done</small></span>\n    </button>\n\n    <div class=\"pb-pop\" id=\"pb-pop\" hidden role=\"dialog\" aria-labelledby=\"pb-pop-title\">\n      <div class=\"pb-pop-head\">\n        <p class=\"pb-pop-title\" id=\"pb-pop-title\">How many students at <b id=\"pb-pop-name\"></b>?</p>\n        <button class=\"pb-pop-del\" id=\"pb-pop-del\" type=\"button\" aria-label=\"Remove this school\">&times;</button>\n      </div>\n      <div class=\"pb-chips\" id=\"pb-chips\"></div>\n      <button class=\"pb-pop-copy\" id=\"pb-pop-copy\" type=\"button\">+5 more like this</button>\n      <span class=\"pb-pop-timer\" id=\"pb-pop-timer\"></span>\n      <span class=\"pb-pop-tail\" id=\"pb-pop-tail\"></span>\n    </div>\n\n    <div class=\"pb-invoice\" id=\"pb-invoice\" hidden role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"pb-inv-title\">\n      <div class=\"pb-invoice-card\">\n        <div class=\"pb-invoice-head\">\n          <h3 id=\"pb-inv-title\">Your invoice</h3>\n          <button class=\"pb-x\" id=\"pb-inv-close\" type=\"button\" aria-label=\"Close invoice\">&times;</button>\n        </div>\n        <div class=\"pb-lines\" id=\"pb-lines\"></div>\n        <button class=\"pb-addline\" id=\"pb-inv-add\" type=\"button\">+ Add a school</button>\n        <div class=\"pb-price-box\"><span>Yearly price</span><strong id=\"pb-inv-total\">$0</strong></div>\n        <p class=\"pb-inv-note\">Priced per building, not per student. Unlimited hours, $0 overage fees.</p>\n        <ul class=\"pb-includes\" aria-label=\"Includes\">\n          <li>all students</li>\n          <li>unlimited hours</li>\n          <li>in-person student presentation</li>\n          <li>teacher PD</li>\n          <li>and more!</li>\n        </ul>\n        <p class=\"pb-fine\">Can&rsquo;t afford us? Email <a href=\"mailto:partnerships@upchieve.org\">partnerships@upchieve.org</a> to join our sponsorship waitlist.</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"pb-sr\" id=\"pb-live\" aria-live=\"polite\"></div>\n</div>\n";
+var st = document.createElement('style'); st.textContent = "/* Palette and type follow the upchieve.org/schools page (the .fs-* section styles).\n   The sticker look (white die-cut borders, outlined italic type, ink-bordered cards) follows its illustrations. */\n.pb{\n  --pb-ink:#1C222B;\n  --pb-ink-2:#101010;\n  --pb-muted:#4A5261;\n  --pb-accent:#154BB7;\n  --pb-yellow:#FFF0C3;\n  --pb-blue:#E3F2FD;\n  --pb-label:#FFFCE2;\n  --pb-price:#DCEAFB;\n  --pb-card:#FFFFFF;\n  --pb-go:#1E9E6A;\n  --pb-alarm:#C2255C;\n  --pb-cozy:#A0452C;\n  --pb-line:#C9CDD6;\n  --pb-rainbow:linear-gradient(90deg,#154BB7,#5CC9A7,#FFC94D,#FF9F6E,#F48FB1,#9B87F5,#154BB7);\n  --pb-shadow:0 1px 1px rgba(28,34,43,.10), 0 2px 5px rgba(28,34,43,.07);\n  --pb-lift:0 8px 24px rgba(28,34,43,.16);\n  --pb-card-edge:0 0 0 2px var(--pb-ink), 0 6px 14px rgba(28,34,43,.18);\n  --pb-halo:\n    0 3px 0 #fff, 3px 0 0 #fff, 0 -3px 0 #fff, -3px 0 0 #fff,\n    2px 2px 0 #fff, -2px 2px 0 #fff, 2px -2px 0 #fff, -2px -2px 0 #fff,\n    3px 2px 0 #fff, -3px 2px 0 #fff, 3px -2px 0 #fff, -3px -2px 0 #fff;\n  --pb-halo-big:\n    0 5px 0 #fff, 5px 0 0 #fff, 0 -5px 0 #fff, -5px 0 0 #fff,\n    4px 4px 0 #fff, -4px 4px 0 #fff, 4px -4px 0 #fff, -4px -4px 0 #fff,\n    5px 2px 0 #fff, -5px 2px 0 #fff, 5px -2px 0 #fff, -5px -2px 0 #fff,\n    2px 5px 0 #fff, -2px 5px 0 #fff, 2px -5px 0 #fff, -2px -5px 0 #fff,\n    0 9px 14px rgba(28,34,43,.22);\n  --pb-font:\"Work Sans\", system-ui, -apple-system, \"Segoe UI\", sans-serif;\n  container-type:inline-size;\n  position:relative;\n  max-width:1180px;\n  margin:0 auto;\n  color:var(--pb-ink);\n  font-family:var(--pb-font);\n  font-size:16px;\n  line-height:1.35;\n  -webkit-font-smoothing:antialiased;\n}\n.pb *, .pb *::before, .pb *::after{ box-sizing:border-box; }\n.pb [hidden]{ display:none !important; }\n.pb p, .pb h3, .pb ul{ margin:0 !important; padding:0; }\n.pb ul{ list-style:none; }\n.pb h3{ text-transform:none; letter-spacing:normal; }\n.pb em{ font-style:italic; color:var(--pb-accent); }\n.pb button, .pb select{\n  font:inherit;\n  color:inherit;\n  cursor:pointer;\n  border:0;\n  border-radius:0;\n  background:none;\n  box-shadow:none;\n  margin:0;\n  padding:0;\n  min-width:0;\n  min-height:0;\n  line-height:inherit;\n  text-transform:none;\n  text-shadow:none;\n  letter-spacing:normal;\n}\n.pb button:focus-visible, .pb select:focus-visible, .pb a:focus-visible, .pb canvas:focus-visible{\n  outline:3px solid var(--pb-accent);\n  outline-offset:3px;\n}\n\n/* Folder tab, same shape as the section tabs on the page */\n.pb-tabrow{ display:flex; padding-left:clamp(12px, 3cqi, 28px); }\n.pb-tab{\n  display:flex;\n  padding:8px calc(18px + 56px) 0 18px;\n  border-radius:6px 0 0 0;\n  background:var(--pb-yellow);\n  clip-path:polygon(0 0, calc(100% - 56px) 0, 100% 100%, 0 100%);\n}\n.pb-tab-label{\n  display:flex;\n  align-items:baseline;\n  gap:10px;\n  padding:9px 18px;\n  border-radius:6px;\n  background:var(--pb-label);\n  box-shadow:var(--pb-shadow);\n  font-weight:600;\n  font-size:clamp(16px, 2.2cqi, 20px);\n  line-height:1.2;\n  color:var(--pb-ink-2);\n  white-space:nowrap;\n}\n.pb-tab-label small{ font-size:14px; font-weight:500; color:var(--pb-muted); }\n@container (max-width: 520px){ .pb-tab-label small{ display:none; } }\n\n.pb-screen{\n  position:relative;\n  width:100%;\n  max-width:100%;\n  aspect-ratio:2 / 3;\n  border-radius:0 12px 12px 12px;\n  overflow:hidden;\n  background:var(--pb-blue);\n  box-shadow:0 0 0 8px var(--pb-yellow), var(--pb-lift);\n  user-select:none;\n  -webkit-user-select:none;\n  transition:box-shadow .12s;\n}\n@container (min-width: 600px){ .pb-screen{ aspect-ratio:16 / 10; } }\n.pb-screen > canvas{\n  position:absolute;\n  inset:0;\n  width:100%;\n  height:100%;\n  display:block;\n  touch-action:manipulation;\n}\n/* Unlimited mode: the whole frame glows and pulses on the beat */\n.pb.is-unlimited .pb-screen::after{\n  content:\"\";\n  position:absolute;\n  inset:0;\n  z-index:8;\n  padding:7px;\n  border-radius:inherit;\n  background:var(--pb-rainbow);\n  background-size:200% 100%;\n  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);\n  -webkit-mask-composite:xor;\n  mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);\n  mask-composite:exclude;\n  animation:pb-rainbow 1.2s linear infinite;\n  pointer-events:none;\n}\n.pb.is-unlimited .pb-screen{ box-shadow:0 0 0 8px var(--pb-yellow), 0 0 30px 6px rgba(255,201,77,.45), var(--pb-lift); }\n.pb.is-beat .pb-screen{ box-shadow:0 0 0 8px var(--pb-yellow), 0 0 46px 14px rgba(255,201,77,.8), var(--pb-lift); }\n\n/* The one place for instructions and status: outlined sticker type, no box */\n.pb-status{\n  position:absolute;\n  z-index:3;\n  top:12px;\n  left:10px;\n  right:56px;\n  display:grid;\n  justify-items:center;\n  gap:4px;\n  text-align:center;\n  pointer-events:none;\n}\n@container (min-width: 600px){\n  .pb-status{ top:16px; left:50%; right:auto; width:min(760px, calc(100% - 2 * clamp(60px, 19cqi, 240px))); transform:translateX(-50%); }\n}\n.pb-status-main{\n  font-size:clamp(24px, 3.5cqi, 40px);\n  font-weight:800;\n  font-style:italic;\n  line-height:1.08;\n  color:var(--pb-accent);\n  text-shadow:var(--pb-halo-big);\n  text-wrap:balance;\n  transform:rotate(-1.5deg);\n}\n.pb-status-sub{\n  max-width:34em;\n  font-size:clamp(16px, 2cqi, 21px);\n  font-weight:600;\n  line-height:1.3;\n  color:var(--pb-ink-2);\n  text-shadow:var(--pb-halo);\n  text-wrap:balance;\n}\n.pb-status-sub:empty{ display:none; }\n.pb-status.is-alarm .pb-status-main{ color:var(--pb-alarm); }\n.pb-status.is-new .pb-status-main{ animation:pb-slap .45s cubic-bezier(.2,1.5,.4,1) both; }\n.pb-status.is-new .pb-status-sub{ animation:pb-rise .35s ease-out .08s both; }\n.pb-status b{ font-weight:800; color:var(--pb-go); font-variant-numeric:tabular-nums; }\n\n/* Meters: white cards with an ink edge, like the \"avg school\" label on the page */\n.pb-meter{\n  display:flex;\n  align-items:center;\n  gap:8px;\n  padding:6px 12px;\n  border-radius:10px;\n  background:var(--pb-card);\n  box-shadow:var(--pb-card-edge);\n  white-space:nowrap;\n}\n.pb-meter-label{ font-size:16px; font-weight:800; font-style:italic; line-height:1; color:var(--pb-accent); }\n.pb-bar{ position:relative; width:clamp(80px, 13cqi, 150px); height:14px; border-radius:99px; background:var(--pb-price); overflow:hidden; }\n.pb-fill{ position:absolute; inset:0 auto 0 0; width:0; border-radius:99px; background:#FFC94D; }\n.pb-meter-num{ min-width:2ch; font-size:17px; font-weight:800; line-height:1; color:var(--pb-ink-2); font-variant-numeric:tabular-nums; text-align:center; }\n.pb-meter-num.is-bump{ animation:pb-bump .45s ease-out; }\n\n.pb-dreams{\n  position:absolute;\n  z-index:4;\n  right:12px;\n  top:70px;\n  bottom:124px;\n  flex-direction:column;\n  justify-content:flex-start;\n  width:66px;\n  padding:10px 6px;\n  gap:8px;\n  animation:pb-pop .35s ease-out;\n}\n@container (max-width: 599px){ .pb-dreams{ top:104px; bottom:96px; width:54px; } }\n.pb.is-unlimited .pb-dreams, .pb.is-crisis .pb-dreams{ bottom:90px; }\n.pb-vbar{ position:relative; flex:1; width:20px; border-radius:99px; background:var(--pb-price); overflow:hidden; }\n.pb-vfill{ position:absolute; left:0; right:0; bottom:0; height:78%; border-radius:99px; background:var(--pb-accent); }\n.pb-dreams .pb-meter-label{ font-size:15px; }\n.pb-dreams .pb-meter-num{ font-size:18px; }\n.pb.is-crisis .pb-vfill{ background:var(--pb-alarm); }\n.pb.is-crisis .pb-dreams{ animation:pb-shiver .22s linear infinite; }\n.pb.is-unlimited .pb-vfill{ background:linear-gradient(0deg,#154BB7,#5CC9A7,#FFC94D,#FF9F6E,#F48FB1,#9B87F5,#154BB7); background-size:100% 200%; animation:pb-rainbow-v 1.4s linear infinite; }\n\n/* Power meter, under the admin in the bottom-left corner */\n.pb-power{\n  position:absolute;\n  z-index:5;\n  left:10px;\n  bottom:10px;\n  transform-origin:left center;\n  transition:transform .5s cubic-bezier(.3,1.4,.5,1);\n}\n.pb-power.is-shake{ animation:pb-shake .4s linear; }\n.pb-power.is-charging{\n  z-index:9;\n  transform:translate(var(--pb-dx, 0px), var(--pb-dy, 0px)) scale(2.2);\n  box-shadow:var(--pb-card-edge), 0 0 34px 8px rgba(255,201,77,.85);\n}\n.pb-power.is-charging .pb-fill{ background:linear-gradient(90deg,#FFC94D,#FFF1B3,#FFC94D); background-size:200% 100%; animation:pb-rainbow .4s linear infinite; }\n.pb.is-unlimited .pb-power .pb-fill{ width:100% !important; background:var(--pb-rainbow); background-size:200% 100%; animation:pb-rainbow 1s linear infinite; }\n.pb.is-unlimited .pb-power .pb-meter-num{ font-size:26px; color:var(--pb-accent); }\n\n.pb-corner{\n  position:absolute;\n  z-index:6;\n  top:10px;\n  right:10px;\n  display:flex;\n  flex-direction:column;\n  align-items:flex-end;\n  gap:6px;\n}\n@container (min-width: 600px){ .pb-corner{ top:14px; right:14px; flex-direction:row; align-items:center; } }\n.pb-clock{\n  padding:6px 10px;\n  border-radius:10px;\n  background:var(--pb-card);\n  box-shadow:var(--pb-card-edge);\n  font-size:15px;\n  font-weight:700;\n  white-space:nowrap;\n  font-variant-numeric:tabular-nums;\n  pointer-events:none;\n}\n.pb .pb-icon{\n  width:40px;\n  height:40px;\n  border-radius:50%;\n  background:var(--pb-card);\n  box-shadow:var(--pb-card-edge);\n  font-size:19px;\n  line-height:40px;\n  text-align:center;\n  color:var(--pb-ink-2);\n}\n.pb .pb-icon:hover{ background:var(--pb-blue); }\n\n/* The power-up: UPdog hugging the star, dropped off by the rocket. Price shows on hover. */\n.pb-pu{ position:absolute; z-index:6; left:0; top:0; width:0; height:0; }\n.pb .pb-orb{\n  position:absolute;\n  left:0;\n  bottom:0;\n  width:var(--pb-orb-w, 170px);\n  transform:translateX(-50%);\n  animation:pb-orb-bob 1.4s ease-in-out infinite;\n}\n.pb-orb-img{ position:relative; display:block; width:100%; height:auto; filter:drop-shadow(0 6px 10px rgba(28,34,43,.25)); }\n.pb .pb-orb:hover .pb-orb-img{ filter:drop-shadow(0 0 14px rgba(255,201,77,1)) drop-shadow(0 6px 10px rgba(28,34,43,.25)); }\n.pb-orb-rays{\n  position:absolute;\n  left:50%;\n  top:50%;\n  width:160%;\n  aspect-ratio:1;\n  transform:translate(-50%, -50%);\n  border-radius:50%;\n  background:repeating-conic-gradient(from 0deg, rgba(255,214,107,.8) 0 10deg, rgba(255,214,107,0) 10deg 30deg);\n  -webkit-mask:radial-gradient(circle, #000 28%, transparent 68%);\n  mask:radial-gradient(circle, #000 28%, transparent 68%);\n  animation:pb-rays 4s linear infinite;\n}\n.pb-orb-cta{\n  position:absolute;\n  left:50%;\n  bottom:calc(100% + 2px);\n  transform:translateX(-50%) rotate(-4deg);\n  font-size:clamp(22px, 3cqi, 32px);\n  font-weight:800;\n  font-style:italic;\n  line-height:1;\n  white-space:nowrap;\n  color:var(--pb-accent);\n  text-shadow:var(--pb-halo-big);\n  animation:pb-cta 0.9s ease-in-out infinite;\n}\n.pb-pu.is-arrive .pb-orb{ animation:pb-orb-in .55s cubic-bezier(.2,1.6,.4,1) both, pb-orb-bob 1.4s ease-in-out .55s infinite; }\n.pb-pu.is-wiggle .pb-orb{ animation:pb-wiggle .6s ease-in-out, pb-orb-bob 1.4s ease-in-out .6s infinite; }\n.pb-pu.is-badge .pb-orb{ animation:none; }\n.pb-pu.is-badge .pb-orb-img, .pb-pu.is-badge .pb-orb-rays, .pb-pu.is-badge .pb-orb-cta{ visibility:hidden; }\n\n.pb-tip{\n  position:absolute;\n  left:calc(var(--pb-orb-w, 170px) / 2 + 10px);\n  bottom:24px;\n  display:grid;\n  gap:4px;\n  width:240px;\n  padding:12px 14px;\n  border-radius:12px;\n  background:var(--pb-card);\n  box-shadow:var(--pb-card-edge);\n  opacity:0;\n  visibility:hidden;\n  transform:translateY(6px) rotate(1.5deg);\n  transition:opacity .15s, transform .15s, visibility 0s .15s;\n}\n.pb-pu:hover .pb-tip, .pb-pu:focus-within .pb-tip{ opacity:1; visibility:visible; transform:rotate(1.5deg); transition:opacity .15s, transform .15s; }\n.pb-tip-name{ font-size:13px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--pb-accent); }\n.pb-tip-desc{ font-size:15px; font-weight:500; line-height:1.3; }\n.pb-tip-price{ padding:6px 10px; border-radius:8px; background:var(--pb-price); font-size:24px; font-weight:700; line-height:1.2; color:var(--pb-ink-2); font-variant-numeric:tabular-nums; }\n.pb-tip-price small{ font-size:15px; font-weight:600; }\n.pb .pb-textbtn{ justify-self:start; font-weight:600; font-size:15px; color:var(--pb-accent); text-decoration:underline; text-underline-offset:3px; }\n@media (hover: none){\n  .pb-pu.is-arrive .pb-tip{ opacity:1; visibility:visible; transform:rotate(1.5deg); width:auto; padding:6px 10px; }\n  .pb-pu.is-arrive .pb-tip-desc, .pb-pu.is-arrive .pb-tip-name{ display:none; }\n  .pb-pu.is-arrive .pb-tip-price{ font-size:17px; padding:2px 8px; }\n}\n\n/* Done: a round green sticker in the corner that becomes the countdown */\n.pb .pb-done{\n  position:absolute;\n  z-index:5;\n  right:18px;\n  bottom:18px;\n  width:clamp(78px, 10cqi, 98px);\n  aspect-ratio:1;\n  border-radius:50%;\n  background:var(--pb-go);\n  color:#fff;\n  box-shadow:0 0 0 5px #fff, 0 0 0 7px var(--pb-ink), 0 10px 18px rgba(28,34,43,.25);\n  animation:pb-pop .35s ease-out;\n}\n.pb .pb-done:hover{ filter:brightness(1.08); }\n.pb .pb-done:active{ transform:scale(.96); }\n.pb-done-face{ display:grid; place-items:center; line-height:1; }\n.pb-done-face b{ font-size:clamp(28px, 4cqi, 36px); font-weight:800; }\n.pb-done-face small{ font-size:15px; font-weight:800; font-style:italic; margin-top:2px; }\n.pb-done-ring{ position:absolute; inset:-14px; width:calc(100% + 28px); height:calc(100% + 28px); transform:rotate(-90deg); pointer-events:none; }\n.pb-done-ring circle{ fill:none; stroke:#FFC94D; stroke-width:6; stroke-linecap:round; stroke-dasharray:289; stroke-dashoffset:289; }\n.pb .pb-done.is-counting{ animation:pb-throb .5s ease-in-out infinite; box-shadow:0 0 0 5px #fff, 0 0 0 7px var(--pb-ink), 0 0 34px 12px rgba(30,158,106,.55); }\n.pb-done.is-counting .pb-done-face b{ font-size:clamp(40px, 6cqi, 52px); }\n\n/* Size picker: a sticker card of chips, anchored to the school */\n.pb-pop{\n  position:absolute;\n  z-index:7;\n  width:max-content;\n  max-width:min(420px, calc(100% - 16px));\n  padding:10px 12px 14px;\n  border-radius:12px;\n  background:var(--pb-card);\n  box-shadow:var(--pb-card-edge);\n  transform:rotate(-1deg);\n  animation:pb-pop-plain .16s ease-out;\n}\n.pb-pop-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:8px; }\n.pb-pop-title{ font-size:16px; font-weight:600; line-height:1.3; color:var(--pb-ink-2); }\n.pb-pop-title b{ font-weight:800; font-style:italic; color:var(--pb-accent); }\n.pb .pb-pop-del{ flex:none; width:26px; height:26px; margin:-3px -4px 0 0; border-radius:50%; font-size:20px; line-height:26px; color:var(--pb-alarm); }\n.pb .pb-pop-del:hover{ background:#FDE7EE; }\n.pb-chips{ display:flex; flex-wrap:wrap; gap:6px; }\n.pb .pb-chip{\n  padding:6px 12px;\n  border-radius:999px;\n  background:var(--pb-card);\n  box-shadow:inset 0 0 0 2px var(--pb-ink);\n  font-size:15px;\n  font-weight:700;\n  line-height:1.2;\n  white-space:nowrap;\n  color:var(--pb-ink-2);\n}\n.pb .pb-chip:hover{ background:var(--pb-blue); }\n.pb .pb-chip.is-on{ background:var(--pb-accent); color:#fff; box-shadow:inset 0 0 0 2px var(--pb-accent); }\n.pb .pb-pop-copy{ margin-top:8px; font-size:13px; font-weight:600; color:var(--pb-accent); text-decoration:underline; text-underline-offset:3px; }\n.pb-pop-timer{ position:absolute; left:12px; right:12px; bottom:6px; height:3px; border-radius:99px; background:var(--pb-accent); transform-origin:left center; opacity:.5; }\n.pb-pop-tail{ position:absolute; width:14px; height:14px; background:var(--pb-card); box-shadow:2px 2px 0 0 var(--pb-ink); transform:rotate(45deg); bottom:-7px; left:50%; margin-left:-7px; }\n.pb-pop.is-below .pb-pop-tail{ bottom:auto; top:-7px; box-shadow:-2px -2px 0 0 var(--pb-ink); }\n@container (max-width: 599px){\n  .pb .pb-chip{ padding:5px 10px; font-size:14px; }\n  .pb-pop-title{ font-size:14px; }\n}\n\n/* Invoice */\n.pb-invoice{\n  position:absolute;\n  inset:0;\n  z-index:10;\n  display:flex;\n  align-items:center;\n  justify-content:center;\n  padding:12px;\n  background:rgba(28,34,43,.35);\n}\n.pb-invoice-card{\n  display:grid;\n  gap:12px;\n  width:100%;\n  max-width:500px;\n  max-height:100%;\n  overflow:auto;\n  padding:20px;\n  border-radius:12px;\n  background:var(--pb-card);\n  box-shadow:var(--pb-card-edge);\n}\n.pb-invoice-head{ display:flex; justify-content:space-between; align-items:center; gap:8px; }\n.pb-invoice-head h3{ font-size:22px; font-weight:800; font-style:italic; line-height:1.2; color:var(--pb-accent); }\n.pb .pb-x{ width:40px; height:40px; border-radius:50%; font-size:26px; line-height:40px; text-align:center; }\n.pb .pb-x:hover{ background:var(--pb-blue); }\n.pb-lines{ display:grid; gap:6px; }\n.pb-line{\n  display:grid;\n  grid-template-columns:minmax(0,1fr) auto auto 32px;\n  align-items:center;\n  gap:8px;\n  padding:8px 10px;\n  border:1px solid #E6E8EE;\n  border-radius:8px;\n  font-size:16px;\n}\n.pb-line-name{ font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }\n.pb .pb-line select{ padding:5px 6px; border:1px solid var(--pb-line); border-radius:6px; background:#FCFCFD; font-size:15px; max-width:170px; }\n.pb-line-price{ font-weight:700; font-variant-numeric:tabular-nums; text-align:right; }\n.pb .pb-line .pb-x{ width:32px; height:32px; font-size:22px; line-height:32px; color:var(--pb-alarm); }\n@container (max-width: 480px){\n  .pb-line{ grid-template-columns:minmax(0,1fr) auto 32px; }\n  .pb .pb-line select{ grid-column:1 / -1; grid-row:2; max-width:none; }\n}\n.pb .pb-addline{ justify-self:start; font-weight:600; font-size:16px; text-decoration:underline; text-underline-offset:3px; color:var(--pb-accent); }\n.pb-price-box{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; padding:10px 12px; border-radius:8px; background:var(--pb-price); }\n.pb-price-box > span{ font-size:16px; font-weight:600; }\n.pb-price-box strong{ font-size:30px; font-weight:700; line-height:1.15; color:var(--pb-ink-2); font-variant-numeric:tabular-nums; }\n.pb-includes{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:4px 12px; }\n.pb-includes li{ display:flex; gap:8px; font-size:16px; font-weight:500; }\n.pb-includes li::before{ content:\"\\2714\"; flex:none; }\n.pb-inv-note{ font-size:15px; font-style:italic; }\n.pb-fine{ font-size:15px; }\n.pb-fine a{ color:var(--pb-accent) !important; font-weight:500; }\n\n/* Mode chooser: two halves of one frame, split by a slanted die-cut divider */\n.pb-choose{ position:absolute; inset:0; z-index:2; }\n.pb .pb-pick{ position:absolute; inset:0; display:block; width:100%; height:100%; }\n.pb .pb-pick:focus-visible{ outline:none; }\n.pb-pick-label{\n  position:absolute;\n  top:31%;\n  left:25%;\n  display:grid;\n  justify-items:center;\n  gap:6px;\n  width:max-content;\n  max-width:min(280px, 42cqi);\n  padding:12px 18px 14px;\n  border-radius:14px;\n  background:var(--pb-card);\n  box-shadow:0 0 0 5px #fff, 0 0 0 7px var(--pb-ink), 0 10px 18px rgba(28,34,43,.25);\n  text-align:center;\n  transform:translate(-50%, -50%);\n  transition:opacity .2s, box-shadow .15s;\n  pointer-events:none;\n}\n.pb-pick-label b{ font-size:clamp(22px, 3.4cqi, 34px); font-weight:800; font-style:italic; line-height:1.05; color:var(--pb-accent); }\n.pb-pick-label small{ font-size:clamp(14px, 1.7cqi, 17px); font-weight:600; line-height:1.3; color:var(--pb-ink-2); text-wrap:balance; }\n.pb-pick-label i{ margin-top:4px; padding:6px 16px; border-radius:99px; background:var(--pb-accent); color:#fff; font-size:15px; font-weight:800; font-style:normal; line-height:1.2; }\n@container (max-width: 599px){\n  .pb-pick-label{ gap:4px; max-width:40cqi; padding:9px 10px 11px; }\n  .pb-pick-label b{ font-size:20px; }\n  .pb-pick-label small{ font-size:13px; }\n  .pb-pick-label i{ padding:4px 12px; font-size:14px; }\n}\n.pb-pick-cozy .pb-pick-label{ background:#FFF8EC; box-shadow:0 0 0 5px #FFF8EC, 0 0 0 7px #7A4A2A, 0 10px 18px rgba(90,50,30,.25); outline:1.5px dashed rgba(122,74,42,.4); outline-offset:-6px; }\n.pb-pick-cozy .pb-pick-label b{ font-family:\"Fraunces\", Georgia, \"Times New Roman\", serif; font-weight:700; color:var(--pb-cozy); }\n.pb-pick-cozy .pb-pick-label small{ color:#3E2A20; }\n.pb-pick-cozy .pb-pick-label i{ background:var(--pb-cozy); }\n.pb-pick:focus-visible .pb-pick-label{ box-shadow:0 0 0 5px #fff, 0 0 0 7px var(--pb-ink), 0 0 0 11px var(--pb-accent); }\n.pb-choose.is-picked .pb-pick{ pointer-events:none; }\n.pb-choose.is-picked .pb-pick-label{ opacity:0; }\n.pb-split{\n  position:absolute;\n  left:0;\n  top:-20%;\n  width:8px;\n  height:140%;\n  margin-left:-4px;\n  background:#fff;\n  box-shadow:0 0 0 2px var(--pb-ink);\n  pointer-events:none;\n}\n.pb-split-knob{\n  position:absolute;\n  left:50%;\n  top:50%;\n  display:grid;\n  place-items:center;\n  width:46px;\n  height:46px;\n  border-radius:50%;\n  background:#fff;\n  box-shadow:0 0 0 2.5px var(--pb-ink), 0 6px 14px rgba(28,34,43,.25);\n  color:var(--pb-ink);\n  transform:translate(-50%, -50%) rotate(calc(-1 * var(--pb-tilt, 0rad)));\n}\n.pb-choose.is-picked .pb-split-knob{ opacity:0; transition:opacity .2s; }\n\n/* Cozy mode: a soft serif, paper cards with stitched edges, gingham on the tab, and nothing that\n   pulses, throbs, shivers, or races. */\n.pb.is-cozy{\n  --pb-serif:\"Fraunces\", Georgia, \"Times New Roman\", serif;\n  --pb-paper:#FFF8EC;\n  --pb-bark:#7A4A2A;\n  --pb-stitch:rgba(122,74,42,.4);\n  --pb-sage:#6F8F5E;\n  --pb-cream-halo:0 0 2px #FFF8EC, 0 2px 0 #FFF8EC, 0 -2px 0 #FFF8EC, 2px 0 0 #FFF8EC, -2px 0 0 #FFF8EC, 2px 2px 0 #FFF8EC, -2px 2px 0 #FFF8EC, 2px -2px 0 #FFF8EC, -2px -2px 0 #FFF8EC, 0 0 10px rgba(255,248,236,.9);\n  --pb-accent:#A0452C;\n}\n.pb.is-cozy .pb-screen{ box-shadow:0 0 0 8px #F1DEB9, var(--pb-lift); outline:2px dashed var(--pb-stitch); outline-offset:3px; }\n.pb.is-cozy.is-unlimited .pb-screen::after{ display:none; }\n.pb.is-cozy.is-unlimited .pb-screen, .pb.is-cozy.is-beat .pb-screen{ box-shadow:0 0 0 8px #F1DEB9, 0 0 24px 4px rgba(255,190,110,.3), var(--pb-lift); }\n.pb.is-cozy .pb-tab{\n  background-color:#F6E3C8;\n  background-image:linear-gradient(90deg, rgba(200,85,61,.2) 50%, transparent 50%), linear-gradient(rgba(200,85,61,.2) 50%, transparent 50%);\n  background-size:14px 14px;\n}\n.pb.is-cozy .pb-tab-label{ background:var(--pb-paper); box-shadow:0 0 0 1.5px var(--pb-bark); outline:1.5px dashed var(--pb-stitch); outline-offset:-5px; font-family:var(--pb-serif); font-style:italic; color:#5B3B33; }\n\n.pb.is-cozy .pb-status-main{ font-family:var(--pb-serif); font-weight:700; letter-spacing:-.01em; color:var(--pb-accent); text-shadow:var(--pb-cream-halo); transform:none; }\n.pb.is-cozy .pb-status-sub{ font-weight:500; color:#3E2A20; text-shadow:var(--pb-cream-halo); }\n.pb.is-cozy .pb-status.is-alarm .pb-status-main{ color:#5E5A86; }\n.pb.is-cozy .pb-status.is-new .pb-status-main{ animation:pb-soft .9s ease-out both; }\n.pb.is-cozy .pb-status.is-new .pb-status-sub{ animation:pb-soft .9s ease-out .15s both; }\n.pb.is-cozy .pb-status b{ color:var(--pb-sage); }\n\n.pb.is-cozy .pb-meter, .pb.is-cozy .pb-clock, .pb.is-cozy .pb-tip, .pb.is-cozy .pb-pop, .pb.is-cozy .pb-invoice-card{\n  background:var(--pb-paper);\n  box-shadow:0 0 0 2px var(--pb-bark), 0 6px 14px rgba(90,50,30,.18);\n  outline:1.5px dashed var(--pb-stitch);\n  outline-offset:-4px;\n}\n.pb.is-cozy .pb-meter-label{ font-family:var(--pb-serif); font-weight:700; color:var(--pb-accent); }\n.pb.is-cozy .pb-clock{ font-family:var(--pb-serif); font-weight:600; color:#3E2A20; }\n.pb.is-cozy .pb-bar, .pb.is-cozy .pb-vbar{ background:#EFE2CA; }\n.pb.is-cozy .pb-fill{ background:#E8A33D; }\n.pb.is-cozy .pb-vfill{ background:var(--pb-sage); }\n.pb.is-cozy.is-crisis .pb-dreams{ animation:none; }\n.pb.is-cozy.is-crisis .pb-vfill{ background:#8C95A4; }\n.pb.is-cozy.is-unlimited .pb-vfill{ background:linear-gradient(0deg,#C2452D,#E8A33D,#F2CC60); animation:none; }\n.pb.is-cozy.is-unlimited .pb-power .pb-fill{ background:linear-gradient(90deg,#E8A33D,#F2CC60); animation:none; }\n.pb.is-cozy.is-unlimited .pb-power .pb-meter-num{ color:var(--pb-accent); }\n.pb.is-cozy .pb-meter-num.is-bump{ animation:none; }\n.pb.is-cozy .pb-icon{ background:var(--pb-paper); box-shadow:0 0 0 2px var(--pb-bark); color:#5B3B33; }\n.pb.is-cozy .pb-icon:hover{ background:#F6E7CF; }\n\n.pb.is-cozy .pb-orb, .pb.is-cozy .pb-pu.is-arrive .pb-orb{ animation:pb-orb-in 1.1s ease-out both, pb-orb-bob 3.4s ease-in-out 1.1s infinite; }\n.pb.is-cozy .pb-pu.is-badge .pb-orb{ animation:none; }\n.pb.is-cozy .pb-orb-rays{ background:radial-gradient(circle, rgba(255,214,150,.75), rgba(255,214,150,0) 70%); animation:none; }\n.pb.is-cozy .pb-orb-cta{ font-family:var(--pb-serif); font-weight:700; color:var(--pb-accent); text-shadow:var(--pb-cream-halo); animation:none; }\n.pb.is-cozy .pb-tip-name{ font-family:var(--pb-serif); font-style:italic; font-weight:700; letter-spacing:0; text-transform:none; font-size:16px; color:var(--pb-accent); }\n.pb.is-cozy .pb-tip-price, .pb.is-cozy .pb-price-box{ background:#F6E7CF; }\n\n.pb.is-cozy .pb-done{ background:var(--pb-sage); box-shadow:0 0 0 5px var(--pb-paper), 0 0 0 7px var(--pb-bark), 0 8px 16px rgba(90,50,30,.25); animation:pb-soft .8s ease-out; transition:box-shadow 1.6s ease; }\n.pb.is-cozy .pb-done.is-settling{ box-shadow:0 0 0 5px var(--pb-paper), 0 0 0 7px var(--pb-bark), 0 0 28px 10px rgba(111,143,94,.4); }\n.pb.is-cozy .pb-done-face small{ font-family:var(--pb-serif); font-weight:600; }\n.pb.is-cozy .pb-done-ring{ display:none; }\n\n.pb.is-cozy .pb-pop{ animation:pb-soft .35s ease-out; }\n.pb.is-cozy .pb-pop-tail{ background:var(--pb-paper); box-shadow:2px 2px 0 0 var(--pb-bark); }\n.pb.is-cozy .pb-pop.is-below .pb-pop-tail{ box-shadow:-2px -2px 0 0 var(--pb-bark); }\n.pb.is-cozy .pb-pop-title{ color:#3E2A20; }\n.pb.is-cozy .pb-pop-title b{ font-family:var(--pb-serif); font-weight:700; }\n.pb.is-cozy .pb-chip{ background:#FFFDF7; box-shadow:inset 0 0 0 1.5px var(--pb-bark); border-radius:10px; color:#5B3B33; }\n.pb.is-cozy .pb-chip:hover{ background:#F6E7CF; }\n.pb.is-cozy .pb-chip.is-on{ background:var(--pb-accent); color:var(--pb-paper); box-shadow:inset 0 0 0 1.5px var(--pb-accent), inset 0 0 0 3px var(--pb-paper); }\n.pb.is-cozy .pb-pop-timer{ display:none; }\n.pb.is-cozy .pb-pop-del:hover{ background:#F6E7CF; }\n.pb.is-cozy .pb-invoice-head h3{ font-family:var(--pb-serif); }\n.pb.is-cozy .pb-line{ border-color:#EADBC2; }\n@keyframes pb-soft{ 0%{ opacity:0; } 100%{ opacity:1; } }\n\n.pb-inf{ font-family:system-ui, -apple-system, \"Segoe UI\", sans-serif; font-weight:700; }\n.pb-sr{ position:absolute !important; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }\n\n@keyframes pb-slap{ 0%{ transform:scale(1.4) rotate(-7deg); opacity:0; } 60%{ opacity:1; } 100%{ transform:scale(1) rotate(-1.5deg); opacity:1; } }\n@keyframes pb-rise{ 0%{ transform:translateY(8px); opacity:0; } 100%{ transform:none; opacity:1; } }\n@keyframes pb-pop{ 0%{ transform:scale(.8); opacity:0; } 70%{ transform:scale(1.04); opacity:1; } 100%{ transform:scale(1); } }\n@keyframes pb-pop-plain{ 0%{ transform:scale(.9) rotate(-1deg); opacity:0; } 100%{ transform:rotate(-1deg); opacity:1; } }\n@keyframes pb-bump{ 0%{ transform:scale(1.8); } 100%{ transform:scale(1); } }\n@keyframes pb-orb-in{ 0%{ transform:translateX(-50%) scale(0) rotate(-30deg); } 100%{ transform:translateX(-50%) scale(1); } }\n@keyframes pb-orb-bob{ 0%, 100%{ transform:translateX(-50%); } 50%{ transform:translate(-50%, -10px); } }\n@keyframes pb-wiggle{ 20%{ transform:translateX(-50%) rotate(-10deg) scale(1.08); } 40%{ transform:translateX(-50%) rotate(10deg) scale(1.08); } 60%{ transform:translateX(-50%) rotate(-5deg); } 80%{ transform:translateX(-50%) rotate(3deg); } 100%{ transform:translateX(-50%); } }\n@keyframes pb-cta{ 0%, 100%{ transform:translateX(-50%) rotate(-4deg) scale(1); } 50%{ transform:translateX(-50%) rotate(-4deg) scale(1.1); } }\n@keyframes pb-rays{ to{ transform:translate(-50%, -50%) rotate(360deg); } }\n@keyframes pb-throb{ 50%{ transform:scale(1.08); } }\n@keyframes pb-rainbow{ to{ background-position:200% 0; } }\n@keyframes pb-rainbow-v{ to{ background-position:0 200%; } }\n@keyframes pb-shiver{ 25%{ transform:translateX(-2px); } 75%{ transform:translateX(2px); } }\n@keyframes pb-shake{ 20%{ transform:translateX(-6px); } 40%{ transform:translateX(6px); } 60%{ transform:translateX(-4px); } 80%{ transform:translateX(3px); } }\n@media (prefers-reduced-motion: reduce){\n  .pb *, .pb *::before, .pb *::after{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition:none !important; }\n}\n"; document.head.appendChild(st);
+host.innerHTML = "<div class=\"pb\" id=\"pb-root\">\n  <div class=\"pb-tabrow\">\n    <span class=\"pb-tab\"><span class=\"pb-tab-label\">Pass Blaster <small id=\"pb-tab-sub\">the price calculator, but fun</small></span></span>\n  </div>\n  <div class=\"pb-screen\" id=\"pb-screen\">\n    <canvas id=\"pb-canvas\" tabindex=\"0\" role=\"img\" aria-label=\"A school district map. Click the map to add a school.\"></canvas>\n\n    <div class=\"pb-choose\" id=\"pb-choose\" hidden>\n      <button class=\"pb-pick pb-pick-party\" id=\"pb-pick-party\" type=\"button\" aria-label=\"Play party mode: unlimited power, zero chill\">\n        <span class=\"pb-pick-label\" id=\"pb-pick-party-label\"><b>Party mode</b><small>Unlimited power. Zero chill.</small><i>Play &#9656;</i></span>\n      </button>\n      <button class=\"pb-pick pb-pick-cozy\" id=\"pb-pick-cozy\" type=\"button\" aria-label=\"Play cozy mode: take your time, it&rsquo;s unlimited\">\n        <span class=\"pb-pick-label\" id=\"pb-pick-cozy-label\"><b>Cozy mode</b><small>Take your time. It&rsquo;s unlimited.</small><i>Play &#9656;</i></span>\n      </button>\n      <span class=\"pb-split\" id=\"pb-split\" aria-hidden=\"true\"><span class=\"pb-split-knob\"><svg viewBox=\"0 0 26 14\" width=\"26\" height=\"14\"><path d=\"M8 2 3 7l5 5M18 2l5 5-5 5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></span></span>\n    </div>\n\n    <div class=\"pb-status\" id=\"pb-status\" aria-hidden=\"true\">\n      <p class=\"pb-status-main\" id=\"pb-status-main\"></p>\n      <p class=\"pb-status-sub\" id=\"pb-status-sub\"></p>\n    </div>\n\n    <div class=\"pb-meter pb-dreams\" id=\"pb-dreams\" hidden>\n      <span class=\"pb-meter-num\" id=\"pb-dreams-mult\">&times;1</span>\n      <span class=\"pb-vbar\"><span class=\"pb-vfill\" id=\"pb-dreams-fill\"></span></span>\n      <span class=\"pb-meter-label\">Dreams</span>\n    </div>\n\n    <div class=\"pb-corner\">\n      <span class=\"pb-clock\" id=\"pb-clock\" hidden></span>\n      <button class=\"pb-icon\" id=\"pb-again\" type=\"button\" aria-label=\"Play again\" hidden>&#8635;</button>\n      <button class=\"pb-icon\" id=\"pb-mute\" type=\"button\" aria-label=\"Mute sound\" aria-pressed=\"false\">&#128266;</button>\n    </div>\n\n    <div class=\"pb-meter pb-power\" id=\"pb-power\">\n      <span class=\"pb-meter-label\" id=\"pb-power-label\">Power</span>\n      <span class=\"pb-bar\"><span class=\"pb-fill\" id=\"pb-power-fill\"></span></span>\n      <span class=\"pb-meter-num\" id=\"pb-power-num\">0</span>\n    </div>\n\n    <div class=\"pb-pu\" id=\"pb-pu\" hidden>\n      <button class=\"pb-orb\" id=\"pb-orb\" type=\"button\" aria-describedby=\"pb-tip\" aria-label=\"UPchieve power-up from UPdog. Click to power up.\">\n        <span class=\"pb-orb-rays\" aria-hidden=\"true\"></span>\n        <img class=\"pb-orb-img\" id=\"pb-orb-img\" alt=\"\">\n        <span class=\"pb-orb-cta\" id=\"pb-orb-cta\" aria-hidden=\"true\">Power up!</span>\n      </button>\n      <div class=\"pb-tip\" id=\"pb-tip\" role=\"tooltip\">\n        <p class=\"pb-tip-name\" id=\"pb-tip-name\">UPchieve power-up</p>\n        <p class=\"pb-tip-desc\">Unlimited tutoring for every student in every school</p>\n        <p class=\"pb-tip-price\"><span id=\"pb-tip-price\">$0</span><small>/year</small></p>\n        <button class=\"pb-textbtn\" id=\"pb-tip-invoice\" type=\"button\">See the invoice</button>\n      </div>\n    </div>\n\n    <button class=\"pb-done\" id=\"pb-done\" type=\"button\" hidden aria-label=\"Done adding schools\">\n      <svg class=\"pb-done-ring\" viewBox=\"0 0 100 100\" aria-hidden=\"true\"><circle cx=\"50\" cy=\"50\" r=\"46\" id=\"pb-done-ring\"/></svg>\n      <span class=\"pb-done-face\" id=\"pb-done-face\"><b>&#10003;</b><small>Done</small></span>\n    </button>\n\n    <div class=\"pb-pop\" id=\"pb-pop\" hidden role=\"dialog\" aria-labelledby=\"pb-pop-title\">\n      <div class=\"pb-pop-head\">\n        <p class=\"pb-pop-title\" id=\"pb-pop-title\"><span id=\"pb-pop-q\">How many students at</span> <b id=\"pb-pop-name\"></b>?</p>\n        <button class=\"pb-pop-del\" id=\"pb-pop-del\" type=\"button\" aria-label=\"Remove this school\">&times;</button>\n      </div>\n      <div class=\"pb-chips\" id=\"pb-chips\"></div>\n      <button class=\"pb-pop-copy\" id=\"pb-pop-copy\" type=\"button\">+5 more like this</button>\n      <span class=\"pb-pop-timer\" id=\"pb-pop-timer\"></span>\n      <span class=\"pb-pop-tail\" id=\"pb-pop-tail\"></span>\n    </div>\n\n    <div class=\"pb-invoice\" id=\"pb-invoice\" hidden role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"pb-inv-title\">\n      <div class=\"pb-invoice-card\">\n        <div class=\"pb-invoice-head\">\n          <h3 id=\"pb-inv-title\">Your invoice</h3>\n          <button class=\"pb-x\" id=\"pb-inv-close\" type=\"button\" aria-label=\"Close invoice\">&times;</button>\n        </div>\n        <div class=\"pb-lines\" id=\"pb-lines\"></div>\n        <button class=\"pb-addline\" id=\"pb-inv-add\" type=\"button\">+ Add a school</button>\n        <div class=\"pb-price-box\"><span>Yearly price</span><strong id=\"pb-inv-total\">$0</strong></div>\n        <p class=\"pb-inv-note\">Priced per building, not per student. Unlimited hours, $0 overage fees.</p>\n        <ul class=\"pb-includes\" aria-label=\"Includes\">\n          <li>all students</li>\n          <li>unlimited hours</li>\n          <li>in-person student presentation</li>\n          <li>teacher PD</li>\n          <li>and more!</li>\n        </ul>\n        <p class=\"pb-fine\">Can&rsquo;t afford us? Email <a href=\"mailto:partnerships@upchieve.org\">partnerships@upchieve.org</a> to join our sponsorship waitlist.</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"pb-sr\" id=\"pb-live\" aria-live=\"polite\"></div>\n</div>\n";
 (function () {
 "use strict";
 var ART = {"dog": "data:image/webp;base64,UklGRm4kAABXRUJQVlA4WAoAAAAQAAAAfgEAYQEAQUxQSKwCAAABCUdu20gSbOs2/3/xVNfiXs4R/Z8Afc7kFLSpz1/HfhrfD9rcZz+fH0XUiTpBm6BNok7QJmhTn5hxSSSqhtT5Lv4MSVnafndyWzo8mWfKjD1K5ItIylymGGXJU5kzuh4lfzBzPfIEzOxdOw9YkuTWbTj3P/T+5SkCSwCiIybAESRJbePDtcceoCyRFJ/rsqPI8jPB4qvI8h8CCxcyvonrcVRZHigwjHluUHFmbZBlR4EbzJ6ED8zOhAPM/kTyTBSmpG3BEOkyMZnSZEIjUmQCDJoa43hQWUIXxM/kIYjclknQeG0pmaIMm5oSni1DJTBbnkpEWrYuHs13RZbCF1k6XzB9tng03b4HtQ+ofTP8/91CRA58PfsIKrj4xJz8WTxctvyY/bHhwtwfPQc7NN6OB95jA9hhAJ4+FN8VJKofltEPcibwtr+gmbx+dzZoAFJOIBdS/oTc+y+jf8fI21x89sVS/q4nAZnC+CnbNiSFYoPh39B2OTOMnD5fnzmHKAegDKAGRwy7vO9MyObJZm4o175+uJYL+uUkcKEqm6FWqVdBgvLV6mA4iOWb8e80qfazbkwnpZdOOMM8qRFpFcA8MUv5b6LTx9sqME688ufu6nNJm5vPMQTFvw2NEmwYP0Z4aGmbfJr93CemHnaYYBklDIuhwX128lf24drZzonXeeYIs8cC++nS90vlh5Y5Uc90iUKMCpS6+AxncL++EBlW2UqgB0Ox+xAG91su4NnfKpSU5wmyKych7rUUfuQc+qnXgVi3eMTpJrvJYRdzdtaod+4csopIfBXHAW1TSGXFgx2I3IvpNafhYWOIuLWtJzn/EAigg2LqTHgFXcQ0F5HUMVSesa1FqcC/nQjgSZFetptM92pS8PTkUJvnak11DSFq6ZU8fmkzmcg17AJWUDggnCEAADCcAJ0BKn8BYgE+PR6MRCIhv5OaFSX4A8Sxt2XSyo9Flq9F2cAfzf8AMys3d8ifox/GMUAs1P96/AD9AP4BqoH4q/oB/ALW3y9z92/AC8XhI/Q/qB3wVWu/f4T9qf75+3XzhVd+f/0j89flR8t+07rzzmfIf0v/e/3/8t/mV/q/9n/Yvcp+ef8/7gP8S/ln+b/v3+R/3/9+///zGerXzBfzr+wf7L/C/vh8xH+P/YD3Pf47/S/8v3AP7n/l/+p2CH7p+wH/MP8h6ZH7X/CF+1n7UfA1/M/7v/1/z/+QD//+oB/+er/63/6r1TeJn6P8rOi79s+UA9B9/v2/+B4o/mJqEflP8//xn5a8DwAD9B/rP+141PED4ISgJ/PP7j6JGhD69/93uJ/r1/0uxb+zv//92AtHXqfwHGx8XplwS/iExXW7nVE647YsQFUihgWuMtAXXqI9TxaAs8dHvzZNRwoBzM8AF3F6Pc/L5GRx/8Ff3vsLn+g84Roips5p4LyZ4lEZjLx7Muh9bMfTmV8Llk6CU+QXv1uTs9QaAEnKyBTZ+JOX71Je9dTqXM2MgFAYcD+sG8ZRtPcl83Br9AygF0vJx2eBeZiij80CgKoVzwRu8ldlFaNf6m4GhsZJCzdu73iksTs1Qa9vskuWlf/LMlTi3niS/xD5c0tlfs+nKJjo6n+2RkR/bmdqDQAmTmjJCk1hFaKUvNsBgc4rQpS4nd06pdkrURdaFevy5VzboMpQ/PwXFGQyZJ7/7YPUOE6AHDnDZ5oE/dzSz2hE74f0aF+Xph6i6EcK7AeZ4BntjoxscoOfAwe7TYwD/FNuq+A7oAygFuwOOTFDtkHbS/0/b6MYckrICvnj//5GmeNz/90qhf0DKAcy/vLLsPOAbws+jWUpBXAd7hkEgasiwAhuTQKAwDfv806AEBfFs9UH4zY+Ecg8A9qh/8fL8aMVG/k429fdws53g6ule4zlppDBnzQJ+0ltgWUlEMWxw9nAxbBMu92yuT7J3UE6LiNXpH/5EXGgu9AONxSyptATLUYhAcA8mzBNDXIUsLg1kRaEH7ebwP4KQX6SAKq2MagVwFes4ZdApIJoC5iLWLOzvc0YATbBrEORcBgH+vEP0kM+UEwmPDPsy6t9Gix15rrdMSGF0Q2OFAJlUyw0rdtCbHBBU6CpZjf5k8dmg5p31uWIZrIQ1ztcK1xHzwaZhp8w2VHCgHNENpbG4QtM6ZJbsdn9pSRXySyoUMx2FNH8JKTUmjdnpzQAmblV0xBS6zFavaMbh+7w2/uOuPQ7N/bv1VRwoBzQKAvxYSdTjwd5kctcHaKho2zgjSdhcIgktACRNERBC7CVF0c+rH9YxmwqVLUZHnJ4CVzJWYmWaSXsrjWtZA9CeV63+nW6MvM/cOwPc7uVgW+ILcJHfsMY9lDlOw12oxOJ2ohv4EdZA0RTSDf6kubYQVTxFUGI5X0wIN9Fn7NIBVy521mbghRgCC32OI1cCn37BzAix9xPzh3uUj2A+GVLIMZ7L2rdOi6WNb8BnxxcYzFkBdxY9PVReP+19FHSzfrxuUX6Ngo19D3BaWAgnImUMlC56r7b6hhFLM6xkatCSy8SQy2v24+D2BBvRzF8XXL8U+mCSG1p8hhkoAZOoVgyGPTDojggloGxwoByKHGTjCsUzZO0NmgT6AAA/qdaQ//xiDUfQHYJNZ6+m3kxlYI4bNWBOmRRDvQO+cXAqZBs223EZKpfI5Mb2VuGb3vh8wkorb22g7kIpKIQP/hfuBxwaE0HaQg7ZpQBXSQz7ahwP/sOHXOXWd5TR8w/0goZ55OJXgHpdY0JCkFDBF1BfJ5ZvfA/xqbyr65ck48hRheSPlQ6uw79k0Gwx/6sRxbfiejd2AzburMqOHdT4o4M8KcZNDt8DrSaJ8bWgALqKxrsV426wOFI7dc/nNwn/rrbZEwOCkl8KjggKwBpYPcnJCvCaTben31+Z/87rUXysbfgGrCHneoG1MBF8eMWW4YgnbYbBWlYzUrXPcFC5hEWfLy7+ZbMsmWAFHp9pGbiqbyhianQoAGxuL1lBi77n1298Ks7VZSeqeqECmHbHcikLsSYeQfn3l38dWo6lyH/+gXSGUN+cATg5mP8mw1JgWPhrDaGjKHNvubDmDJ7nPzEGzIk/3OvlmRUGeC7Vyq7MMIfyWCEclIXJtzBV4SeF7K4subJVs/seeyzdbdKjE2um9oAasRTxgKIfCvD/+TjjV0pMitmUboBNgo+S4QoxwpANSsfKAhVmcrUdtz4lT+VvvRiLkTs2v4Mj+25+TrwGAULHhBVpuHhPzRuql3Gii2yzhqlNE0k9wNT0Ljw1i7R5OOeVjMISpWVvTjqkuTJ636AAAAxmY9CSgAMfK9MOzOcUSD1gQVcw0yG7xLalraMqxrgsji1Kl46r8ePMXiwbl9nGUDI2jVwvwjSVpkG45mX1A7KxHO5JP4kNV4QW9TcEpceudXrzgn8HyobcwHhbojLyth6y5+sA/BEY03rS8RcAt4tD+VedN7EBmsMXpOXg5nYz/tyqtoyp4WcWxJWB26ijTjM0VSrrRkP1YZBni6fJBCC5BWcaqrcjx8HorONGaOt8d7KX6UJRg45gLYrQqe+m+EbkzBpZjdbpvZIQBPJaqlHMvvgVelvT6DwdQkylobGUbfPm7AxM3HsQJ/TyYJGhiyRaZW532jyqPMbDutxohP/piIPc2vd456+V6vrR+wYPqq+HZjZ7WO+p/+tjM+f8Unurojvz4okLWhLZMpOvolfs2aCr0RZ3uT6jL2k2+XrKh1vzxhFMhlkrB4AGuN08DQzFlR7v/pOIov5FrsnVYuwfvYQNjEFOaAjpYkB1k/CO+ZpWbYspOFIXERq1Qx1KnhNHY+GBLO1rwd2BKD5bBOoqGNRmLHXz3fRtdSHtQOgrUvdusb6nThQAsdlsLKG5AAGPaMCMv/XmNMxNpjEjP6+OnO87ZylQ0iOiG+YbHw59fdZ/ummpsJOLD/2SopPlQU6pg+0dtvAYYAs46gn2DXVSI85zqw5DRd2aeXMP4modv527AWBDQfQiExCxS465jl+SmIHNM4a/mPzX8KB3XEii6u3qnGWdzZnc8h0X01LjgIWYM/pJoMdOsqyuYiljlxnQmWZKrhqgLSv4lK2HLJFevyRMcQltNwWD8BMfzZSjIFKAADCrudzPcs2URwP5aCxnyaAygChCypIFk1dg12z/l4SNh7WSYwnP2WRIVKG5FjhYWdgXL+W50JBtTJ/ZLoPP29iZst316S/P5BH0eTFz+05ssDiiWX1D3+iFovCAapmVD/7RFWZsD0KtXO0DH/c0ntISXpRZA6SYyYc7qQkbU5mDyiJh/WahlDNhvta17t3B7PMfl1AoR0UwRd6vz5s2lGxbi+Jq6NDFb7DFxk09Wg1IsW40qxde/IrFkz+uE8f1xHYzDeWtcbRD/F6/i2UaEfu2/6bJG3tYkGgE1938zhUL1lXje1B7eUmYDgJnINqr73IzgJ5fvvq497SCoK4Jo/Sari9xVn9+r7MP7e5WOoQD5vwoKTJrVT7hLVrk6/HGfHZV5P4LHRos1R4IrcPqa7XA1lM6WlyTa/W7X+rqeIQ26FuXFIoMdpb/ZGdCQ+hJXx/9w903SJYhpw8O+bpoMTbem+UFbBsIe3aWdcRXIeygsMMT10Xojga1xYiaEC9wNmiSuq543nZKJm5Soikhu+MB9ThWeVnUQGQx1t3WyV/yX+ovakP4KkCR1UIhzelB0K/JlS59kXv9p8rg2EMt/KDYctnvvfpvmLUdz4anJoC73B3i2IF/kCEPMSiiThq9yREWHAAcXHV8qV97Y3qSP+OQ6GaWd0hAxBWbkbo3un9fxdfqpZln13lu+gC1/rmsvw2RulNydLxdBtV04GXOrnCWj74oYPgXr5qpD12/NGYZZvNefHDzO92rhvuQHvsurRwd6qvQv3SJTtpk5xNMxtt+OJkCiC5U7XBPaSSvs4g4E1sEKzK+zGv5VT4IxjYtXy+Ul24Y33wbRNYAL/rAqtpUcdgLnjvY2jZx0WeL4ESyvaxEBuhu88DsDptZIcTQxJelPvpXWVtgvo/F3X/51Gmg5n8CWi64Tqjc80mm/KKtOwU448WKGcAD+kFcHMHHuO74DyxOnQTicxyFpGtqXRYVDlXWVPdbJr3oTfI4nS/HdX5GyVLvHhwlU0AL7HIOeLOhgC/fHIPy7/8Sx8p6mskUjKPiXlOZBCiuGV6WVlVU8GUg/YyML1AedIsDHqLyyyFgcGf202Ld13zNuyoP0dpYl8EGRn8Z5aaA3flehkqkwtTiEUkdG9w0FBug/5M9tkoYkLyxG6mjXj3/CymAftNMzVyWmk2iEMnvdXAWoSY6/IZ/upQjTpkwpnvADdpulgGt7H+vUSA8HV9ZdiR20FZ0ndiO+Euy1DzMVd6BqoSZjdmfEWcCtP9sKcocrI/6N+5nsIWGP33RVtAmD03yR5j40pFzz8LsDqqrgOdgVEGFLjooDo84sJkGuRDI48zHjHZZJ3neCpFX04BSTHKpbu+CZUm5e8MmgVDydG932xpceaczHuU/mqJ6kDiGQYQIHQLTwkqa1U1XSeJWeRKJ/XmfTsbsbnskporLmE+65voM4hJteTgDFTVNFn8xYqUERiwr28h1TIAgx7JrZzdq9tGZ7vK3U/urTZPy69EtfU6vFprLbxAZamznc5q56BhEc2usSZ6vSNEMjBsprBbJawdcootCB8Hmu/R9aaAXtn+yQtHsScTvxxqxUjhtvJ6HHIGJ2YpliDHK8oI/2CjCeF43CU7+Qjr0+OgcqkIChTV7OdV0u1mFChySpfoha2Ks+elpvH2iX1IgmJcZ/d+92LpvfcD/OYAzzLgHHeWyNC8tk6kBDvUsihQWGmgUURh+SnK/FtNY4dqCY3ZGHidsHaA5HDUavNTwDSRhRCBMHjxm9vD9Gj6mY/5Keu4BoP1ISrip4bFXp39wmu4+92fDrV6nQcSmJKueKfrT/9IgwbuGEI409vyLhRoDytWfnHj0LqSRO8tiQD5mQvkSrT/ozRT75zMgvGSUSH5V5325PnUjgNtwbr/JYirm4fbEAnrHB5+nXiI7UQGcSAYoBYVp3w09bvDabS4fHvvznxqCZ1+YkpdOZkjrfmF872GIWvBbwyKZBFsEKYlZ7nqfao9ZGGV25tWL7toeTvIUnxPFl3iaLL3t3acn1Nge87Kev9KTOqQueDIn5E8L8gOK+GPKCFoIUSkDPxOeNSIAItC6TX/TnC89KyH+sgoiIkYMJNgPkBaOLYEq39hNAHHkI11vg6cnBy+iABBeL6O/9RbAGVNUobmNAi+V8us0sw2OUQQ4VJk/M0dgp78VfDESybn4UuxA/0xP+jNvL9NoUkiUBL+rzDHpXNXOXnbn9G7TNH5zbaZAenEou3LVlgp+YztgVMprEpPjDRVrwbnmrZYzST1SF+FRruYmuMznpVE5z5js+xG0SZLMAYlCosfLScWGoj25gNoJE6vpwQoGpDHlys2Rdr+qJ4I1nzfHO8XjEk53oCrACPzbaJDB9anGw6HjtIEUlt8L1YczZvIqXxa1QCpeOTxFjqsfa/DzOhTT5WqyqKhDVpFmJ7ysBHbu4njeUzi2jyf74ec5DQAAMqhPhYHZqaHjVgtR/Iv1hv9vRYWVMFShsm4qVpMFXDSlGiGubhG1M8KB33zCJi2yKkg8tm2Zng3zl/v1jdaIxonveZ4/0PrY9RXO0dWwv291gnGg8UOCO9v84Uw1cs9Tq6vUtnk67BcfB1CdITGYr82xcaOI2GIF6SVIudw3pB9uSnF0dvg5E5+QzjuvyA7frzRV6G1j9BTfdn3+TqCOcPEAa1jEu2nXEvEYFGGEfJV8/+sLu37rluBd7psnl0K14wbD4AWdSgY5oK+dDDT19XrlAt9xD4lav7NcY/9759f2z41JGN9NOYr+VcjE6PmhE01SZeny6sTnsYGm4zEBH2hcV0zJQ3JzJIx4xd8bXSyO8ictYJzowzjvcUfS+3TYj5YwfcGLnAh+ul1h7S30aoiwXeq76x3DxPnJD+KcVQJug0M/KqbiD2nh1kzy3rAqoPiXjiOkWAuAZIXXr4IB/dCcbxx+hQeCe8f/vJHCLI71kCpBQalYc+Ta/B7pE8Tch5y0QI6tp4/UpMXEcs5Rib+1WQaJSTM6XSb9bb3mxK8df99tWU5sK94D/l8NoHIx86Wy088yOOLuvKrl8zdsyXYQHyUqsgGIAp++3Hz1eXKEGIcWCVKcwhO8C8CobXwkTuBtu5gTjaszpqetzStHJbCa2Tx2+YCdrYw4JlQJsKKYO2Q7GT4Kf+miPaK2xhvj3OJBMmHSevRoApMYs2W7Eb3n/iZP6977QWlIYLLOfKOX4FB4QRb2rDGuzpNyuezjmO/WaXVcpq8GRrvUeAXRM7AJH/CiOE43cOCF/Oya+kMd4h4379Ty5VuSKh7hIYY1VKQj4LNl4jK9zy5ZSO3BSSZWlzQxykDm8ea7+ln2eRB1Js2HTHJmh/Dabtr2229T6ElVsD72K6Gg1FKNXYH14CNaUkl2kOqL1vl5ujrHtJ6mhTJe9bs+180EgSRUgOZKoQStxN749+T9CAjFL/77hQ1fLQcBIwuankzgTHOkWxWAM9fPUCbFT6ajACUd84Li1ebcDJf3MuzHZwVeTGp8n7oA976+K9fL1EPllDCIObhFk6bwlQJsGLDJ497KrerpXbbzUo+zMk7cY9blOxSbzj1cfiD5QIi5FTJXHCDstOwgzJHeYH4ngpOP5AnXWJQ3zIaZ8d6yvo8RsGXv9uzYUADo2UrKjaHz9oAG/1k9yqM3UdjANevHZ6OtlPjP88OdEe2xXmBzKwUWtWUiPp2IKwoPD/5C7P6b/lpLmFfX5UMtFw1AyIKn0UtZooHEORM8ad4aonfmJBDEQYvWITX2rRDiR9E1Zu7xjLijjJkwn5PodBR5Gg3HSGIp5ew3Xxg1Tn7TwT2CERLlqlfZ+ZcHSOqI2wtf+3ZXhFfCBvc4LqyeNgSdbVm4FMuOBPGk+4SQ5Bc/XeabxBIN5HzpvgJGnHqRMQmS4Z5FolCIga5E03mJdXSyAE59mqWYV9xw01rYTxodoW45+oLIqwlAJWzM5Mq32r5pWN24/zVd0bU59oHd4fsf7eOMx8NgUUhOT3oUntuBAD3P+P0RixITkJkBEE2cB8BYxrENc4xLYmRsfWkdjbVdCXivbbEG8OowWp/CV8EG7dq4DvRrUA7MNpZku/4UFsqQvbduCfGQd61uUrUZJlFC5Qd45S7Gpy6ySBZ4A/o7SKtfkmjZtj1SyPa24EqKhqEGBvWFG/TUv7in/8hCk/CwxT2ot9LeEbY7t9Q2CGotkljrgT6OYlXLuSSLexgtFa0rbM7RgDrOc7Z/9Fnc6Hx1Oi8jZQjNMTql/0i6FCAs5zywTbFmdI7slmm0Mhh4aBGKS706gZo2biA3a+Jj1T+oig8CI4pdLM9IuEI0hYAAACXv6m3tsJoCvgL6uvsO/syF14cRTJ9gkV2muH5Hx38ZGkZDLDMt8I/itR1wdYKDVtuvW+xqhzWxsDeRG3fEuOwY+YhzZNygPkkPA9C6VU3/9OfeO0bNosAtEFT7rmZffxsOp2vbi8+SND3bPgLR9WARxvIEgCGlAYX9a2jGQhg8KwhJTeUM/mQq2d5Xu6InrlTq+5e9j24WXJv+reYAAivyi4mSTiaWMPAh+od/NzSg+qZmz9bEz/BybzOQu0nKsH6n7KgkUuyivhyP6jrnQ+JY2PficuwMe41x8C6Y6I7oO2J7lK0zCuOwH96/97X6I+9fl1avp1B1M3bwbez4RN238Q0CiNNw2KiUCpGoOQU+hXl4lo4QGdk0l4eDfrWej9p0+JJnxPNQq0EYnu6fwyXnCWGNMkLNtnqwgdBLT7+Ix69rmS5y73gE+tK8pXpLSPcthDPH+87OVcY2V2v9EFdmQN4I0smIxlJgS6yBu6S9O1T5t2v/+QPCFLiUGRRdkMD4LBh2Ttz2qc2XLPbrKkiIIWZIHDqIh3qb0XjEzl3+LujgAAQrX05VSCDbVgrlTczn3YTMnu8bTuleUHEZJKDHffQWLePYT8Pf/1vv+RTbaInDRxUUnVNBARoKLh+h2+9CBx2aX4WMVztt+JoBbk5IiMKX+lAJDcFJJ5TbhlO4BdLuXA2QLC2ReEuuyzsFqkzk26x0TN/1xCK0F8ayplQqXVPz/prneUr5UT4YLuPJzW1rmZ2negKmgfIeUa/eW9vm50g0D5hC3tQXx/98bnrOk+FGGwvqcPZRixfB3Flf7BzYPG4RG9JRnxwIB92PaGcpX8S/VbyPENmTvF5coO/1VfDs2FPtmLbSYtSDAHEgikevi5FDwCQK2TH+1WUMut+GUrTdP3dbIRPr6tNWbMB1rb09oN5PNh/Epez4Ls4d7D9+JwyUU2nn6GiqBqmwvzpeFaiDnOrwvJqjvojkRaXbA693wAUzWPGmukGh9Qgz9/BpTrTx5/KUQZuDJpBBFnRMuSAHVF4W5U8q+1llNMFleIFHdPE6u4611YWBJzpqMJXgnINuh/uAWDoXZgsgg8SupA459AzRV7UUwrzx6AP5mmmSGc1h/1r09yE0FXoizvWqBEigFJtjaJ+QLKxCAfGMBaEuRGjIO7UfsYRzTgp/27R4KUS7zC5eL9fM5ca2NnqEClGsk+n8puH80W9WKX/R2tm/JO9DZtUI/9q7531VlWMcFT4AAAAAMNg050kBVM9vVllkBj1AogT4GzK938DPx+YLGVeEfnNsUJy0uNdomGkOJv9hkD8w+fSdLvO4CRlCXEmj4uf/yA4tcgnpeZ/IGzrWGZQ2Ik40bFLFGSSM32oRrCidjI2X7uSf+UY/b5dRM8TrETodL8bTPqSxR9GfuhEfOgEiQr3AZAAGgx3Q3EweSH8pt8kWY43qvL1gRP9CW3wKCtvZjMfJzq7hNgBrYwABEhF9e8LPlmFUXCRvOn3XJ+MienvbR9AUkN+0WcofekVO76vtZcDi7Uf+PPGy7vpdXwMiNP53qFl5qAkmrYyUCjlNxf4z+7dnuIIqDMpI5hGwrq8hCJo3Hn21dBQOn+kLcE0NMHomth7nXnvfvBiOlbndkntiCTEfhFB2MqpuKAt68kBwczCec/4fpBCXP1xWsYweBSmlkB4Ciw0SkgrzjovX0ULwTnB2iBLfbI+VyfnNttkvK3BcH9yySddszdvbkrEyOH2Hr8PVjFjqdHuKjGBZW1hNe0LDaXj8gCELG1sdaUbANdNC7+NFlnSEi5JFXBbDK9fj5pdtNMRANtPnvhh3SqVaYEFeOO/nzqIzOfdvOLGYWuZy+F9EdrSHmRYz64dqEZacwWLcKaKmoN6V1A/88aZGc78FmXGza9npgfKKlek2FyR3ylUJTehXum+/J+NOoRBCKD0PXaXVEy1bcqH9/HKnXX/04jQrcR5J4NtIqHy9jCQ0gYxhjV6bkqnLoDwqBiTyvsIANUMLRs2vMNTBdD4wcE/kEyKqACHaEm03HU7gJ31qIe21PABrEoXxL3+ElrcV6SJxLs+xJ9g8p0vHq0+zBpJ5vA61j0RlN0ZxL0URtyrbeuYFgrsCR4fUXodlgx5psb49wBDzBeJ2aIa8zn8KYfmK0rRf3Zl4XdjFgWYNZyiFty4nOxqNI+rwvsnz5EgPrCe9rP3R7J7vHcr7uq3Csw6ZRxbLqgwYrDE1zmHu9Nky+25nbIKvrWFWRIvVLyMWnMzDam/hhoj4VSf+l6HAhHbSBhQpprD6cIl36rXNMPOq+fK9OAoS7uqpBFxFE6IXbDGUXVoJB5c77A5qLrmfkBLAYKi5R6h9VfID8rUyAZ3DKSphBOS4HVb54UOh4ShKVp4fJ0Z99ZFgdp3vopOEv0Qigaf/8iA2//g4sWYmjIjPDdGtkJIQgkCae4t5D47tJmSziDmsnGWdMhzWqQpQJw4q5eJEaSBbHnA1smxY5new308TLCdRD4b0MMtYEw+BVmtROBqXVjN9IDttxTOoMHjOQkwmW0Drhy0qx/9uInKY1FGRL7EgXh/FpF6ffxhNdwoQonZaonpOigi4CL0WBF0YluTFJahUtFGhfjys66PkPuhQjNHktATEshUOAMiOXyMedspDR7YOyDctjsSSyq0sHWJHe7cuGVtYfd78Qe2agXN+/7N/8LUkTiqbKS2TIX62f943yUJU29+KvoGlefbOJ7hMj7QYMwoIEKXqbh22cnxRbepaXuz9zUkU9QiLHUXLql2muAojPBubutZnNufu2qtCnAopITxb5Cf0TQDJ7HgzNAHASxdtXfno/3APyzpeCfD00TOAFv6bqVJwNp7TC2J5EOv2hJDylA3cvM4rIEw3SxNRyYSsTMXdEClVbgLb95DFzn+r9oTtoa0tEpATyl5j3DIrfAhpJI0MKyrEhDmkgWrGHeiQumSjms/JDtM0FRXgRBnv2PDZYev+ibeOlY/FSf9Csd0J7XecG4BfzBb6Cu3HwCXmQlpAcOiwZ2eDCsiQB3PVFM9qhPjHDQgchUXauSF3+QRqEAA+AvilajWIRAVdZyoa0fts8Xs3ClswHoKBeRhOaekBwhRmPCFUWklcR+5Z/FEw1zWh1MsIOLvisRPOkU6SSYQ1leavrpiUBDQlcw1HBNkePBxYgrUy+HjkBfNF2cJwKST2IA6YA/b/qyiNMUjxRI9+No59LI312PIeb9VIcVyEtPAR50IBzKGIogboCBmjljiOmtMWcj0/Bzmt6cYT+oi/kf8IAt1fuocf5qnZYsgffW4QLDqkhf2z/X7OTDQFYbqjTkGtMd9zQ87f6tZk18kIdYJ/9l9f2QacaOwPkg+k/VKACGRd8/mAL8r8sAJ6OcWQBZdKObS/hudroLI1wTn433t8pmw0UbO5Nqg5f4wjmeIur3iZGzBppaASqcwRZZZsU/rkHSAFByRWuSMsaZuOuln1NggQ2Cvk1P8kkzTZLn7niQVrh1mdW8tO2CzwLV7DSHNE45ToxMcRL8XYoQUtPvb1qkgVy/RpN6p5TsVR8Lk5AkST1SyC3JqLFYqtXnTE5IOHpmYNWK269xrUxwV0qVSa+6TcK+wIsgO3L0TjeDim2B6d5libh0Ur7OEUMsWGx39GnRFZwUUMfr/HJrV4nQkz0+3e6vfVCkL7De0RyHpH/jHDdSPnWrGPqZUFle2tGfcUhNmX43LN+PQrbnVPDyYUD6csrFu7RfONwqKXc8KWmUwnpJneaCzeZppZFq6LRzgsSIZzd87oNh6YyOSn8XVZGi3RTp9Kwg3qKXywC/gsyFlfg812tcgcyS46ikVHLxBJNagLYrO4kPA3///aYl3uC3mXctZRIMWaKsJDVSilQCrEY2eg6UZU7Zl1DzFWJnx9leNSEX6LdZo/vwOvBaIT6COAIwNDpSz7UMv6aps2OznFn/ZFLg+2MAAAAAAAA==", "glasses": "data:image/webp;base64,UklGRgQEAABXRUJQVlA4WAoAAAAQAAAA5QAAKAAAQUxQSDcAAAABUNi2kZL9l36meyYpIiZAzSqpX4dTGLm7C28zSG8G0u+l/PdSuB6KV0K7/0vMUlAO0sXQzZ8RAFZQOCCmAwAAsBsAnQEq5gApAD41GIhDIiIhHBwEXCADRLSEOAAVQh/Xu0H/E8lIfPfVPLv+n7oj+u/k9tgkE3+L/KDVMf7vyEvhXqG/y7+8flL/jPfU/k/y0/yvvL+Wv9H7h/8i/mf+T/tn7ycaB+3Ys2vgOJmqAcrmluSw7CvTvzxvC5PgTS4aZ6Re/QrKMw/zHKNDQmR9K0YW6+xZxjL90sAUSwh40Y23muGAVJ+BYIaYRuAe3fD4RZgFtyZK5Grm31uKxQRbuvB4LF1bZGLBAz2eO3FEVMN1XO7/gdOFxXCUZ+D1N8aCdjCS1IAA/vOSX6iOqekGrCzvGv8bc+BjJ6qGy0g0vzRhAIdWLHaH11O5KaCLvuf/r4ofnegW0udGYkpdsLP/aY3lDvkbgpoEbncVqnmN9UuJZbUiS5JV/8vPdw5XxkZFRAl4nciksAL+PsOHYhxw3wILvxz8+FQQZ/+hgJ45w8xAk7Ox/6r1Kxc1/02emBw7l2f3+MAVxZJyla8zhwtI3FPsFXzTagBuYzzdQaNg2VuUMv5rtH00UL0yJUhUiPjOL5Fyv3+6fVbFJ7w2CoDjoSJ7izWJnN+0c1BTgw2LV/8xWWPlR8P7XObaCQa6EG/sqjf3eDlUkjBDuB363QVPqfccS5ne242XS8G2BnSr+uEH/04a6Vf6mOeT/E0fdeamwEHL7+anl9RVK0GhqFHq8WZMji8v+3+3k/8lW7fxhz/me76Cc1H2DfiLtKlb5F3z1/zoa0EplaZo4t8B3aFAHbdI1wzeA08PC2wa7FrLmf8dMU6AGUnfxUreBazkK09I8SQoqDgecLOamaEOjq9/VquQfxY6Gpua3SDUdLDFHN9b8+sFvgGBdvW1Ljoz0bqzCm5jkEvNPj8n2y17aLOpVTB0DxvvYfbW1iA+OzJ9ylpDGfkvMSD4owfZTR//HYYmfkIWgNFS35Nb4L7d7ZxBA3QRYUjo76ELBNvTgenMQfpfmdfT5jynsqnlAAepcob+SRXWVYxCkvHMAP7dfb8SvURypWY+4PPFaxzRiIfgY2JgmQirrb0eOm70ugcUt0XNPf2uMrQSh5qFta2IJnKwyB1QR4jHeZsJ7Ff+SAt3m7setAy6Un74YFDJRRsjEbRN67VzQEgqCL9++QjLiGDgwT10B3+ms/eT//ia77dEc/dDMd/uZwTi6egf05koyzp6JK/XOpuXP0gm/2pCr75ye6ITlsQ3yVtv0zLxzLY/5nOAAAAAAA==", "rocket": "data:image/webp;base64,UklGRqoyAABXRUJQVlA4WAoAAAAQAAAABwIAowEAQUxQSPECAAABEcdt2wgSYt1v+q94dm3ntoGI/k/AfF8lWHP1PQhgCQp4NPBoYPHqYVHBOhWCaQa3Epl/dAIIYFISIm5P0vWbOReZXkYPrFEgYI0GBpr+2dNDHY7ctpGk+P+PNjDHtTq2k4qYAEiMJMdtvCZmuRyuAfMmJeV41tJRofJGgdLfetf0JCofFuhk3t6/qXyRQPO4X/USQJoM/Jb09rsTWObBOLQV8FdDjcqA0kAFjLmgweNmqFOEYAW75aIiUgG/5UqCuBBoQRAnueYCFTDyQAN/Mf4uqoCRBxr4ivG3UQWMPNDAT9a/j25iHACtxDgD+sh6DHQR4yBoIetZUAYMGQRQgVUHGnjnQySAJAOGuAOZxiqChkUqYDyhptW7kskEf2SHjqf933shBXQ8jshLyj+VUEFhiMUaa60yNTpdSr7+mUpOCo0EWjkpzSUB0mCw3g2WqRR4NK+00cBrX1lJmnzHWU+qhKKO5heZCj5oJNDKDYi2Vfq4/tNKmQk+blc0mHFbl/crGmQbbZYKDLitSwP5TzaagXwEG42yIJAKyowCaD6n6D58LGAcxMcCxkF8ziGUQrK48J9kkU6yYJMmJmraf4MOXta4wX4U4qWRvSV6vv6zr2JsmHy/rssStXFFAqhpTfeXAmkesIAV+DuyBiY4rdyUrwIGE/iYjt4GohXKdJQo8ABTkTQYEax3xxS8RAh9/yuJuo8FRHGHBimh/Knxq8M/osDjQNnR4dEb/nuRU7P3jzWCIoTWVv9GxCEPHtEJvWDOpCc3k1xWR9Rg6ELpT4WVEom+swKXTgkotP/FVZE2ZEGb4hQX7EJZu2kh9XWqVbpMkiw7avF0XxLkZnocsEUbyF4HWhQHedKgvVDG3VkGU+E3T4lPm7JbBiQoadnpI8HcnYpoqidAXzFy76dWapx0ULImQyINtG3Saw9PibWtkrmb7bd7ga/dW4COXcTefg2KAjTo4yXR8MHJBKjgwniRaUlg2QbSwN15oXH1rgAAVlA4IJIvAAAwzwCdASoIAqQBPj0ejESiIaETWSzEIAPEsbd+NincFr8Afyj8E/wfz1HfXwB+in8UxQDSGsJ/kn4AfoB/APJm+gD+AdIB/L/wA/QD+AWujlp/5L+AH6AfwC+TeL8F/pe4c2F3b/CftH/Zvf0rj9g/tX55/v/7g/J7w56e9Azx39H/3397/Kr4gf632KfrH/ge4F/Bf5V/tv8B/m/2r7oPmB/qX+n/bT3vf8B+4HuZ/wf+3/ab+7fID/Wf99/9uwI9AP+j/8j02v3Z/93yd/03/Z/uD/0/kZ/ZL/8+wB/+vUA/8nV/9TP7P+RH67fzH2JfpX95/MH19/Dfrv7r+XHLVeW+236n/Gfun/gv3U9rjwR/IPEC/D/5D/ifyx/vX7rfUI/DcBe9P2f/bcd3iAfrxxFPqXsAfp//uezB/Sf/H/P+dn81/z/7X/AV/PP7N/yv7/+UPzn///3YftD///dL/cP//kw1ebveTT682rzd7yYm06rG9dMXhOZ6QwTQ6heTm1gkt96ZY273k0+vNq83e8mntvR+Z3llhQov/56Ud/lHwVwyc/PE/dRLw2dSR/RDEclogNEdnjAN/Xm1ebveTS28/O+WAgLuOh/dSCfyzT/29L53XAhrX7+twJZ49spsINq83e8mn15tV9/2dv9EHjv/xJtuvB7bfgRj+3TuF5huG+P/mX1gpGAb+vNq83eSd3va83/CSe123eEgxEDuApVInI56ahZBIer4ailah0G1ebveTCCv0CLmwR7Fa22bLombYtEDlOGLHJWZJxrrVA8r4dRxq+cD6XlXpmZtXm73kwdb1qPpeAdYQC5RSMZGBBEhnVGM9eJsjqItfGoc+f926HJZIiqMnq0kohhnXjBRSV++ZviPNpz9NWiLbeyoZmbV5u946YlkUDsBy9yyokPpY1IIpbVIGWfgqdzu8p06oqTEvx2wzF8BVkSndTvALFg9jIroUumGRxbzu9Cy3f3k0+vNqv5kDZnFCVF7gk5O3co9UpZlEdM8r5vQtYl+9tOKc6J7LQeOR0dxdXFkgo66gdm3R8oDfF+bivk6HMZzDgux1t7fHeTT682e6usSKWF17tfGLtUEuPBMcskMxoBLne12cUb0T6HKhM8G2Rb94fEUohBFDPLleAnIFxc5nBgrMmxhNuCyZpq83e8dMSyUh6A8Gzf0XV1JcSpwz9equD/udd+G9ID8qS2uoGoqga9MVTS/RsmcOxAhdJMe9WzI39lClCbFZ0JBtV/MgfLO/zI2jCou2YyVBWBjQBJ/PAiLtKQMksOOtLR5HbCZalnuk4jdpMM5T8T8w7OMjDwIvleXP9U1aqVGgpGAbvg/ZgG/q8j9dW+14CtT4dOmqvS22G2YscdSepuc4WoTe3MrPSHqmOt3YRcYBv682gTs3bulYkm+bazc98oiO17QCIksygRdg0vrouW7zkqvHie1/2IJCNlEzFMA39ebQYE3In/0g3h2AGBqgDLIV3Cuy97x0Xs2vPodL8OoMIMA2RoKRgG/rzaBQmPRBj+lcyTLJzpQXGNV5I/vt5945V+m0qcnsEwbV5u95NPbSlVzaN8BblIcJtVZ7Qo+DpIhRykDSP2FCs3TkVmmai9rk6ICiGrzd7yae6oU8268z//1MXgwAgWo+f5WlkgJXMlvSAKDBFlv2h5Z0EO4YtIGtYTwOC1CfVC0NLBtXm73k0vh7h/HJU982mdnqdCDJpfjH9uznkCtcthrwZg5DkDM3u6ZVuP/sh93S1+eESO0sryXvWwFhSMA39ebV4UNQJmAkViIHiHiQF5LDQWiDefp2LB7DOJFf/7dtZFcwSqn7QuKu582rzd7yafV2bsmx6zzYpeXB9fzrQga26qCjGQPc71c3ODkdqz7lvISI63KzoSDavN3ukTS+e5aCNKFUg0n0PfwDThoZhPINGAfU8czhpjSUwQsyaRoKRgG/rzZ4LSecU9XS9tduI+0nH2nr/54NpaAYJTwsWXlGU+n3D0E+HRUPR/sr4IbveTT682rzdRsbicuGaCdFDSIk1MT0SdBdmoDiySm6lFSA7aW8fNq83e8mn15s+kQCtkdRF7VZlRW8of44Bjf0gnP/ErBNxz9jNdvdebolsuUiqtD73k0+vNq83e6PViRZNHkbTYq1tSqMHam4Fgb1OVwuWyjUSmurTNJNI0FIwDf15tXm73Um5P0cWBlM83uGNXm73k0+vNq8zQAAP6fJQAAIqqn90Ugf6gxghZTV/Ab/gHkW57yw/sh0QJZaREgH1gg7fOc097ayxKY3C1jq309vSJvwuubc7o0jxavB6q2RVvZpMoA/fjzuDPDwUb0MLe7qseMSVpyJ4kGFec/uieofivM0zV+h/bGgLbk+a98YX2AlndJ5IwrnphYZVL3fU2a15NUowVcBww+TqSxyw+Cjc9LKQCt6dBgQ5UOkjlaS+EZZ9FPW3xvJggAJMjaviCQWZqvx3APOlOq5uftlakr2jnd2283L7Y1xReLMaAAAGP/JORX+ScWBGMz87jwFcTvqVWV5PGvUD08hLeBaI7wzKPdXufGXEcJYD0lE9IjZgvSHuw+56FCPCLeqbJM+yA2zjZ/hlqlURJ9DC+G4N/1nAZ/0pTUuogzAticPVI7Zd+TMCMcteZVofpfVms9OlyKz3AyXeC0kr2FeGyuRkjZv+aIv2uSDRWL6oHzv3/k5FrvuctrfmR0O/zMI2rSnrFz2sRwTT61Jx1JNaSgr44CGFI8GxAnSGbndxBGvrAPJyF5o+leE0t+zIwJfDKILXtu9JeXg+gMp9rbOUs/34mdSjsOogGQNr4wSBSEz6or+kI9b8aMhA0M6n8FcxmEQ2wnYbian/JmMEzagTekEj66UZofmgCQ6bH/Qdf0wzJTwy1AAD1/knIr/JOKVT+t4MUk9x9pv0AYV/AbllinscLXfj4KYzBbZ5XTJf/wX2dmNa32KMSRyS17Lm9cy4dyVFgJpIuF9BT7NrOTdEPgVDIpoFy4Umm97zNh/tfk0XmUi/vtgKv3ycq5pjQ9/SQ/WFsRtCccPPHNZHbd73rV4OapUQXh2XOgPo06AFEzL5o0Vx/mU8MGuq9LtUEo0eNzsrhDdJFvtx0s76OwOuKfE7O25O5kgoj6HXPghBAjONZZ6jJZCABI6cgsOyNJqI8hJkrqHcCnz9eD1O4vYa0Art3UNM1/InulfDXvAughqbnUsAqqIdIurUpeXvv9s9w8wtGzxCJmzeCbQAuCkXdmse/jc31cAACC/yTlv/JOJkjc91FNd7rN7YhJILDqR32hIu/kt0dRybFo6e6DVAyAl0GaR1WMC9pvOUqdkMWybsp28kaEerES2olb/XJbPbDVW2w5GPln7Qu49SSKTBXHFv5Ocx/k1GtBX1oHtrtgoM9PQrwg076dq6Va9j1ZHeS1iQC2gGlsLRwN9pRSEl+faVGB+LUuN9H22bFM5WAAEXcZ3pHp5VsNmWU0jzOAhdF3tNm9CsbjwFu21gMnDHnjyq9zF6qTvxwBNMI/uv96yRD8YY57H8oC4EbVjCnBbymCuGzq7R7sR+i4Cq6sfG3FC9bkw0vic81A76lBaeZDyopnxSy8N5ofP+VGTd6Gf5MqAAAEV/knIr/JOByI1qZL0CVRctqOHGHW2Qm8YfcuZDZLrP881RRxKZ+lZbBfoxX5SvNOtOed3gPle5esp1i/hspubVu5V2w830UwINdmsZERIrQQ7Giz6snJDumLIKjlwgAmDjPYZUph4iqQ3xQBRdEE/ccvrB3uxt4kdHi7a3z0rYzXUODXvBOp6RqfOmF49pXngBW+I9zLk5uvRiBAkpnhiaeOdYT7PSZqEGBH7YKbBENC7naKQsgAi1k/yagW3UQTtd1mPcbR2vbyCogVcz2hC2Scxec8uvhcis7dQXuTH5QlVpRyrj1m/kI67DacUvgXGzjgR/+TKghBcACh/knCc/knFgRjM/NeXa9jhZYuxhV8MY9m2TO7mLo8LIBit4Fx/TsHbYMtLgx9bx+zy4yzsAiusotEpzhjUeqvoAyn0kTdqhRZlztwdIhm8UqUosGr3veqgxxii1Zalp9gsflSL5ZQM6GRCsD2uCcNABhpYkxAy27ed7Q1c23y1ql2KGbp2sOb0Sgn/4+sAaqig5w6BVe7EodYN4LzoSlxm1Up77fqxh4wwm/ctK9cVlhupizoDWCKWOeqJais/a+EN9jVsYL7TgsMO/+qYzc3LXY9bSW6GBms7mBOUs6MmoJqHLTMW+Z+NIhvl/u5gvSVOGPPHw2vBQ5e4gCbhng+af+O3sRldIq4yzqD+/MmP92Hzke9Wq9jDznQs75Mc+NsusPLsYukBXisQkqX92RcSAO/kSPgUJPadA0dK4kZfeYap8lLIS9vlcZD3bUkLwmx4yydU+iAKgAFj/JORX+ScFlkzWZ1ZPFFtvQYLOH4i/JN5CYJzUf5Y8egJ16PdRMet4c6dSyV0eaQk183nIaWsTGSLeUgKaUFPDCOBwMz8YthNDluXkXNKGaoOWrD88mV11Lvo/v2aDgbjiQ+axBqtDoCbwDD6jOqUlW13FhR7PFl3/DmLUvzf6ppIeEX0MqtjsKYsxcx5xDsA/iPvAVBtZdtS1XyjyAm+wGG+MS18Oa/2GbOhvwuP2h63j4VyYUOt5nu6i9F2rb92Fn86+uVdXGhhJXbsKdlQaW7ru5fEJojQofWlRpt4GBzrdKZQDbUcw2QvJ8lAbVYhRHtmd9l7Jv15xjD/CJGL5iC4DA36ctoVdlkBrNyEw0U7yN2/guM3G/pPYBditEDUI3LBui9j8fK/IU2cZqSCXeR633B7dkdNe4un37ZDI+bbEhMO6Oi+x3srf2aIR1624Ylsy0m/gAUVICMCEFAJmrJC0P449PrmVBMSE+zkja0SVtBfeFR3O18JRsyI1CPHgi/8h98TqdHeoHJIVJLUbV9eGZR6Z3Jnoa27MDe5WjutOFfBg7GszFs+ooSfijkHMfVs+8cWoA1AGiW19j/fsW6fCsOUUBfUZYCOV8uCiOCqyGUXK5mBVk65YGBdLKyN3ebuVnZ/a5uy9qCQISNNzn+7iyW08DIdSh4cawzmcoInxFyRna67w+T59V3QaTkVNkttjHUo7QcPOVQFFayDpC56aJVa1pS3ADc1coys/Q9vxkmciHj93cZjR67EaEvt86QR3sEuciJGkYw+//jc8P8gDc7K6EB0K31y0kZ2UKqQVe71Qsfrj2dG8NR8E/PEOmjfjVxJ4MBzp06YACj0DWR4bLPvBEBCedZNfFSM2XGCdCVA8TlltBmn1Hk1OsOlOY4Tschrq8WdhNdmFRLLza4NI6c6I/GDtC8Atls6jS892RM0Cq/Y5Nmp6dnQAAU/8k5b/yTikZECPoX8hrAq62xHmjAoExE/hRSToiK2FSgYy7XF16oWD0wVlD0obuO04HITzvXCGOXeXPWnMbL6QUcxmKs2U1IUqt5vspfdlBdLZGxrPVC36HMfYOfj5MLBzwBYXxrPo6CY9qVnmqyY0DeGCxx5KMkqxWIYYLbZaFzVVuKYQHFIGlW10wgKtWbW9qX3RCJLOrzUsM8PnTTpUB+4s97EcR5KquPwYQEMrpDAYAJqzJVfCtTQlgs4ekL8bnz8WUkj4sD80o/OciYpMUVURN8qH8zPxu18DzqTrZc3rORI+sxxX0ypbrSk1jcRKniZIdxsbh/Jq0i00rf6nY0akyeXXu6vyh3VkbwbLTkl0wmBZryqBb8y/0o0o34Da1asFWX/xJ/Tu78RiA6ZcmUN8HieDwpGCNsR5+/BBZBSy8RJm7zgfnMpysR498MgVwHI2+vZIeonKC4vnLz2BeLzw0jIDxiY6u7l2KBK8eY1PrwCtSGiOPUERUnRqh4N6Sm2ZGUYrr5W+x1lojrtkmOT/8e/rO+PtAZ+D3NAzjUfaYlD6ZlHZ+mpd3/uXDiqphiWPpOlF6pkf7ctlODNATdxXlTFO3eGdLFWFfBbX+yHECa0pGxMS3Tx6pLCCyA6412ZpiVQJcNGvqWm+D7p/aBmux0fHnSxXUeH3pIHde+Arw1YZA5hHJgDSPHFckYJYJqCZTKOGSxSmSPDiHgveg5x4n12HfghdM0fBDS3u716CaJm8zoOiEotCH+mmUYV3kQD057zDZGPQR+iB2iqOEU1LN1+XIAb0SMfndjZH/ezsK3mBFjcNFwTs/BpVv9tJVqZw6tuNlgsI9dAX749vRMGR9387//hrEOkzluD9e+Cwdc96uFQvjAeiF+H4HdLb0VG/teebFHH5xEkUkla03GNbl1mmszE86YgAqP5JyK/vNGHEDxq77N1mwh/T6w3U+y1aLSm38L+HJng1viTnm/JO58a1etRuWIc6ofbhqSYPaKlEPpRkK8CDelPcF/QOovyGq8LkekTXlOJqYobpfdhR37qhAvpoI+Sqhk5E0+4D6db8Xo1xeWgvE3M4Wb74raPTckAmIlER4MTDmhbLyztoOKm5u08zFeoH5eYnQ/b/1VhnNRPY30pGzdC3O6iUiLTC8q4gzmOqn8u5+y5B5g7Scqq7lfnMCir5q3UHXfgsQyxdG27LH0StH43BaSolKpa4mOSUhPOHIhOV/DvtdQeUkJ4tFfO6dkqv+qmfd4DCkkn/6lvQmkumTlN2ogqsfFYXxEULDS7Z3DFy8IH4cj0cBpGcZ+ATkrjhUvpmLr97q/RQK2P1HVnS660mxs9o7/t4mCcBvJH/xDm/a03VScAIbHGyQfkzMIKN9rYL4U+kpaJrhx2zSiD8DKU4FHjavB1zNsu45+xJ2XDuCoAqwS0OA2OadkYQicrbgjGCnNbog2I75v6ZFHkULsXrNBN5hXJLXZluWvoZGrFfEeCJNnbkQEt57ksiiKo/QhsP0cpOAjVTLwkOYcQ3SK0q54qeGAjaLDJOjitQhp038HwTSqJRkmphQ12kzw+sDc/ebQE9rEyRZ7JytU7Z9zs3MWkv4CouocrONbi/sg4pKAf8DaVe1HWXpWyY203rpiceFdFAxj9Lt/bj7goAbmS0IFrGokWJ8lww1ub/ITvqp04nZjGYGrA6KsNvE8LSSttiZtdla4riGuFhE63LjhujU8bNZzi+QlotPXlqzRxqLQ9Fg6tybb+G/eSz/tea7dmuKo/+39Lqv+izD54Ly/6JrjM9ARmilnhZVSO7FrPTBaLaYU7y5aIlAlI3MN/lve72vhrINMclW0sV3ZLca52AutiiyQlIyKDOzQeG1BDhkqF0wBllCilAUkWCAiuUzoU2Gyv8mVAAAQP+SdJ/5Jwy9z8Zn1aMPSGm4pgAw9ehCtmas/PLaiP8miB6MhwFgL/ec5m34dh+q4tf5AhJ45WKDaj+JXd+9yeK+1+N78V+tYKC111ds9qUDHPOkgv4zP9Bn7kUH4zm0XDmP2c5ZzobuGl5s3F+az/9XeoOQF/DXXwv9IQg3gK27gFYcdi+4vmai0gnZkwCVDeM0CPJpDM1KOBqG5OJqABfGKYum/aePr58qFBuHnl2Nu8NRppIU+PPDI/eDn+gLSKkPDiVf0PgnMkUK3aQSE4Jlwt18ZHwk8L36uGKtpNpTNsOk4PoRkKOXv4bIha5Q6XY9xI/MBRTzFidtPOaRi5WLum8ioVBdeJ1gCWpnueaceyPw0a9dCXKbt9CrwaQWAvEQK+BNX+crFltUdI0pJP068nNkA+8YgwBHzwncpIgJYp/jU3d7xBkQCZ7e3hdcu5NiebWf9yaekvshoAhUJULBEN72g8mAw8F+TVtH7MhwdmqMEc1P1OtaZaF9MC49f9Tmamt8anS8Ubn+AB4c6EDLs4ItiyD6vXEVkT4xJGLElvTm68TSRFk8UpFa16VqcPS3Khe/rMk80gLYV3rFb8SYShsheY5dfQngkB+Z6xsse8RfOF9Cf0OxQlkk/NHV3m+qPEc+LP9dkjYrfxpVNZRYteps/e7xK9e9VGbaAo3ZjPSepmiL779iu2xf7GIUKX2BsBRbzQAffBQoJIXJa8jlbX8A2oCLk1WZEr0DsIuqXkk+k5kwaAWo6mrTN6GbAywLjcahvpPa2hbJ7P3FpLFYLQVtzlQF3lnAR7fys7j9vU0hYe+4uv3m6IAySy7uqDIfC7zEJ7rqXU9wPeqvJFxL9MA6scgcYX7G2rmCRVSLYrV90QgxsF3S6309aTs5Pg5vzOOJFl0vqU9PX2DlM1QcclmScRX79iXZ+4v1aEbdQgABi/yTlv/JOKE6BYfoVYwMWDIAyfu7ABuZ3ohvbP1xzz045zaPi0BY6zmjPbO850ilE4GjrB3i3TvvTm5CxnTtrmmhPSUbAfevGrWi6OtWG/SiVdgov/RQ8T8KSx7Q4o0biDkihFy7wpYsJbbp0yuGRayZpCcB2hVxBEDB0FrsHt4URd0NUYQQretVxaEGpslINWR8iklurKHIwd4SHIwqELtKqO5ZzBF+HUL8EEL7Ask0Z5SRGjgH0/IeUbqWXlbWmmnaHz2rlBDKDbKhb/tyif0NToo6leqS36zalSkCLUmfBbtCln8d0gXi/+EHf1i8mTOlEmsQlaSWuI6FIpgOpK8iQ9a/QSsgyrRro9T0pSt38NcSmbyXVPcVwpuie1D26/3j1nSZYKYrsJP3Ya6929ZR+YRudrpDBMYKz5lWWq2YM9DeGinepmg8T361/6f5YMGQ56RanKAJKAmkKh2M7yf9NCU5wPemuv9gBRjto/kPzvwctz5g9OxfFAWZH/Flpx5Yb4iEGiDl5LKOMEoKjD5YEc7CO28qIXWvvaHphaZ8fJSKnkzF929QJhrD8qaMXIpoafT73IuMYh0c8Z6VoaUlAhdxDDpwKO3lXxWQYpPWHFkRVg5d0J19RXyUKLlZUa+NHmurjXlHJQdJDgAewOmKzZXyUjRSIHallKdwQKJhE2Y/xrtnHV6Cs/s5xUQhbXGyqljxv/+PrCpe6MiPvVl7fW/t3ae2Ss/MP5ARFVs2/kLQOIkLGhyyBEOhA+uCMaST/gvo8P7F75HlxvqwmzU9OrQAAzP5JyK/yTkWnbMM0z/2QSs5lFPhEfyUNTd6zlzwfgg4g0O/oDEnam0yZav36swYRSleYeX6Ijx6FET+acCnTuyLadrAJzaNnhkCFd9HnszTi15xVlb7m0dlL+I1Nm1lySMzmnH/HrLeekhCKxck5WFp1zoZsyo9UAEfALTVM7v4MRbLtPCbMeLCKynkBVk8FwTRfLl35TwYg0a3CGFswqEQdcu58c1oJb5SgORTqfA1X5T+9TAB3aca017sjEpP6hFlWVxPDWGob3Koj6aDK7siH1LHftQJc97Wj4mpQPVhYfA7YHXVLBx3K0Wc12nQjFnYbkVej4X46CqISRNPrPxb5T0fmLPiQhrNN5b9h7mt4uqRpXr19EmVQHNvB+f+CD+H4WoKJVElPTbOGrvtSXYfYUg113tfINw9IWoy+PWFOHqmtb2tkHxi07JgWWn9p0G3MXebPIoagTJYd/mwc/trMiZWGb5f/mDvEVvFiYNy1+2a7CKyZjlbz2G2ehiIhNd29G7xSMbmpBb2WjOKmN4n0U4hz3VlpMEZirqM2IFCdO6/s3FieRfU7/uWvCtiBPXLsh6BoHtKkdkkw0RqbK7rO/I28+XBJECMiHu0blu3Sd+VzrBv1hPaXA/mdcnFhWXIQVH3QEwCr77anP2Y8DIACfGIvWxhmXohPIv7oc10Sw6g1j5dsM/gBuCeBJ0YTjpt/6Ls8+JAIPVe4EN49Gj7vZQkgRDuESm364FDorX1EJgimmJWaaIIBhsYrrz6RIMKxrVRJXq4uiPFB0Sn5mB6xlvGbuUKDNG7HUAcd9T/46fUP3tDuWSzfoL2YVulRhAqNHcIkdyLi/VoRt1CAAZVRqaulkv4epSLIGoG2YzloYFc1Pngb3er8B47bO2QNfG8oOZkmJKqHzWtwMSFSoqMKcfFbgR4+r7yuFcizB6hrECpx2aCohsDvgdkX1d2hmKvDL+trJg3XVFJrIRVWYPSlhMifchUUb5j1vuzlHQyEpwEiyCBi0o0oefW/wFzx3L6Xftp8HPKMKSqupnnj0QaoWdtbnhu7EVsS+nb4I3nrkFyzhXT2FO2azDrxZawWg7yYAEHCoY0BNpKgO9sdtwRDV268piNVXed6imorH85/jbKyQFN+XfeIGassUKWPl8O+WXr5R0qGTo7FZ9ZWCBKfp9PF+TyYy4cxdKB+DC0miCqGTRzykQnBxgyP7AeEqcC34MSueGFMF8ZZFRdVtRE32n+l4a9WjTQn+M62VKNyLoe1zghBAeLwe5wQ3B6relPLRHvXni4WKtOxi2O2y58x7gKmwpduE392n5Ore4ZR6+KFrnYsgg8LUCYeLIRQj1xdVmLD4EDiecLb1x29T9+TkmGSARSZMDviY4ROqOdSiaQkYK3TWTOCrBz461IT60Q/gg7+UHgAAjJh0tdSUxu+nAUn+RubdqcxVYpaBxGiTBtyZk2lPN+BiZiCubCwH06Rkl1MFu37E1xXl2Il2pqVgWzA8aIJAIvusH5YTfLVQnZVSIXkLMeJ0/xfMY93iP6jW4LPFdlinHMy1JssiU1LxZUQnq9JkHFE//z+BGNooh6hX6OYJVNSrd6F/+o/jwoZpMJwI+rO2mdweW6DNhkLg/Hcf4Dg/bf+wUYOJT5Xp0Ni8bpMBe1EymigkHdw1HgXMwaFEt5+k/jcP6ep9pLIBpDVtnWbuEGQrPhW02mt0DNgGzFKw49Y0Oc1gX39KSzXKQ5lJ9gZNTjCDKiXkCAEz+4lkab+kji/FgQET1gNKzvSlr9xFrselgDwbPgYU1TR7tlOc8nDcH+hE53ScozXxWrgJVallpEHMq8Caa2bMLd0nFhBe6EknyqT/iomUxtlRVyj8k5AKCi2O208gsWiX4kvEvI7Xy9wKRKl6tdHRS41qXsureiFFNFUQo3ZsLzXt2ZYkkWAsHkgSrZfpJju4XqlaAAAAm7knHVNRuRApjoASEbr27cCo2NFPqLjVqyH7oraJTB+XbRkiS32XnvZ1SkfN1P29WpWGmHC5O5gmKUXxpwsUfJKJTv6qgqTzZ0gAgiUmDM0kZ+renvDl6Lq1m2uItfjgEJhM72iXURK44Qi1lEmDWN0PiKO46evyUuB54GWY9W/NDDdMk372LPjS9LX85qgOzTSzqfqqIqU4p4A+FrtYFaYe1WfNHpWhj+0TuQdy6pAD8291FH793wKdqIpsYO7LRGBdt7oJCLzrs53z8/01fyk5UIcCUBTcLKePe6MahVq/rLGwo+Ex++EsxIaVDnRHZs/bbYAANJynhCkvuowxF0kULBk4JD5/sk4QQvB/boIlJOKVcqXJ7ay81Dn0D844aWbxnPoBikCLZDUf5OkNG/UbQNLiRBXT/fO+OYJh75XVHo8kcamxhz8E0kPUE7ZNTQNn1oHJaAIljGHfG7mS7IAwG7ZGyLO64EGILHlYhv75fjuUY1ojOmYeQuxAJMiyBkIYNrA3+UGEgbi3xdDH0ECkcSRLZew6Bixy643eTb3oeQTsDJCQAYkywQOebt+Rd1gxKE+056VfIt1yroewvFlJihwkrPdF0VtLzEzB8FXRbZlXccjxn7lSS6BT7DqLHx1IuxWkl2sWawWf2OPb8eLRzgkGCU8tdHTap2LFyyQAAOP+ScAmFApQdzrb1Awu9ssS3d8Eza8xntbfiNIPuuOrl9ra6zbrV7+UfYbURH/+B4FM4iuJADc0EtAzaUN7Xy+bRevI8f2bJoNpXMX8dgFWsHkKhwRspJQS9+ipyqnx17z3ULB18/Ll2Hy/s75sGGCLbb7qJHzpZ5TLnbuBZrwkJmRapjEseZN2w61Ywp5KULxughHNy2Js0b1V4S93grSboFsi2tM3qpveZP7NiJM01E4x2GYaL6yHPLWru+5x39Lqk3+UAWKNfpHgkgSQEmwY2OlogLJcH3aY4JKTIJjBCgv81JW0i5U/xJ9MurZU0/8onrrmKHpG7/Ac2JTfyKE+fEqzavGDF6M+vYZbpXje9W+zZGAyFfbTr2L0BEYq8NTaIX4373mJ9uAAhekFwMYxx/Iezlklg+PshC6VuKAFNHER9L4TMRW/hlxdBM7S699MwLr1mkifQcmkqw7I04NZzVfXgTNhvOg6GZGoAOxMp+Qlr63utxjm5K5g24qW9l/DfXpcRNOKwMQiSrvrx8T43IHa+Wdeap6FkMjcgIKEsdiskZLq6Dq/eoSO8HXvZRGquJlRBvi82dXOVxetOxfFm2HICDtIRy1rtKb5NngYxeFnjazcL2CDB83PJYi3HntJGSCaob+K1Uouc/GdTgqYI2kwSPpxuu1nUEyz2I2PVGwGNuF+pTdNe0F7YFZGTSOto8jTGLkO3/dYLScawaeNhglFZnWR2pXng+XGmftGJ3buDAww9g9cMMrI6MZs82gJYkDbe8AW9hRz49kGtWNSXOfxXBMj9V46P47wEi20rBRYX49jnhJ442t2qC+p/9huq83ffvYDO6/Kf0DH3Vs347253vRDsEInpe5VQVO69kxxNLAjgmK6SaWRT8FPNdNrOaLJh3CbdrFNqk/4kSYgouramAAUW2D3pTyZ2UTwXD/4PsiUEAVVHu52AtKTY/E9e+RH/XrgJB/XIkJenTVOBssVHZEzodhR8ewMVs0WfYMW44pbHYmxJaDimCFwfhKuOipMhTMuqa57sjvipyKzG4YhCYO0RkfAZM1B3sGCpnqOxj22wADao0jV0vlz+T+syOB0QoY2y2LoNpLGAiVhuO+jldBWY2OltbIb3d2UDmK56cJkX2SXFBmRVNJjChOkbLrvO2dD6lm/7cyQ3Q5dltId6hGyiwk0o7PYGwJYgmG95edYDMUodxc8ZcdwhzY09D6VBe2z3BK3Vyy7jyfvK1CsflZfifD85HxbZYsBnqmIEwSHQQezJUtHqZvozqCeiW9wtyI6p2foSPC/O8oJVkz0GLZPgM1Pds0INNiXktSlXsuL590OgnsLlCrF5ZubW/U9Ile2u5Y+vyc8HICoFQbzS2d5toUpyrsyeaTs5PzxCl0I6dIdyruFsI6YhJ1bMLSW/H+hzRR+/l0gFBBSEYDwhPoaGkK5JCslvzsIYAT71370AoERbiCVXozdZcJER9mMl7DG/95+NRoBpUT2Bwtw6fuB0IKj7I2z5xV+yM2H7/U/FhyH3En7smayLoRlSksdWjg5GgDe107Qf3m4s15+mn7iEn+zIwin5PEnd2yeUUSdqIhd5CY46tI4JxEqaqxgssIA/QAhM5EuKmzZQBTw4anIMguNQ/7bArDFfxq6rVb8PFBXHPkDZ+Dsvd5bS0zcW8fCwfYPNZSdxIZB5w1UXCSt10TOtw0MSBD9f8t8VqNL3mHpgDtQAX00+H4zkf11F2rrHWjJwRKn4kz8QJ2XrHJs1PTs6HX0luAC6/knImEhQKdIUexJWKtlLKUUz91K0IcV/YjvYPBBFTj3eYE6SXTDaGcUvc161nVvTjtB/lSBU8g7Tp5NANYKHnifro2wpaFgxPqlr8Gc/nezH0pC9V//zBSPa41eEFxQFUU7f9tsW1fWwHMELuh33HxUJ3AhAfOCWE/SJw1YdF+KA3dftSlpUesfy8J0MqgOUOu/KmkJt//b7/0ct79c9Rbn7/yvw/LcT1KgHpNQNnGO4//nsErhxeqdDelQLE2xqav4FWhwyy6mdl+cbIsb9xUxgunwRaS79U7BWrKw1pMetD9An8iYBdpDdrn+kz9QSArSI1ecvlVIvf8qztsrzW8jg3xD4DLPQ/0kGaN7VKp+tJNnCvUqZLs8zvoYQdlRhpBQh+Ta4VrGr3y8CdSC5aswvU0yvCRQZc7uk/5MqAz73gAkb7InrU+di9rSeh9vYkiVQCZkLpXU1WTFGwNtWbxH0sxFXsYL33C3d/xRIohrA0k6R+CIav4SL8VHLL3NgH18HK+TngSOqh/goiximwaijR7PHjix2nBc0Pmru54V9R/N8fSq88RkLWVhDa1J+9d+/oy8IAVn4+Zuw7JWFzgfjhk8jIvreb/SbOJasNLr7CXIobJNJ/2p1ifRuVR3tiOBXqB4zvmgei7HvWidV5r6lNd6emLN+PLrRwv04f5VY9zzbZ+sEEwxeB8Y0/NW7kr0bLf18fO3gl3auI6UhJC2CiJxwfhKuOhDGMHueOzyON9WEmHwI0IPzre4Et5sGn0+eBJrv0ZHPEBm6ImNYCi1R2oJtdcJw9p0d+U7/98wgcyXSgQBLf5JxytOQd2+mPqfeYyu8wtoccxxXBSuA6TBVAX1YSe11Z09EZdRFYmnO24CZcfelGYndxLTjPhJGChBjJXboYKkgQDuOrpE05r+jh0EfCFOGEudauqXX91rZoEIhy/6MrkRRfk1I9J5xlhBagVorW7y3A9hdhLfVN27vJtnEof6dq4GDNcg/S3NFlLPgtr76wBVrjGpxteSphlCzky2/5JAJEA8P/V7Ev2rv+7dq6l+vHMyTVD2wVqO+FNgpXpUA4ggFQtJvdW+pY/DSfhvnPwNQhxzp0TH6mzDv/cINJdlpWRecgj2fxo2uTNINcxCPnAmKqk3lWCf9tKPPhF4sGDWJmsjNJmWNGUuB7uTsxF41CAAAC5/knD3UDSfXKkubbSc/6NGWxSzrxVxk4P00pTAtdLHMBcfmyHgt7y7HKxYO4EP2o9DSDfbj93KQn0D9ufmkNLt/R7v36uHMASWiKoJX9gupqDD66ZW4tVQCgzVeUyWh9MvU1MQnY4elEB71udCiWd+VS2BYpb5+n8Bmlw2jE/wnH543R/lJcJ3p9mjBKvItgED+RX79L+YLyHGBo04JDmuTkrAphBq18KrWrj32oHVddaRANq6FD61XHoPUXW15XFHhHLs6Z/lbU+9S+uGD1d4e2ziwJXG4ckentdoU0dpLxdw2ULSPvAY1po0pCvqBAYSIeNBFNAzAj1zjanJQkkhRVZ4b71KSfIOX3cnZiLxqEAAAND+ScRXbABelRN7Qlx36Kbqxaxc+Ek4PAvKF9pHGkreYXTzxNHGG6Bl70VFyP/N7AiS9+VC6lZpC6WZTXglT8WOd54inu7QOD5VBr9F6gARyQir+QTWzBCKzLVZBrw2uu3NBzZ2xmjVYro6q/wKGchpi/pRCujd3+BvSmhe6Zb7ZkkTn46ccFiDmaTBQlLXbG6hTmOcTy73XYWQNbhrSd3YloDolY6378svvqVmykWzYM8LdforZoDyw7+wsONGCMBujcVLZiuQaccnGwGX8YiC+kcD+Z9jwuc4bATtSfvDtd+Ncx36Tf8YGLpxLuP+3Tjj+7TQu1EuYJmOSkIUv2DfW38wiFevGVBeimJdl1P13F+rQjbqEAAAn/01CzcvWz9R6McgimlwEidhN3diy0eto/xTH3UAYiy65FE6z1yZGMeJ8yH71JW8JN4HarpAtG5dBSBBS0gOC2LTjjf57y8iE2iZDLkizFH8shzIopjpQ+ARpeLeq+7/fi3xr9nmxEb+BmDu9mSK3cp301DB9RH1BLYfTHLHAl5lBY16SeNhdmcbJELTmevNn2gR/ge+cf5aVoL0MahWAELlBnFGj73Mb6R/cbNapkeYPzgiZtkKTI6KCZYNi1u+DqDqo+jYoncHuzgIrsoFJ4J12ouYmgZI5WMQ1TWLvcYewySQd49bovmQ9+QPybVZ8YjHfpAwtWMBBUmw0o3mzn3LNBW8GAISkAn8FqC89en1XgfaKEL4A92Qd/Z8XwuFkeQvAEDSxjfU/8o4GoLXaQz8YtPI4OxHHZKBul7Ckb/e+18CuU9PRdSZ4an+Wyghm5VZ5AxzS543QAAAImvsDVYTD6Ti3ulL+SsYk2WiHOzXwoMAteDdVRCEUBcuDc5AA/oUFz968VBM2DAolx9HANLs+IRuX86cGNqq7Tblo4NjDphrxEXvhW+zpWw5D/5vP9ivR0fYTTYyZqGjWWHzTGy4MjITtC1qqs5swGhggU0GdYlTnfe39Y8+5w1pfyqOJZp8//8uBu7QdH26/W5Wr3mrDLlTrv15F224f0taXlO1O7IY0bRFirAJ8vN7k4jISS1MLEWGd1/F4hTVEbTDw2dcX2xQjO+csMKrJKyXrJ0MJvXHxAw+ma2LFUWH+Hpo1Kwg/Gr8nwNiru/0wfRLXOhGDdHShzO4c6bnQeHmPSRqrhhKhYyR8gnON6J159PJK1q/sYsKAWHxBxl9AAAAWNsTQAAAGL3NzVAAAAAAAAA", "star": "data:image/webp;base64,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"};
@@ -42,6 +42,13 @@ function priceFor(n) { return TIERS[tierOf(n)].price; }
 function money(n) { return '$' + Math.round(n).toLocaleString('en-US'); }
 function num(n) { return Math.round(n).toLocaleString('en-US'); }
 
+var NAMES_COZY = [
+  'Willow Creek Elementary', 'Maple Hollow Middle', 'Juniper Hill High', 'Bramble Brook Academy',
+  'Honeysuckle Middle', 'Fernwood High', 'Mossy Oak Elementary', 'Thistle Grove School',
+  'Birchwood Academy', 'Cedar Hollow High', 'Hazelnut Hill Middle', 'Clover Field Elementary',
+  'Wildflower Prep', 'Acorn Ridge High', 'Blackberry Lane Middle', 'Foxglove Academy',
+  'Pinecone Point High', 'Primrose Middle', 'Heather Glen School', 'Orchard Hill High'
+];
 var NAMES = [
   'Lincoln High', 'Maple Middle', 'Roosevelt Academy', 'Riverside High',
   'Oak Hill Middle', 'Washington Prep', 'Central High', 'Sunnyvale Middle',
@@ -234,14 +241,15 @@ var SFX_COZY = {
   rocket: function () { wind(2.4, 300, 700, 0.04); [392, 523, 659].forEach(function (f, i) { tone(f, 0.5, 'sine', 0.025, 0.3 + i * 0.22); }); },
   poof: function () { noiseHit(0, 0.05, 'lowpass', 1200, 0.2); tone(1047, 0.25, 'sine', 0.035, 0.05); tone(1568, 0.35, 'sine', 0.03, 0.14); },
   buzz: function () { tone(196, 0.22, 'sine', 0.08, 0, 130); },
+  // A slow breath in: a soft swell and a few rising harp notes.
   charge: function () {
-    wind(2.2, 250, 2400, 0.07);
-    for (var i = 0; i < 14; i++) tone(mtof(60 + PENTA[i % 5] + 12 * Math.floor(i / 5)), 0.5, 'sine', 0.03, 0.15 + i * 0.12);
+    wind(3.6, 200, 700, 0.03, 0.6);
+    for (var i = 0; i < 8; i++) tone(mtof(60 + PENTA[i % 5] + 12 * Math.floor(i / 5)), 1.1, 'sine', 0.025, 0.9 + i * 0.4);
   },
+  // And out: one warm chord and a single bell as the light spreads.
   boom: function () {
-    wind(1.6, 1800, 300, 0.12);
-    bell(0, 0.07); bell(0.32, 0.06); bell(0.64, 0.05);
-    [262, 330, 392, 494, 587].forEach(function (f, i) { tone(f, 1.6, 'triangle', 0.025, 0.1 + i * 0.05); });
+    bell(0, 0.05);
+    [262, 330, 392, 494, 587].forEach(function (f, i) { tone(f, 2.6, 'sine', 0.022, 0.05 + i * 0.12); });
   },
   clink: function () {
     var now = performance.now();
@@ -265,7 +273,7 @@ Object.keys(SFX_PARTY).concat(['clink']).forEach(function (k) {
 // Cozy mode plays a slow lo-fi loop instead (IV-iii-ii-I sevenths, swung hats), with soft drums at night.
 var music = { on: false, next: 0, step: 0, t0: 0 };
 var STEP = 60 / 138 / 4;
-var COZY_STEP = 60 / 84 / 4;
+var COZY_STEP = 60 / 72 / 4;
 function stepLen() { return MODE === 'cozy' ? COZY_STEP : STEP; }
 var PROG = [[48, 52, 55, 60], [43, 47, 50, 55], [45, 48, 52, 57], [41, 45, 48, 53]];
 var COZY_PROG = [[53, 57, 60, 64], [52, 55, 59, 62], [50, 53, 57, 60], [48, 52, 55, 59]];
@@ -345,7 +353,7 @@ var S = {
   wave: null,
   beat: -1,
   // Cozy mode: how gray and rainy it is (0-1), how hard the wind blows, and the leaves and fireflies it carries.
-  gloom: 0, windy: 0, cloudShift: 0, leaves: [], flies: [],
+  gloom: 0, windy: 0, cloudShift: 0, leaves: [], flies: [], bloom: null,
   W: 0, H: 0, k: 1, t: 0
 };
 
@@ -400,10 +408,10 @@ function recalcNeeds() {
 }
 
 function addSchool(x, y, tier) {
-  var used = {};
+  var used = {}, names = MODE === 'cozy' ? NAMES_COZY : NAMES;
   S.schools.forEach(function (s) { used[s.name] = 1; });
   var name = null;
-  for (var i = 0; i < NAMES.length; i++) if (!used[NAMES[i]]) { name = NAMES[i]; break; }
+  for (var i = 0; i < names.length; i++) if (!used[names[i]]) { name = names[i]; break; }
   var s = {
     id: S.nextId++,
     name: name || 'School #' + (S.schools.length + 1),
@@ -545,7 +553,7 @@ function updateKids(dt) {
     if (!going && k.pause > 0) { k.pause -= dt; keep.push(k); continue; }
     var tx = going ? k.target.x : k.tx, ty = going ? k.target.y : k.ty;
     var dx = tx - k.x, dy = ty - k.y, d = Math.sqrt(dx * dx + dy * dy);
-    var sp = k.speed * S.k * (going ? 2.6 : 1);
+    var sp = k.speed * S.k * (MODE === 'cozy' ? (going ? 1.6 : 0.65) : (going ? 2.6 : 1));
     k.ph += dt * (going ? 16 : 9);
     if (d < sp * dt + 1) {
       if (going) {
@@ -572,6 +580,15 @@ function updateSchools(dt) {
     if (s.hit > 0) s.hit -= dt;
     if (s.squash > 0) s.squash = Math.max(0, s.squash - dt * 3);
     if (s.landed) return;
+    if (MODE === 'cozy') {
+      s.drop += -s.drop * Math.min(1, dt * 6);
+      if (s.drop > -1.5) {
+        s.drop = 0; s.landed = true; s.squash = 0.2;
+        sfx.stamp();
+        burst(s.x, s.y, 8, ['#FFFFFF', '#EEEAE0'], 70 * S.k, 'dot');
+      }
+      return;
+    }
     s.vy += 3400 * dt;
     s.drop += s.vy * dt;
     if (s.drop >= 0) {
@@ -615,7 +632,7 @@ function moveTo(o, kx, ky, tx, ty, sp, dt) {
   return false;
 }
 function updateTeachers(dt) {
-  var m = S.clock % 1440, walk = 32 * S.k, drive = 150 * S.k, road = S.G.roadMid;
+  var slow = MODE === 'cozy' ? 0.5 : 1, m = S.clock % 1440, walk = 32 * S.k * slow, drive = 150 * S.k * slow, road = S.G.roadMid;
   S.teachers.forEach(function (tc) {
     var s = tc.school, spot = carSpot(tc);
     tc.ph += dt * 9;
@@ -672,17 +689,18 @@ function burst(x, y, n, colors, spd, shape) {
   if (S.parts.length > 700) S.parts.splice(0, S.parts.length - 700);
 }
 function floatText(x, y, text, style, size) {
-  S.floats.push({ x: x, y: y, text: text, style: style || 'win', size: size || 15, life: 1.3, max: 1.3, rot: rand(-0.12, 0.12) });
+  var life = MODE === 'cozy' ? 2.8 : 1.3;
+  S.floats.push({ x: x, y: y, text: text, style: style || 'win', size: size || 15, life: life, max: life, rot: rand(-0.12, 0.12) });
   if (S.floats.length > 14) S.floats.shift();
 }
 function updateFx(dt) {
   S.parts = S.parts.filter(function (p) {
-    if (p.orb) { p.life -= dt; orbitStep(p, dt); return p.life > 0; }
     p.life -= dt; p.vy += (p.grav === undefined ? 340 : p.grav) * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.rot += p.vr * dt;
     if (p.shape === 'leaf') leafDrag(p, dt);
     return p.life > 0;
   });
-  S.floats = S.floats.filter(function (f) { f.life -= dt; f.y -= 38 * dt; return f.life > 0; });
+  var rise = MODE === 'cozy' ? 14 : 38;
+  S.floats = S.floats.filter(function (f) { f.life -= dt; f.y -= rise * dt; return f.life > 0; });
   if (S.wave) { S.wave.r += S.wave.v * dt; S.wave.life -= dt; if (S.wave.life <= 0) S.wave = null; }
   S.wavelets = S.wavelets.filter(function (w) { w.r += 260 * S.k * dt; w.life -= dt; return w.life > 0; });
   if (S.hero.pulse > 0) S.hero.pulse = Math.max(0, S.hero.pulse - dt * 4);
@@ -692,14 +710,14 @@ function updateFx(dt) {
 
 var SAD = ['GRADES', 'SAT SCORES', 'GRADUATION', 'COLLEGE ACCEPTANCE', 'ATTENDANCE', 'CONFIDENCE', 'HOMEWORK DONE', 'FAFSA FILED', 'AP SCORES', 'READING LEVEL'];
 var WINS = ['A+ ON THE ESSAY', 'MATH CLICKED', 'UNSTUCK!', 'LAB REPORT DONE', 'PROOF SOLVED', 'GOT IT!'];
-var SAD_COZY = ['STUCK ON FRACTIONS', 'ESSAY DUE TOMORROW', 'LOST IN CHEM', 'NO ONE TO ASK', 'FAFSA IS CONFUSING', 'GRADES SLIPPING', 'HOMEWORK PILING UP', 'MISSED THE REVIEW'];
-var UPS_COZY = ['GRADES', 'CONFIDENCE', 'HOMEWORK DONE', 'READING LEVEL', 'TEST SCORES', 'ATTENDANCE'];
-var WINS_COZY = ['FRACTIONS CLICKED', 'ESSAY OUTLINED', 'UNSTUCK!', 'LAB REPORT DONE', 'GOT IT!', 'READY FOR THE TEST', 'FAFSA FILED'];
+var SAD_COZY = ['Stuck on fractions', 'Essay due tomorrow', 'Lost in chemistry', 'No one to ask', 'FAFSA is confusing', 'Grades slipping', 'Homework piling up', 'Missed the review'];
+var UPS_COZY = ['Grades going up', 'Feeling confident', 'Homework, done', 'Reading level up', 'Test scores up', 'Showing up more'];
+var WINS_COZY = ['Fractions clicked', 'Essay outlined', 'Unstuck!', 'Lab report done', 'Got it!', 'Ready for the test', 'FAFSA filed'];
 function schoolTop(s) { return s.y - (dims(s).h + 8 + (MODE === 'cozy' ? roofRise(s) : 0)) * s.sc; }
 function sadEvent() {
   if (!S.schools.length) return;
   var s = pick(S.schools);
-  floatText(s.x + rand(-20, 20) * S.k, schoolTop(s), MODE === 'cozy' ? '\ud83c\udf27 ' + pick(SAD_COZY) : '\ud83d\udd3d ' + pick(SAD), 'sad', 15);
+  floatText(s.x + rand(-20, 20) * S.k, schoolTop(s), MODE === 'cozy' ? pick(SAD_COZY) : '\ud83d\udd3d ' + pick(SAD), 'sad', 15);
   if (Math.random() < 0.5) sfx.sad();
 }
 function addDreams(v) {
@@ -763,29 +781,39 @@ function firework() {
   }
   if (Math.random() < 0.5 && S.phase !== 'choose') sfx.pew();
 }
+// Cozy clicks are a visit, not a blast: a soft sparkle, the spirit does a happy loop, the bell
+// sways, the kids come out for a toast, and one note of the melody plays. No streaks.
+function visit(s, px, py) {
+  S.sessions++;
+  s.hit = 0.14;
+  s.squash = 0.08;
+  s.ring = 1;
+  burst(px, py, 5, ['#FFE08A', '#FFFFFF'], 80 * S.k, 'dot');
+  spiritCheer(s);
+  if (S.t - (s.lastFloat || -9) > 1.2) {
+    s.lastFloat = S.t;
+    var r = Math.random();
+    if (isParty() && r < 0.35) floatText(px, schoolTop(s), '\ud83c\udf19 ' + clockStr(S.clock) + ' \u00b7 still helping', 'win', 15);
+    else if (r < 0.6) floatText(px, schoolTop(s), pick(UPS_COZY), 'happy', 15);
+    else floatText(px, schoolTop(s), pick(WINS_COZY), 'win', 15);
+  }
+  addDreams(0.06);
+  cheer(s);
+  sfx.blast(S.sessions % 10 + 1);
+  S.idle = 0;
+}
 function blast(s, px, py) {
+  if (MODE === 'cozy') { visit(s, px, py); return; }
   S.sessions++;
   S.combo = S.t - S.lastBlast < 0.6 ? S.combo + 1 : 1;
   S.lastBlast = S.t;
   s.hit = 0.18;
   s.squash = 0.45;
-  var r;
-  if (MODE === 'cozy') {
-    burst(px, py, 10, LEAVES, 170 * S.k, 'leaf');
-    burst(px, py, 6, ['#FFE08A', '#FFFFFF'], 150 * S.k, 'star');
-    addFlies(s.x, schoolTop(s), 3);
-    s.ring = 1;
-    r = Math.random();
-    if (isParty() && r < 0.35) floatText(px, schoolTop(s), '\ud83c\udf19 ' + clockStr(S.clock) + ': STILL HELPING', 'win', 15);
-    else if (r < 0.6) floatText(px, schoolTop(s), '\ud83d\udd3c ' + pick(UPS_COZY), 'happy', 15);
-    else floatText(px, schoolTop(s), pick(WINS_COZY) + ' \u2728', 'win', 15);
-  } else {
-    burst(px, py, 16, POP, 190 * S.k, 'star');
-    r = Math.random();
-    if (isParty() && r < 0.35) floatText(px, schoolTop(s), '\ud83c\udf19 ' + clockStr(S.clock) + ': STILL ON', 'win', 15);
-    else if (r < 0.72) floatText(px, schoolTop(s), '\ud83d\udd3c ' + pick(SAD), 'happy', 15);
-    else floatText(px, schoolTop(s), pick(WINS) + ' \u2728', 'win', 15);
-  }
+  burst(px, py, 16, POP, 190 * S.k, 'star');
+  var r = Math.random();
+  if (isParty() && r < 0.35) floatText(px, schoolTop(s), '\ud83c\udf19 ' + clockStr(S.clock) + ': STILL ON', 'win', 15);
+  else if (r < 0.72) floatText(px, schoolTop(s), '\ud83d\udd3c ' + pick(SAD), 'happy', 15);
+  else floatText(px, schoolTop(s), pick(WINS) + ' \u2728', 'win', 15);
   if (S.combo >= 5 && S.combo % 5 === 0) floatText(px, py - 46 * S.k, S.combo + 'x STREAK!', 'big', 20);
   addDreams(0.1 * (1 + Math.min(S.combo, 20) * 0.03));
   cheer(s);
@@ -805,7 +833,6 @@ function schoolAt(px, py) {
 
 // Energy streaming into the admin while the power-up charges.
 function chargeFx(intensity) {
-  if (MODE === 'cozy') { leafVortex(intensity); return; }
   var n = Math.ceil(intensity * 3);
   for (var i = 0; i < n; i++) {
     var a = Math.random() * Math.PI * 2, r = rand(120, 420) * S.k;
@@ -1131,12 +1158,7 @@ function drawSchool(s, nt, ghost) {
   var shape = cozy
     ? function () { if (d.mega) drawCozyTower(s, d.w, d.h, nt); else drawSchoolhouse(s, d.w, d.h, tierOf(s.size), nt); }
     : function () { if (d.mega) drawTower(d.w, d.h, nt); else drawHouse(s, d.w, d.h, tierOf(s.size), nt); };
-  if (!ghost && S.phase === 'unlimited' && cozy) {
-    STK_STYLE = goldAcross(d.w, d.h, S.t * 0.2 + s.id * 0.13);
-    STK = 12 + 6 * Math.pow(1 - beatFrac(), 2); shape();
-    STK_STYLE = '#FFFFFF'; STK = 6; shape();
-    STK = 0;
-  } else if (!ghost && S.phase === 'unlimited') {
+  if (!ghost && S.phase === 'unlimited' && !cozy) {
     // The die-cut outline powers up: brand colors flow across it and it thickens on every beat.
     STK_STYLE = rainbowAcross(d.w, d.h, S.t * 0.6 + s.id * 0.13);
     STK = 16 + 10 * Math.pow(1 - beatFrac(), 2); shape();
@@ -1147,12 +1169,12 @@ function drawSchool(s, nt, ghost) {
   }
   shape();
   if (s.hit > 0) {
-    g.globalAlpha = Math.min(0.65, s.hit / 0.18 * 0.65);
+    g.globalAlpha = Math.min(0.65, s.hit / 0.18 * 0.65) * (cozy ? 0.35 : 1);
     rr(-d.w / 2 - 3, -d.h - 8, d.w + 6, d.h + 10, 6); paint('#FFFFFF');
   }
   g.globalAlpha = 1;
   if (cozy) {
-    if (S.gloom > 0.02 && s.landed && !ghost) drawDrizzle(d, s);
+    if (S.gloom > 0.02 && s.landed && !ghost && !s.blessed) drawDrizzle(d, s);
   } else if (isGloomy() && s.landed && !ghost) {
     var cy = -d.h - 64;
     g.fillStyle = '#8E94A3';
@@ -1194,6 +1216,7 @@ function drawPerson(p, x, y, sc, moving) {
   rr(-bw / 2, top, bw, bh + 1, 3.5); paint(p.shirt, OUTLINE, 1.3);
   if (MODE === 'cozy') {
     if (!p.scarf) p.scarf = pick(SCARVES);
+    scarfTail(bw / 2 - 2, top + 1, 7, 2.2, p.scarf, p.ph || 0);
     rr(-bw / 2 + 0.5, top - 0.6, bw - 1, 3.2, 1.6); paint(p.scarf, OUTLINE, 0.8);
   }
   if (adult) {
@@ -1222,6 +1245,7 @@ function drawPerson(p, x, y, sc, moving) {
 }
 
 function drawCar(tc, nt) {
+  if (MODE === 'cozy') { drawBike(tc, nt); return; }
   var sc = S.k * depth(tc.cy) * 1.2, col = dk(tc.car, nt);
   g.save();
   g.translate(tc.cx, tc.cy);
@@ -1303,6 +1327,7 @@ function heroFigure(ph, t) {
   g.stroke();
 }
 function drawHero() {
+  if (MODE === 'cozy') { drawCozyHero(); return; }
   var h = S.hero, k = h.hs, t = S.t, ph = S.phase;
   var bounce = ph === 'unlimited' ? Math.pow(1 - beatFrac(), 2) * 8 : ph === 'crisis' ? Math.abs(Math.sin(t * 9)) * 2 : 0;
   var shakeX = ph === 'charge' ? rand(-1, 1) * 2.5 * Math.min(1, (S.chargeT || 0)) : 0;
@@ -1314,7 +1339,7 @@ function drawHero() {
     var power = ph === 'charge' ? Math.min(1, (S.chargeT || 0) / 2) : 0.7 + 0.3 * Math.pow(1 - beatFrac(), 2);
     var aura = g.createRadialGradient(0, -40, 4, 0, -40, 70);
     var hue = (t * 200) % 360 | 0;
-    aura.addColorStop(0, ph === 'charge' ? 'rgba(255,236,150,' + (0.3 + power * 0.6) + ')' : MODE === 'cozy' ? 'rgba(255,196,110,' + (0.3 + power * 0.25) + ')' : 'hsla(' + hue + ',95%,65%,.55)');
+    aura.addColorStop(0, ph === 'charge' ? 'rgba(255,236,150,' + (0.3 + power * 0.6) + ')' : 'hsla(' + hue + ',95%,65%,.55)');
     aura.addColorStop(1, 'rgba(255,236,150,0)');
     g.fillStyle = aura;
     g.fillRect(-80, -120, 160, 150);
@@ -1322,12 +1347,7 @@ function drawHero() {
   g.translate(0, -bounce - (h.jump || 0));
   STK = 7; heroFigure(ph, t); STK = 0;
   heroFigure(ph, t);
-  if (ph === 'unlimited' && MODE === 'cozy') {
-    for (var lf = 0; lf < 7; lf++) {
-      var la = t * 1.6 + lf * 0.9, lr = 40 + Math.sin(t * 2 + lf) * 6;
-      leafShape(Math.cos(la) * lr, -46 + Math.sin(la) * lr * 0.5, 4.4, la + 1.5, t * 3 + lf, LEAVES[lf % LEAVES.length]);
-    }
-  } else if (ph === 'unlimited') {
+  if (ph === 'unlimited') {
     for (var sp = 0; sp < 8; sp++) {
       var a = t * 3 + sp * 0.785, r2 = 38 + Math.sin(t * 6 + sp) * 4;
       starPath(Math.cos(a) * r2, -42 + Math.sin(a) * r2, 3.4, t * 4); paint(POP[sp % POP.length]);
@@ -1344,6 +1364,7 @@ function easeBounce(t) {
   t -= 2.625 / 2.75; return 7.5625 * t * t + 0.984375;
 }
 function drawDog() {
+  if (MODE === 'cozy') { drawCozyDog(); return; }
   var d = S.dog;
   if (!d.on || !imgReady('dog')) return;
   var w = d.w, s = w / ART_META.dog[0], h = ART_META.dog[1] * s;
@@ -1355,11 +1376,7 @@ function drawDog() {
   g.translate(d.x, d.y - bounce - (d.jump || 0));
   g.rotate(tilt);
   g.drawImage(IMG.dog, -w / 2, -h, w, h);
-  if (d.glasses > 0 && MODE === 'cozy') {
-    g.scale(s, s);
-    g.translate(-ART_META.dog[0] / 2, -ART_META.dog[1]);
-    dogScarf(s, (1 - easeBounce(Math.min(1, d.glasses))) * 160 * S.k);
-  } else if (d.glasses > 0 && imgReady('glasses')) {
+  if (d.glasses > 0 && imgReady('glasses')) {
     var e = easeBounce(Math.min(1, d.glasses));
     g.drawImage(IMG.glasses, -w / 2 + ART_META.glassesAt[0] * s, -h + ART_META.glassesAt[1] * s - (1 - e) * 160 * S.k, ART_META.glasses[0] * s, ART_META.glasses[1] * s);
   }
@@ -1426,6 +1443,7 @@ var FLOAT_STYLES = {
   big: ['#154BB7', '#FFFFFF']
 };
 function drawFloats() {
+  if (MODE === 'cozy') { drawCozyFloats(); return; }
   var ks = clamp(S.k, 0.85, 1.2);
   g.lineJoin = 'round';
   S.floats.forEach(function (f) {
@@ -1480,7 +1498,7 @@ function drawCursor(nt) {
     var r = srect(over);
     g.save();
     g.setLineDash([8, 6]); g.lineDashOffset = -S.t * 30;
-    rr(r.x - 6, r.y - 6, r.w + 12, r.h + 12, 10); paint(null, '#154BB7', 3);
+    rr(r.x - 6, r.y - 6, r.w + 12, r.h + 12, 10); paint(null, MODE === 'cozy' ? '#A0452C' : '#154BB7', MODE === 'cozy' ? 2 : 3);
     g.restore();
     return;
   }
@@ -1488,7 +1506,8 @@ function drawCursor(nt) {
   var ghost = { size: SIZES[DEFAULT_TIER].size, x: p.x, y: p.y + 24 * S.k, drop: 0, squash: 0, hit: 0, sc: 1, wall: WALLS[(S.nextId - 1) % WALLS.length] };
   placeSchool(ghost, ghost.x, ghost.y);
   drawSchool(ghost, nt, true);
-  pill('Click to add a school', p.x, ghost.y + 24 * S.k, Math.round(clamp(16 * S.k, 14, 18)), '#FFFFFF', '#154BB7');
+  if (MODE === 'cozy') cozyTag('Click to add a schoolhouse', p.x, ghost.y + 24 * S.k, Math.round(clamp(15 * S.k, 14, 17)), '#FFF8EC', '#A0452C');
+  else pill('Click to add a school', p.x, ghost.y + 24 * S.k, Math.round(clamp(16 * S.k, 14, 18)), '#FFFFFF', '#154BB7');
 }
 
 function render() {
@@ -1541,14 +1560,14 @@ function drawScene() {
     else drawPerson(o, o.px, o.py, S.k * depth(o.py) * 1.3, true);
   });
 
-  if (cozy) drawFlies(nt);
+  if (cozy) { drawSpirits(nt); drawBloom(); drawFlies(nt); }
   drawHero();
   drawDog();
   drawRocket();
   if (cozy) { drawRain(); drawLeaves(nt); }
   if (S.toss) {
     var tt = S.toss.t, tx = lerp(S.toss.x0, S.toss.x1, tt), ty = lerp(S.toss.y0, S.toss.y1, tt) - Math.sin(tt * Math.PI) * 90 * S.k;
-    starPath(tx, ty, 26 * S.k, S.t * 10); g.lineJoin = 'round';
+    starPath(tx, ty, 26 * S.k, S.t * (cozy ? 1.5 : 10)); g.lineJoin = 'round';
     paint(null, '#FFFFFF', 8 * S.k); paint('#FFC94D', OUTLINE, 2);
   }
   S.wavelets.forEach(function (w) {
@@ -1574,20 +1593,25 @@ function drawScene() {
   }
 }
 
-// Cozy mode: the same game on an autumn afternoon. Schools become old-fashioned schoolhouses,
-// the crisis is a gray, rainy spell, the power-up is a gust of wind that clears the sky, and
-// unlimited mode is lamplit windows, swirling leaves, and fireflies that pile up with every click.
+// Cozy mode: the same game on a slow autumn afternoon. Schools become old-fashioned schoolhouses in
+// a meadow, the crisis is a gray, rainy spell, and the power-up is a quiet moment: the admin floats up,
+// breathes, and a soft ring of light spreads over the town. After that, each school has a little
+// caretaker spirit that drifts over the roof and now and then visits a window to help a kid inside.
 var LEAVES = ['#E07A3F', '#E8A33D', '#C2452D', '#F2CC60', '#B5562E'];
 var COZY_WALLS = ['#C8553D', '#D9A441', '#B5452E', '#8FA36B', '#C8553D', '#E3CFA0'];
 var COZY_ROOF = '#5B3B33', COZY_TRIM = '#FFF7E8', COZY_DOOR = '#2F5D50';
 var SCARVES = ['#C8553D', '#E8A33D', '#6FA8C8', '#8FA36B', '#9C89B8', '#E07A5F'];
+var SERIF = '"Fraunces", Georgia, "Times New Roman", serif';
 var COZY_SKY = [[0, '#1E1A3A', '#3A2F57'], [5, '#2A2450', '#4D3F6B'], [6.5, '#F6B9A0', '#FCE2C4'], [8, '#A9CFE0', '#F6E9D0'],
   [17, '#A9CFE0', '#F6E9D0'], [18.5, '#EE9A78', '#FBD3A1'], [19.3, '#5B4A8B', '#E8A08A'], [20, '#2A2450', '#4D3F6B'], [24, '#1E1A3A', '#3A2F57']];
 var GLOOM_SKY = ['#8C95A4', '#BCC2CB'];
-var COZY_CLOUDS = [], TREES = [];
+var COZY_CLOUDS = [], TREES = [], FLOWERS = [], TOADSTOOLS = [], PEBBLES = [];
 (function seedCozy() {
-  for (var i = 0; i < 9; i++) COZY_CLOUDS.push({ x: Math.random() * 1.3, y: rand(0.1, 0.62), s: rand(0.8, 1.4), v: rand(0.004, 0.009), storm: i >= 5 });
+  for (var i = 0; i < 9; i++) COZY_CLOUDS.push({ x: Math.random() * 1.3, y: rand(0.1, 0.62), s: rand(0.8, 1.4), v: rand(0.002, 0.004), storm: i >= 5 });
   for (var j = 0; j < 16; j++) TREES.push({ x: (j + rand(-0.3, 0.3)) / 15, s: rand(0.75, 1.3), c: pick(['#D9622B', '#E8A33D', '#C2452D', '#E07A3F', '#B8A13A']), ph: rand(0, 6) });
+  for (var f = 0; f < 80; f++) FLOWERS.push({ x: Math.random(), y: Math.random(), t: (Math.random() * 4) | 0, r: rand(0.8, 1.2) });
+  for (var m = 0; m < 7; m++) TOADSTOOLS.push({ x: rand(0.04, 0.96), y: rand(0.05, 0.95), s: rand(0.8, 1.2) });
+  for (var p = 0; p < 50; p++) PEBBLES.push({ x: Math.random(), y: Math.random(), s: rand(0.8, 1.6), c: Math.random() < 0.5 ? '#B08E67' : '#DCC19B' });
 })();
 
 // Colors darken toward a plum night and gray out in the rain.
@@ -1601,6 +1625,7 @@ function cz(hex, nt) {
 }
 function mixArr(a, b, t) { return [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)]; }
 function css(a) { return 'rgb(' + Math.round(a[0]) + ',' + Math.round(a[1]) + ',' + Math.round(a[2]) + ')'; }
+function smooth(u) { u = clamp(u, 0, 1); return u * u * (3 - 2 * u); }
 function cozySky() {
   var h = (S.clock % 1440) / 60, top = rgb('#1E1A3A'), bot = rgb('#3A2F57');
   for (var i = 0; i < COZY_SKY.length - 1; i++) {
@@ -1624,8 +1649,8 @@ function drawCozySky(nt) {
   if (nt > 0 && gl < 1) {
     g.fillStyle = '#FFFFFF';
     STARS.forEach(function (s) {
-      g.globalAlpha = nt * (1 - gl) * (0.45 + 0.55 * Math.sin(S.t * 2 + s.tw));
-      circle(s.x * W, s.y * G.horizon * 0.95, 1.3 * k);
+      g.globalAlpha = nt * (1 - gl) * (0.55 + 0.45 * Math.sin(S.t * 0.7 + s.tw));
+      circle(s.x * W, s.y * G.horizon * 0.95, 1.2 * k);
       g.fill();
     });
     g.globalAlpha = 1;
@@ -1642,12 +1667,15 @@ function drawCozySky(nt) {
   } else {
     var hn = h < 6 ? h + 24 : h;
     t = (hn - 19) / 11; x = W * (0.08 + 0.84 * t); y = G.horizon - Math.sin(Math.PI * t) * G.horizon * 0.7;
+    var mg = g.createRadialGradient(x, y, 0, x, y, 60 * k);
+    mg.addColorStop(0, 'rgba(255,240,210,.28)'); mg.addColorStop(1, 'rgba(255,240,210,0)');
+    g.fillStyle = mg; g.fillRect(x - 60 * k, y - 60 * k, 120 * k, 120 * k);
     circle(x, y, 20 * k); paint('#FFF3D6');
     circle(x + 9 * k, y - 5 * k, 17 * k); paint(c[0]);
   }
   g.globalAlpha = 1;
 
-  // Gray clouds roll in with the rain, and the gust blows everything off to the right.
+  // Gray clouds roll in with the rain and drift off once the light comes back.
   COZY_CLOUDS.forEach(function (cl) {
     var a = cl.storm ? gl : Math.max(1 - nt, gl) * 0.95;
     if (a <= 0.01) return;
@@ -1664,8 +1692,8 @@ function drawCozySky(nt) {
 
 function drawTrees(nt) {
   var G = S.G, k = S.k;
-  TREES.forEach(function (tr, i) {
-    var x = tr.x * S.W, y = G.horizon + 2 * k, s = tr.s * k, sway = Math.sin(S.t * (1.2 + S.windy * 2.5) + tr.ph) * (1 + S.windy * 5) * s;
+  TREES.forEach(function (tr) {
+    var x = tr.x * S.W, y = G.horizon + 2 * k, s = tr.s * k, sway = Math.sin(S.t * 0.8 + tr.ph) * 0.8 * s;
     g.fillStyle = cz('#6B4A35', nt);
     g.fillRect(x - 2 * s, y - 14 * s, 4 * s, 14 * s);
     g.fillStyle = cz(tr.c, nt);
@@ -1674,10 +1702,59 @@ function drawTrees(nt) {
     circle(x + 7 * s + sway * 0.7, y - 17 * s, 8 * s); g.fill();
   });
 }
-
+// Far hills as a patchwork of fields.
+function patchworkHill(nt) {
+  var G = S.G, W = S.W, k = S.k, cols = ['#E6C28C', '#D9BD7E', '#CFC68E', '#E2B784'];
+  hillPath(G.horizon, 11 * k, 0.006, 0.013, 0.5); paint(cz(cols[0], nt));
+  g.save();
+  hillPath(G.horizon, 11 * k, 0.006, 0.013, 0.5); g.clip();
+  for (var i = 0, x = -60 * k; x < W + 60 * k; i++, x += 70 * k) {
+    g.beginPath(); g.moveTo(x, G.horizon + 6); g.lineTo(x + 40 * k, G.horizon - 50 * k); g.lineTo(x + 110 * k, G.horizon - 50 * k); g.lineTo(x + 70 * k, G.horizon + 6); g.closePath();
+    g.fillStyle = cz(cols[1 + i % 3], nt); g.fill();
+  }
+  g.restore();
+}
+function batchDots(list, color, nt) {
+  if (!list.length) return;
+  g.beginPath();
+  list.forEach(function (d) { g.moveTo(d[0] + d[2], d[1]); g.arc(d[0], d[1], d[2], 0, Math.PI * 2); });
+  g.fillStyle = cz(color, nt); g.fill();
+}
+function drawMeadow(nt) {
+  var G = S.G, W = S.W, k = S.k, top = G.horizon + 12 * k, span = G.roadTop - G.horizon - 22 * k;
+  var white = [], yellow = [], pink = [], lilac = [], centers = [];
+  FLOWERS.forEach(function (f) {
+    var x = f.x * W, y = top + f.y * span, r = 1.7 * k * depth(y) * f.r;
+    if (f.t === 0) { white.push([x, y, r * 1.3]); centers.push([x, y, r * 0.5]); }
+    else if (f.t === 1) yellow.push([x, y, r]);
+    else if (f.t === 2) pink.push([x, y, r]);
+    else { lilac.push([x, y - r, r * 0.7]); lilac.push([x, y, r * 0.7]); }
+  });
+  batchDots(white, '#FFFDF4', nt); batchDots(centers, '#F2B33D', nt); batchDots(yellow, '#F6CF4A', nt);
+  batchDots(pink, '#E9A0B8', nt); batchDots(lilac, '#A992D0', nt);
+  TOADSTOOLS.forEach(function (m) {
+    var y = top + m.y * span, x = m.x * W, s = k * depth(y) * m.s;
+    rr(x - 1.6 * s, y - 5 * s, 3.2 * s, 5 * s, 1 * s); paint(cz('#F4E9D6', nt));
+    g.beginPath(); g.arc(x, y - 4.6 * s, 4.6 * s, Math.PI, 0); g.closePath(); paint(cz('#C8553D', nt));
+    g.fillStyle = cz('#FFF7E8', nt);
+    circle(x - 2 * s, y - 6.6 * s, 0.9 * s); g.fill(); circle(x + 1.6 * s, y - 7.4 * s, 0.8 * s); g.fill(); circle(x + 2.4 * s, y - 5.4 * s, 0.6 * s); g.fill();
+  });
+}
+function drawFence(nt) {
+  var y = S.G.roadTop, k = S.k, pitch = 11 * k, w = 5 * k;
+  g.fillStyle = cz('#E9DCC4', nt);
+  g.fillRect(0, y - 11 * k, S.W, 2.2 * k);
+  g.fillRect(0, y - 5.5 * k, S.W, 2.2 * k);
+  g.beginPath();
+  for (var x = 2 * k; x < S.W; x += pitch) {
+    g.moveTo(x, y); g.lineTo(x, y - 13 * k); g.lineTo(x + w / 2, y - 16 * k); g.lineTo(x + w, y - 13 * k); g.lineTo(x + w, y); g.closePath();
+  }
+  g.fillStyle = cz('#FFF7E8', nt); g.fill();
+  g.lineWidth = 1; g.strokeStyle = cz('#B8A48A', nt); g.stroke();
+}
 function drawCozyGround(nt) {
   var G = S.G, W = S.W, H = S.H, k = S.k;
-  hillPath(G.horizon, 11 * k, 0.006, 0.013, 0.5); paint(cz('#E6C28C', nt));
+  patchworkHill(nt);
   drawTrees(nt);
   hillPath(G.horizon, 6 * k, 0.011, 0.021, 2.1); paint(cz('#D4A56A', nt));
   var grass = g.createLinearGradient(0, G.horizon, 0, G.roadTop);
@@ -1690,22 +1767,25 @@ function drawCozyGround(nt) {
     if (t.f) { ellipse(x, y, 3.4 * k, 1.6 * k); paint(cz(LEAVES[i % LEAVES.length], nt)); }
     else { ellipse(x, y, 6 * k, 2 * k); paint(tuft); }
   });
-  g.fillStyle = cz('#EFE2CA', nt);
+  drawMeadow(nt);
+  // A dirt lane instead of a road, with a picket fence along the meadow.
+  g.fillStyle = cz('#B9B577', nt);
   g.fillRect(0, G.roadTop, W, 8 * k);
-  g.fillStyle = cz('#857A72', nt);
+  g.fillStyle = cz('#C9A77F', nt);
   g.fillRect(0, G.roadTop + 8 * k, W, H - G.roadTop);
-  g.fillStyle = cz('#F7E4B8', nt);
-  for (var d = 10; d < W; d += 44 * k) { rr(d, G.roadMid - 2 * k, 22 * k, 4 * k, 2 * k); g.fill(); }
+  g.fillStyle = cz('#B08E67', nt);
+  PEBBLES.forEach(function (p) { ellipse(p.x * W, G.roadTop + 12 * k + p.y * (H - G.roadTop - 14 * k), 2.2 * k * p.s, 1.2 * k * p.s); g.fillStyle = cz(p.c, nt); g.fill(); });
+  drawFence(nt);
 }
 
 function drawCozyRainbow(nt) {
-  var a = S.rainbow * (1 - nt * 0.85) * (1 - S.gloom);
+  var a = S.rainbow * (1 - smooth(nt * 1.4)) * (1 - S.gloom);
   if (a <= 0.02) return;
   var cols = ['#D9624A', '#EE9A4D', '#F2CC60', '#9CC47E', '#6FA8C8', '#9C89B8'];
   var bw = 10 * S.k, cx = S.W * 0.52, cy = S.G.horizon + 10 * S.k, R = Math.min(S.W * 0.4, S.G.horizon * 1.05);
   var inner = R - (cols.length - 1) * bw;
   g.save();
-  g.globalAlpha = a * 0.85;
+  g.globalAlpha = a * 0.6;
   g.lineCap = 'round';
   g.beginPath(); g.arc(cx, cy, (R + inner) / 2, Math.PI, 0); g.lineWidth = cols.length * bw + 10 * S.k; g.strokeStyle = '#FFFFFF'; g.stroke();
   cols.forEach(function (c, i) {
@@ -1715,13 +1795,19 @@ function drawCozyRainbow(nt) {
 }
 
 // The schoolhouse: a front gable, a belfry with a bell and a pennant, a SCHOOL sign over the door,
-// tall trimmed windows with flower boxes, and a chimney. Bigger schools get a second floor and columns.
+// tall trimmed windows with flower boxes, pumpkins on the steps, and a chimney (two on big schools).
+// A school's windows light up once the light reaches it.
+var CUR = null;
 function gableH(W) { return Math.min(W * 0.3, 30); }
 function roofRise(s) { var d = dims(s); return d.mega ? 36 : gableH(d.w) + 34; }
 function schoolWall(s) { return COZY_WALLS[(s.id != null ? s.id : S.nextId) % COZY_WALLS.length]; }
+function isLit(s) { return S.phase === 'unlimited' && !!s && !!s.blessed; }
 function cozyWindow(i, nt) {
-  if (S.gloom > 0.5) return cz('#7D8796', 0);
-  if (S.phase === 'unlimited') return nt > 0.3 ? '#FFC861' : '#FFE3A3';
+  if (S.gloom > 0.5 && !(CUR && CUR.blessed)) return cz('#7D8796', 0);
+  if (isLit(CUR)) {
+    var c = nt > 0.3 ? '#FFC861' : '#FFE3A3';
+    return CUR.flare > 0 && i === CUR.flareWin ? mix(c, '#FFFBE6', Math.min(1, CUR.flare * 1.4)) : c;
+  }
   return cz('#CFE3EE', nt);
 }
 function belfry(x, y, s, nt) {
@@ -1730,26 +1816,26 @@ function belfry(x, y, s, nt) {
   rr(x - 5, y - 10, 10, 9, 4); paint(cz('#3A2A2A', nt));
   g.save();
   g.translate(x, y - 9.5);
-  var ring = s.ring || 0;
-  g.rotate(Math.sin(S.t * 9) * 0.5 * ring + (S.phase === 'unlimited' ? Math.sin(beatPos() * Math.PI) * 0.12 : 0));
+  g.rotate(Math.sin(S.t * 5) * 0.45 * (s.ring || 0));
   g.beginPath(); g.moveTo(-3.4, 6); g.quadraticCurveTo(-3.6, 0.5, 0, 0); g.quadraticCurveTo(3.6, 0.5, 3.4, 6); g.lineTo(4.4, 7.2); g.lineTo(-4.4, 7.2); g.closePath();
   paint('#E8B04A', OUTLINE, 1.1);
   g.restore();
   g.beginPath(); g.moveTo(x - 11, y - 12); g.lineTo(x, y - 26); g.lineTo(x + 11, y - 12); g.closePath(); paint(roof, OUTLINE, 1.8);
   g.strokeStyle = '#E5E5E5'; g.lineWidth = 1.8; line(x, y - 26, x, y - 40);
   g.beginPath(); g.moveTo(x, y - 40);
-  for (var f = 0; f <= 4; f++) g.lineTo(x + f * 3.6, y - 40 + Math.sin(S.t * (6 + S.windy * 6) + f) * 1.4 + f * 0.9);
+  for (var f = 0; f <= 4; f++) g.lineTo(x + f * 3.6, y - 40 + Math.sin(S.t * 2.4 + f) * 1.2 + f * 0.9);
   g.lineTo(x, y - 32);
   g.closePath(); paint(S.gloom > 0.5 ? '#9AA0AE' : cz('#C8553D', nt), OUTLINE, 1.2);
 }
-function smoke(x, y) {
+// Chimney smoke curls up lazily, and there's more of it in the evening when the hearths are lit.
+function smoke(x, y, nt, seed) {
   if (STK) return;
-  var on = S.phase === 'unlimited' || S.phase === 'choose' ? 0.7 : 0.45;
-  for (var i = 0; i < 3; i++) {
-    var ph = (S.t * 0.45 + i / 3) % 1;
-    g.globalAlpha = (1 - ph) * on * (1 - S.gloom * 0.6);
-    circle(x + ph * (6 + S.windy * 30), y - ph * 32, 3 + ph * 6);
-    g.fillStyle = '#FFFFFF'; g.fill();
+  var on = (0.3 + 0.5 * nt + (isLit(CUR) ? 0.15 : 0)) * (1 - S.gloom * 0.6);
+  for (var i = 0; i < 4; i++) {
+    var ph = (S.t * 0.16 + i / 4 + seed) % 1;
+    g.globalAlpha = (1 - ph) * on;
+    circle(x + Math.sin(ph * 5 + seed * 6) * 3 + ph * 8, y - ph * 42, 2.6 + ph * 7);
+    g.fillStyle = nt > 0.4 ? '#E6DDEE' : '#FFFFFF'; g.fill();
   }
   g.globalAlpha = 1;
 }
@@ -1757,25 +1843,32 @@ function signBoard(y, w, nt) {
   rr(-w / 2, y, w, 10, 2); paint(cz('#F4E6C8', nt), OUTLINE, 1.4);
   if (STK) return;
   g.fillStyle = cz('#5B3B33', nt);
-  g.font = '800 7.4px ' + UI_FONT;
+  g.font = '700 7.6px ' + SERIF;
   g.textAlign = 'center'; g.textBaseline = 'middle';
   g.fillText('SCHOOL', 0, y + 5.4);
+}
+function pumpkin(x, y, r, nt) {
+  ellipse(x, y - r * 0.8, r * 1.25, r * 0.85); paint(cz('#E8883A', nt), OUTLINE, 1);
+  g.strokeStyle = 'rgba(28,34,43,.25)'; g.lineWidth = 0.8;
+  g.beginPath(); g.ellipse(x, y - r * 0.8, r * 0.45, r * 0.8, 0, 0, Math.PI * 2); g.stroke();
+  rr(x - 0.7, y - r * 1.9, 1.4, r * 0.5, 0.5); paint(cz('#5E7A3A', nt));
 }
 function paneWindow(wx, wy, ww, wh, i, nt, box) {
   var trim = cz(COZY_TRIM, nt), glass = cozyWindow(i, nt);
   rr(wx - 1.6, wy - 1.6, ww + 3.2, wh + 3.2, 1.6); paint(trim, OUTLINE, 1.4);
   rr(wx, wy, ww, wh, 1); paint(glass);
-  if (!STK && S.phase === 'unlimited' && nt > 0.3) {
+  if (CUR && CUR.wins) CUR.wins.push({ x: wx + ww / 2, y: wy + wh / 2 });
+  if (isLit(CUR) && nt > 0.3) {
     g.fillStyle = 'rgba(92,52,36,.5)';
     if (i % 2) {
-      var bob = Math.sin(beatPos() * Math.PI * 2 + i) * 0.5;
+      var bob = Math.sin(S.t * 0.8 + i) * 0.5;
       circle(wx + ww / 2, wy + wh - 5.5 + bob, 2.4); g.fill();
       rr(wx + ww / 2 - 3.2, wy + wh - 3 + bob, 6.4, 3, 1.4); g.fill();
     } else {
       g.beginPath(); g.moveTo(wx + ww * 0.3, wy + wh * 0.5); g.lineTo(wx + ww * 0.7, wy + wh * 0.5); g.lineTo(wx + ww * 0.6, wy + wh * 0.3); g.lineTo(wx + ww * 0.4, wy + wh * 0.3); g.closePath(); g.fill();
       g.fillRect(wx + ww / 2 - 0.5, wy + wh * 0.5, 1, wh * 0.3);
     }
-  } else if (!STK && S.phase === 'build') {
+  } else if (S.phase === 'build') {
     g.strokeStyle = '#FFFFFF'; g.lineWidth = 1.6; line(wx + 2, wy + 6, wx + 6, wy + 2);
   }
   g.strokeStyle = trim; g.lineWidth = 1.3;
@@ -1783,11 +1876,16 @@ function paneWindow(wx, wy, ww, wh, i, nt, box) {
   line(wx, wy + wh / 2, wx + ww, wy + wh / 2);
   if (!box) return;
   rr(wx - 2.4, wy + wh + 1.6, ww + 4.8, 4, 1); paint(cz('#8B5A3C', nt), OUTLINE, 1);
-  if (STK) return;
   ['#E07A3F', '#C2452D', '#F2CC60'].forEach(function (c, j) { circle(wx + 1 + j * (ww - 2) / 2, wy + wh + 1.4, 1.7); paint(cz(c, nt)); });
+}
+function chimney(x, H, R, W, nt, seed) {
+  var y = -H - R * (1 - Math.abs(x) / (W / 2));
+  rr(x - 4, y - 15, 8, 17, 1); paint(cz('#9C4A35', nt), OUTLINE, 1.6);
+  smoke(x, y - 18, nt, seed);
 }
 function drawSchoolhouse(s, W, H, tier, nt) {
   var wall = cz(schoolWall(s), nt), trim = cz(COZY_TRIM, nt), roof = cz(COZY_ROOF, nt), R = gableH(W);
+  CUR = s;
   var front = function () { g.beginPath(); g.moveTo(-W / 2, 0); g.lineTo(-W / 2, -H); g.lineTo(0, -H - R); g.lineTo(W / 2, -H); g.lineTo(W / 2, 0); g.closePath(); };
   front(); paint(wall);
   if (!STK) {
@@ -1799,10 +1897,8 @@ function drawSchoolhouse(s, W, H, tier, nt) {
   }
   front(); paint(null, OUTLINE, 2.2);
 
-  // Chimney on the right slope, then the roof edges over it.
-  var chx = W * 0.26, chy = -H - R * (1 - chx / (W / 2));
-  rr(chx - 4, chy - 15, 8, 17, 1); paint(cz('#9C4A35', nt), OUTLINE, 1.6);
-  smoke(chx, chy - 18);
+  chimney(W * 0.26, H, R, W, nt, 0);
+  if (tier >= 2) chimney(-W * 0.3, H, R, W, nt, 0.5);
   g.lineJoin = 'round'; g.lineCap = 'round';
   g.beginPath(); g.moveTo(-W / 2 - 6, -H + 4); g.lineTo(0, -H - R - 2); g.lineTo(W / 2 + 6, -H + 4);
   if (STK) paint(null, OUTLINE, 9);
@@ -1810,6 +1906,7 @@ function drawSchoolhouse(s, W, H, tier, nt) {
   belfry(0, -H - R - 1, s, nt);
   // Everything below sits inside the walls, so the sticker-outline passes can skip it.
   if (STK) return;
+  s.wins = [];
 
   var gw = Math.min(6, R * 0.22);
   if (gw > 3.5) { circle(0, -H - R * 0.38, gw + 1.6); paint(trim, OUTLINE, 1.4); circle(0, -H - R * 0.38, gw); paint(cozyWindow(98, nt)); }
@@ -1834,11 +1931,14 @@ function drawSchoolhouse(s, W, H, tier, nt) {
   g.beginPath(); g.arc(0, -dh, dw / 2, Math.PI, 0); g.closePath(); paint(cozyWindow(99, nt), OUTLINE, 1.4);
   rr(-dw / 2, -dh, dw, dh, 1.5); paint(cz(COZY_DOOR, nt), OUTLINE, 1.8);
   g.strokeStyle = OUTLINE; g.lineWidth = 1.1; line(0, -dh, 0, 0);
-  if (!STK) { circle(-2.4, -dh / 2, 1); paint('#E8B04A'); circle(2.4, -dh / 2, 1); paint('#E8B04A'); }
+  circle(-2.4, -dh / 2, 1); paint('#E8B04A'); circle(2.4, -dh / 2, 1); paint('#E8B04A');
   rr(-dw / 2 - 6, -3, dw + 12, 4, 1.5); paint(cz('#D8CBB2', nt), OUTLINE, 1.2);
+  pumpkin(-dw / 2 - 11, 0, 4.2, nt);
+  pumpkin(dw / 2 + 12, 0, 3.3, nt);
 }
 function drawCozyTower(s, W, H, nt) {
   var trim = cz(COZY_TRIM, nt);
+  CUR = s;
   rr(-W / 2, -H, W, H, 3); paint(cz('#B5523A', nt), OUTLINE, 2.2);
   if (!STK) {
     g.save(); rr(-W / 2, -H, W, H, 3); g.clip();
@@ -1849,6 +1949,7 @@ function drawCozyTower(s, W, H, nt) {
   g.beginPath(); g.moveTo(-W / 2 - 4, -H + 2); g.lineTo(0, -H - 14); g.lineTo(W / 2 + 4, -H + 2); g.closePath(); paint(cz(COZY_ROOF, nt), OUTLINE, 2);
   belfry(0, -H - 12, s, nt);
   if (STK) return;
+  s.wins = [];
   circle(0, -H + 18, 11); paint(trim, OUTLINE, 1.6);
   var hr = (S.clock / 60 % 12) / 12 * Math.PI * 2, mn = (S.clock % 60) / 60 * Math.PI * 2;
   g.strokeStyle = OUTLINE; g.lineWidth = 1.4; g.lineCap = 'round';
@@ -1860,15 +1961,10 @@ function drawCozyTower(s, W, H, nt) {
   rr(-12, -30, 24, 30, 2); paint(cz(COZY_DOOR, nt), OUTLINE, 1.8);
   g.strokeStyle = OUTLINE; g.lineWidth = 1.1; line(0, -30, 0, 0);
 }
+// Window positions are recorded in the school's own units; spirits need them on screen.
+function winOnScreen(s, w) { return { x: s.x + w.x * s.sc, y: s.y + w.y * s.sc }; }
 
-// Unlimited mode's outline: warm gold that breathes with the music instead of a racing rainbow.
-function goldAcross(W, H, t) {
-  var shift = (t % 1) * W, x0 = -W / 2 - shift, cols = ['#FFD27A', '#FFB35C', '#FFE7A3'];
-  var gr = g.createLinearGradient(x0, -H - 40, x0 + W * 2, 10);
-  for (var i = 0; i <= 8; i++) gr.addColorStop(i / 8, cols[i % cols.length]);
-  return gr;
-}
-// A small rain cloud over each school during the gloomy spell.
+// A small rain cloud over each school during the gloomy spell, gone once the light reaches it.
 function drawDrizzle(d, s) {
   var cy = -d.h - roofRise(s) - 16;
   g.globalAlpha = S.gloom;
@@ -1877,19 +1973,19 @@ function drawDrizzle(d, s) {
   rr(-24, cy + 3, 48, 12, 6); g.fill();
   g.strokeStyle = '#8FB0DA'; g.lineWidth = 1.6; g.lineCap = 'round';
   for (var r = 0; r < 6; r++) {
-    var ry = (S.t * 90 + r * 17) % 26;
+    var ry = (S.t * 60 + r * 17) % 26;
     line(-20 + r * 8, cy + 17 + ry, -21 + r * 8, cy + 22 + ry);
   }
   g.globalAlpha = 1;
 }
-// At night each school glows like a lit window, pulsing gently on the beat.
+// At night a lit school spills warm light onto the meadow around it. It holds steady; nothing pulses.
 function drawCozyGlow(s) {
-  var d = dims(s), sc = s.sc, pulse = Math.pow(1 - beatFrac(), 2);
-  var gy = s.y - d.h * sc * 0.55, R = d.w * sc * 1.15;
+  if (!isLit(s)) return;
+  var d = dims(s), sc = s.sc, gy = s.y - d.h * sc * 0.4, R = d.w * sc * 1.05;
   g.save();
   g.globalCompositeOperation = 'lighter';
   var glow = g.createRadialGradient(s.x, gy, 0, s.x, gy, R);
-  glow.addColorStop(0, 'rgba(255,184,92,' + (0.26 + 0.12 * pulse) + ')');
+  glow.addColorStop(0, 'rgba(255,184,92,.22)');
   glow.addColorStop(1, 'rgba(255,184,92,0)');
   g.fillStyle = glow;
   g.fillRect(s.x - R, gy - R, R * 2, R * 2);
@@ -1899,13 +1995,13 @@ function drawCozyGlow(s) {
 function drawRain() {
   var gl = S.gloom;
   if (gl < 0.02) return;
-  var n = reduced ? 50 : 150, W = S.W, H = S.H, k = S.k, len = 12 * k, lean = (0.18 + S.windy * 0.9);
+  var n = reduced ? 50 : 130, W = S.W, H = S.H, k = S.k, len = 11 * k, lean = 0.22;
   g.save();
-  g.strokeStyle = 'rgba(150,172,205,' + (0.6 * gl).toFixed(3) + ')';
-  g.lineWidth = 1.3 * k; g.lineCap = 'round';
+  g.strokeStyle = 'rgba(150,172,205,' + (0.55 * gl).toFixed(3) + ')';
+  g.lineWidth = 1.2 * k; g.lineCap = 'round';
   g.beginPath();
   for (var i = 0; i < n; i++) {
-    var sp = (380 + (i * 37) % 160) * k, x0 = ((i * 0.61803) % 1) * (W + 300) - 200;
+    var sp = (240 + (i * 37) % 110) * k, x0 = ((i * 0.61803) % 1) * (W + 300) - 200;
     var y = (S.t * sp + i * 71.3) % (H + 60) - 30, x = x0 + (y + 30) * lean;
     g.moveTo(x, y); g.lineTo(x - lean * len, y - len);
   }
@@ -1913,7 +2009,7 @@ function drawRain() {
   g.restore();
 }
 
-// Leaves: a few drift by while you build, then the wind picks up and swirls them around.
+// Leaves: a few drift by on a light breeze.
 function leafShape(x, y, s, rot, flip, c) {
   g.save();
   g.translate(x, y); g.rotate(rot); g.scale(1, 0.35 + 0.65 * Math.abs(Math.sin(flip)));
@@ -1932,26 +2028,24 @@ function heartShape(x, y, s) {
 }
 function leafTarget() {
   if (S.phase === 'crisis' || S.phase === 'charge') return 0;
-  if (S.phase === 'build' || S.phase === 'intro') return 7;
-  return reduced ? 10 : 28;
+  return reduced ? 3 : 6;
 }
 function spawnLeaf(anywhere) {
   S.leaves.push({
     x: anywhere ? rand(0, S.W) : rand(-40, -10), y: anywhere ? rand(0, S.G.roadTop) : rand(-20, S.G.roadTop * 0.8),
-    vx: rand(20, 50) * S.k, vy: rand(10, 30) * S.k, rot: rand(0, 6), vr: rand(-3, 3), flip: rand(0, 6),
-    c: pick(LEAVES), s: rand(4, 7) * S.k
+    vx: rand(12, 24) * S.k, vy: rand(8, 16) * S.k, rot: rand(0, 6), vr: rand(-1.5, 1.5), flip: rand(0, 6),
+    c: pick(LEAVES), s: rand(4, 6.5) * S.k
   });
 }
 function stepLeaves(dt) {
-  var want = leafTarget(), wind = (25 + S.windy * 230) * S.k, eddy = (22 + S.windy * 55) * S.k;
-  if (S.leaves.length < want && Math.random() < dt * 8) spawnLeaf(!S.leaves.length);
+  var want = leafTarget(), wind = (14 + S.windy * 60) * S.k, eddy = 12 * S.k;
+  if (S.leaves.length < want && Math.random() < dt * 2) spawnLeaf(!S.leaves.length);
   S.leaves = S.leaves.filter(function (l) {
-    // A slowly turning flow field makes the leaves loop and eddy instead of flying in straight lines.
-    var a = Math.sin(l.x * 0.005 + S.t * 0.6) * Math.cos(l.y * 0.007 - S.t * 0.45) * Math.PI * 2;
-    var tx = wind + Math.cos(a) * eddy * 1.6, ty = 14 * S.k + Math.sin(a) * eddy * 1.6, e = Math.min(1, dt * 2);
+    var a = Math.sin(l.x * 0.005 + S.t * 0.3) * Math.cos(l.y * 0.007 - S.t * 0.22) * Math.PI * 2;
+    var tx = wind + Math.cos(a) * eddy, ty = 12 * S.k + Math.sin(a) * eddy, e = Math.min(1, dt);
     l.vx += (tx - l.vx) * e; l.vy += (ty - l.vy) * e;
     l.x += l.vx * dt; l.y += l.vy * dt;
-    l.rot += l.vr * dt * (1 + S.windy); l.flip += dt * (3 + S.windy * 4);
+    l.rot += l.vr * dt; l.flip += dt * 1.8;
     if (l.x > S.W + 30 || l.y > S.H + 20 || l.y < -60) {
       if (S.leaves.length > want) return false;
       l.x = rand(-40, -10); l.y = rand(-20, S.G.roadTop * 0.8);
@@ -1963,115 +2057,190 @@ function drawLeaves(nt) {
   S.leaves.forEach(function (l) { leafShape(l.x, l.y, l.s, l.rot, l.flip, cz(l.c, nt * 0.6)); });
 }
 function leafDrag(p, dt) {
-  if (p.gust) return;
-  p.vx = p.vx * (1 - Math.min(1, 1.4 * dt)) + S.windy * 90 * S.k * dt;
-  if (p.vy > 80 * S.k) p.vy = 80 * S.k;
-}
-// While the power-up charges, the wind pulls leaves into a whirl around the admin.
-function leafVortex(intensity) {
-  var n = Math.ceil(intensity * 2);
-  for (var i = 0; i < n; i++) {
-    S.parts.push({
-      x: -99, y: -99, vx: 0, vy: 0, life: rand(0.8, 1.3), c: pick(LEAVES), s: rand(4, 7) * S.k, shape: 'leaf', rot: rand(0, 6), vr: rand(-6, 6), grav: 0,
-      orb: { cx: S.hero.x, cy: S.hero.y - 40 * S.k, a: rand(0, 6.28), r: rand(100, 230) * S.k, w: rand(4, 7), dr: rand(70, 160) * S.k, lift: rand(20, 70) * S.k }
-    });
-  }
-}
-function orbitStep(p, dt) {
-  var o = p.orb;
-  o.a += o.w * dt; o.r = Math.max(10 * S.k, o.r - o.dr * dt); o.cy -= o.lift * dt;
-  p.x = o.cx + Math.cos(o.a) * o.r; p.y = o.cy + Math.sin(o.a) * o.r * 0.45; p.rot += p.vr * dt;
-}
-// The power-up lands as one big gust: leaves sweep across the whole town and blow the rain away.
-function gust() {
-  var n = reduced ? 40 : 150;
-  for (var i = 0; i < n; i++) {
-    S.parts.push({
-      x: rand(-S.W * 0.5, 0), y: rand(0, S.G.roadTop), vx: rand(750, 1150) * S.k, vy: rand(-70, 50) * S.k, life: rand(1.3, 1.9),
-      c: pick(LEAVES), s: rand(4, 8) * S.k, shape: 'leaf', rot: rand(0, 6), vr: rand(-10, 10), grav: 0, gust: 1
-    });
-  }
-  S.windy = 1.3;
+  p.vx = p.vx * (1 - Math.min(1, 1.4 * dt)) + S.windy * 60 * S.k * dt;
+  if (p.vy > 60 * S.k) p.vy = 60 * S.k;
 }
 
-// Fireflies: every click sends a few up, and they stay, so the night fills with them.
-var FLY_MAX = reduced ? 80 : 240;
-function addFlies(x, y, n) {
-  for (var i = 0; i < n; i++) S.flies.push({ x: x + rand(-12, 12) * S.k, y: y, ph: rand(0, 10), sp: rand(0.6, 1.4), rise: rand(0.8, 1.4) });
-  if (S.flies.length > FLY_MAX) S.flies.splice(0, S.flies.length - FLY_MAX);
-}
+// Fireflies come out at dusk: a few, low over the meadow, blinking yellow-green on and off.
 function seedFlies(n) {
-  for (var i = 0; i < n; i++) S.flies.push({ x: rand(0, S.W), y: rand(S.G.horizon - 50 * S.k, S.G.roadTop), ph: rand(0, 10), sp: rand(0.6, 1.4), rise: 0 });
+  for (var i = 0; i < n; i++) S.flies.push({ x: rand(0, S.W), y: rand(S.G.horizon, S.G.roadTop - 10 * S.k), ph: rand(0, 10), sp: rand(0.6, 1.3) });
 }
-// They hover over the field and the low sky, the way fireflies do.
 function stepFlies(dt) {
-  var top = S.G.horizon - 90 * S.k, bottom = S.G.roadTop;
+  var top = S.G.horizon - 20 * S.k, bottom = S.G.roadTop - 8 * S.k;
   S.flies.forEach(function (f) {
-    var t = S.t * f.sp + f.ph;
-    var vx = Math.cos(t * 0.8) * 22 + Math.cos(t * 0.33 + f.ph) * 14 + S.windy * 40, vy = Math.sin(t * 1.1) * 16;
-    if (f.rise > 0) { f.rise -= dt; vy -= 90 * f.rise; }
-    f.x += vx * S.k * dt; f.y += vy * S.k * dt;
+    var t = S.t * f.sp * 0.6 + f.ph;
+    f.x += (Math.cos(t * 0.8) * 12 + Math.cos(t * 0.3 + f.ph) * 8) * S.k * dt;
+    f.y += Math.sin(t * 1.1) * 9 * S.k * dt;
     if (f.x > S.W + 10) f.x = -10; else if (f.x < -10) f.x = S.W + 10;
     f.y = clamp(f.y, top, bottom);
   });
 }
 function drawFlies(nt) {
-  if (!S.flies.length) return;
-  var night = clamp(nt * 1.6, 0, 1), pulse = S.phase === 'unlimited' || S.phase === 'choose' ? Math.pow(1 - beatFrac(), 2) : 0;
+  if (nt < 0.25 || !S.flies.length) return;
+  var night = smooth((nt - 0.25) / 0.45);
   g.save();
-  if (night < 1) {
-    g.fillStyle = '#E09A1F';
-    S.flies.forEach(function (f) {
-      g.globalAlpha = (1 - night) * (0.5 + 0.4 * Math.sin(S.t * 3 * f.sp + f.ph));
-      starPath(f.x, f.y, 3.2 * S.k, f.ph + S.t); g.fill();
-    });
+  g.globalCompositeOperation = 'lighter';
+  S.flies.forEach(function (f) {
+    var blink = Math.pow(Math.max(0, Math.sin(S.t * 1.1 * f.sp + f.ph)), 5) * night;
+    if (blink < 0.02) return;
+    g.globalAlpha = blink * 0.4; circle(f.x, f.y, 4.2 * S.k); g.fillStyle = '#B8F04A'; g.fill();
+    g.globalAlpha = blink; circle(f.x, f.y, 1.4 * S.k); g.fillStyle = '#F2FFB8'; g.fill();
+  });
+  g.restore();
+}
+
+// Caretaker spirits: after the light reaches a school, a small glowing spirit with a leaf hat drifts
+// over its roof, two leaves circling it. Now and then it floats down to a window, the window glows,
+// and a kid inside gets unstuck. It keeps doing that day and night, whether or not you click.
+var TENDS = ['Got unstuck on fractions', 'Essay outline, sorted', 'Chemistry finally clicked', 'Ready for the quiz', 'FAFSA, filed', 'Proof makes sense now', 'Lab report, done'];
+function bless(s) {
+  if (s.spirit) return;
+  s.blessed = true;
+  s.spirit = { ph: rand(0, 6), born: S.t, tendAt: S.t + rand(2.5, 6), tend: 0, loop: 0, fw: 0 };
+  s.ring = 1;
+  var t = spiritHome(s, S.t);
+  burst(t.x, t.y, 8, ['#FFF3C4', '#FFFFFF'], 60 * S.k, 'dot');
+}
+function spiritHome(s, t) {
+  var d = dims(s), sp = s.spirit, top = s.y - (d.h + (d.mega ? 22 : gableH(d.w) * 0.6)) * s.sc;
+  return { x: s.x + Math.sin(t * 0.32 + sp.ph) * d.w * s.sc * 0.4, y: top - (16 + Math.sin(t * 0.65 + sp.ph) * 5) * s.sc };
+}
+function spiritPos(s, t) {
+  var sp = s.spirit, p = spiritHome(s, t);
+  if (sp.tend > 0 && s.wins && s.wins[sp.fw]) {
+    var w = winOnScreen(s, s.wins[sp.fw]), e = smooth(Math.sin(Math.PI * Math.min(1, sp.tend)) * 1.15);
+    p.x = lerp(p.x, w.x + 9 * s.sc, e); p.y = lerp(p.y, w.y - 6 * s.sc, e);
   }
-  if (night > 0) {
+  if (sp.loop > 0) {
+    var a = (1 - sp.loop) * Math.PI * 2;
+    p.x += Math.sin(a) * 12 * s.sc; p.y -= (1 - Math.cos(a)) * 9 * s.sc;
+  }
+  return p;
+}
+function stepSpirits(dt) {
+  var live = S.phase === 'unlimited' || S.phase === 'choose';
+  S.schools.forEach(function (s) {
+    var sp = s.spirit;
+    if (!sp) return;
+    if (sp.loop > 0) sp.loop = Math.max(0, sp.loop - dt / 1.2);
+    if (s.flare > 0) s.flare = Math.max(0, s.flare - dt / 1.8);
+    if (sp.tend > 0) {
+      var was = sp.tend;
+      sp.tend += dt / 3.2;
+      if (was < 0.5 && sp.tend >= 0.5) tended(s);
+      if (sp.tend >= 1) { sp.tend = 0; sp.tendAt = S.t + rand(6, 12); }
+    } else if (live && S.t >= sp.tendAt && s.wins && s.wins.length) {
+      sp.fw = (Math.random() * s.wins.length) | 0;
+      sp.tend = 0.001;
+    }
+  });
+}
+function tended(s) {
+  var sp = s.spirit, w = s.wins && s.wins[sp.fw];
+  if (!w) return;
+  s.flare = 1; s.flareWin = sp.fw;
+  var p = winOnScreen(s, w);
+  PART_TAG = S.phase === 'choose' ? 'cozy' : undefined;
+  burst(p.x, p.y, 5, ['#FFF3C4', '#FFFFFF'], 45 * S.k, 'dot');
+  PART_TAG = undefined;
+  if (S.phase !== 'unlimited') return;
+  addDreams(0.03);
+  if (S.t - (UI.tendFloat || 0) > 4.5 && Math.random() < 0.6) {
+    UI.tendFloat = S.t;
+    floatText(p.x, p.y - 26 * s.sc, isParty() ? clockStr(S.clock) + ' \u00b7 still helping' : '\ud83d\udca1 ' + pick(TENDS), 'tend', 14);
+  }
+}
+function spiritCheer(s) { if (s.spirit) s.spirit.loop = 1; }
+function drawSpirits(nt) {
+  S.schools.forEach(function (s, idx) {
+    var sp = s.spirit;
+    if (!sp || (CULL && !CULL(s.x))) return;
+    var age = smooth((S.t - sp.born) / 1.4), k = s.sc * 1.3, p = spiritPos(s, S.t);
+    if (age <= 0) return;
+    g.save();
+    g.globalAlpha = age;
+    for (var i = 3; i >= 1; i--) {
+      var q = spiritPos(s, S.t - i * 0.14);
+      circle(q.x, q.y, (4.6 - i * 0.9) * k); g.fillStyle = 'rgba(255,244,214,' + (0.22 * (1 - i / 4)).toFixed(3) + ')'; g.fill();
+    }
     g.globalCompositeOperation = 'lighter';
-    S.flies.forEach(function (f) {
-      var a = night * (0.5 + 0.5 * Math.sin(S.t * 3 * f.sp + f.ph)), r = (1.5 + pulse * 0.8) * S.k;
-      g.globalAlpha = a * 0.35; circle(f.x, f.y, r * 2.8); g.fillStyle = '#FFB000'; g.fill();
-      g.globalAlpha = a; circle(f.x, f.y, r); g.fillStyle = '#FFF3A0'; g.fill();
-    });
-  }
+    var R = (16 + 6 * nt + 6 * (s.flare || 0)) * k, glow = g.createRadialGradient(p.x, p.y, 0, p.x, p.y, R);
+    glow.addColorStop(0, 'rgba(255,230,170,' + (0.35 + 0.3 * nt).toFixed(3) + ')'); glow.addColorStop(1, 'rgba(255,230,170,0)');
+    g.fillStyle = glow; g.fillRect(p.x - R, p.y - R, R * 2, R * 2);
+    g.globalCompositeOperation = 'source-over';
+    circle(p.x, p.y, 5.8 * k); g.fillStyle = '#FFF9EC'; g.fill();
+    g.lineWidth = 1; g.strokeStyle = 'rgba(214,160,90,.8)'; g.stroke();
+    g.fillStyle = '#3A2A2A';
+    circle(p.x - 1.9 * k, p.y - 0.2 * k, 0.8 * k); g.fill(); circle(p.x + 1.9 * k, p.y - 0.2 * k, 0.8 * k); g.fill();
+    g.fillStyle = 'rgba(233,140,150,.55)';
+    circle(p.x - 3.4 * k, p.y + 1.4 * k, 1 * k); g.fill(); circle(p.x + 3.4 * k, p.y + 1.4 * k, 1 * k); g.fill();
+    leafShape(p.x + 0.8 * k, p.y - 6.2 * k, 3.6 * k, -0.5, 1.57, LEAVES[idx % LEAVES.length]);
+    for (var j = 0; j < 2; j++) {
+      var a = S.t * (1.1 + sp.loop * 5) + sp.ph + j * Math.PI, r = 11 * k;
+      leafShape(p.x + Math.cos(a) * r, p.y + Math.sin(a) * r * 0.45, 2.6 * k, a + 1.5, S.t * 1.4 + j, LEAVES[(idx + j + 1) % LEAVES.length]);
+    }
+    g.restore();
+  });
+}
+
+// The power-up's ring of light: it spreads out from the admin and wakes each school as it passes.
+function stepBloom(dt) {
+  var b = S.bloom;
+  if (!b) return;
+  var cx = S.hero.x, cy = S.hero.y - 40 * S.k, maxR = Math.hypot(S.W, S.H);
+  b.r += maxR / 3.2 * dt;
+  S.schools.forEach(function (s) { if (!s.spirit && Math.hypot(s.x - cx, s.y - cy) < b.r) bless(s); });
+  if (b.r > maxR * 1.1) S.bloom = null;
+}
+function drawBloom() {
+  var b = S.bloom;
+  if (!b) return;
+  var cx = S.hero.x, cy = S.hero.y - 40 * S.k, maxR = Math.hypot(S.W, S.H), fade = 1 - b.r / (maxR * 1.1), band = 120 * S.k;
+  g.save();
+  g.globalCompositeOperation = 'lighter';
+  var gr = g.createRadialGradient(cx, cy, Math.max(0, b.r - band), cx, cy, b.r + 8 * S.k);
+  gr.addColorStop(0, 'rgba(255,214,150,0)');
+  gr.addColorStop(0.8, 'rgba(255,214,150,' + (0.32 * fade).toFixed(3) + ')');
+  gr.addColorStop(1, 'rgba(255,214,150,0)');
+  g.fillStyle = gr;
+  g.fillRect(0, 0, S.W, S.H);
   g.restore();
 }
 
 // Weather and critters that tick along whenever cozy mode is on screen.
 function cozyStep(dt) {
   var gloomy = S.phase === 'crisis' || S.phase === 'charge';
-  S.gloom = gloomy ? Math.min(1, S.gloom + dt * 0.7) : Math.max(0, S.gloom - dt * 1.1);
-  var to = S.phase === 'charge' ? 0.4 + Math.min(1, (S.chargeT || 0) / 2) * 0.6
-    : S.phase === 'unlimited' || S.phase === 'choose' ? 0.38 + 0.14 * Math.sin(S.t * 0.4)
-    : S.phase === 'crisis' ? 0.2 : 0.05;
-  S.windy += (to - S.windy) * Math.min(1, dt * (S.windy > to ? 0.7 : 1.5));
-  S.cloudShift += S.windy * S.windy * dt * 0.25;
+  if (gloomy) S.gloom = Math.min(1, S.gloom + dt * 0.5);
+  else if (S.bloom) S.gloom = Math.min(S.gloom, Math.max(0, 1 - S.bloom.r / Math.hypot(S.W, S.H) * 1.4));
+  else S.gloom = Math.max(0, S.gloom - dt * 0.6);
+  S.windy += (0.1 + 0.05 * Math.sin(S.t * 0.3) - S.windy) * Math.min(1, dt);
+  S.cloudShift += (gloomy ? 0 : 0.004) * dt + (S.bloom ? 0.03 * dt : 0);
+  stepBloom(dt);
   stepLeaves(dt);
   stepFlies(dt);
-  S.schools.forEach(function (s) { if (s.ring > 0) s.ring = Math.max(0, s.ring - dt * 0.7); });
+  stepSpirits(dt);
+  S.schools.forEach(function (s) { if (s.ring > 0) s.ring = Math.max(0, s.ring - dt * 0.45); });
 }
 
-// UPdog floats in under a hot-air balloon, hops out with the power-up, and the balloon drifts off.
+// UPdog floats straight down under a hot-air balloon, hops out with the power-up, and the balloon
+// rises straight back up.
 function launchBalloon() {
-  var p0 = { x: S.W * 0.92, y: -30 * S.k };
-  S.rocket = { t: 0, leg: 0, p0: p0, p1: { x: S.W * 0.7, y: S.H * 0.35 }, p2: { x: S.dog.x, y: S.dog.y }, x: p0.x, y: p0.y };
+  S.rocket = { t: 0, leg: 0, x: S.dog.x, y: -40 * S.k, from: -40 * S.k };
   sfx.rocket();
 }
 function balloonStep(dt) {
-  var r = S.rocket;
+  var r = S.rocket, sway = Math.sin(S.t * 0.8) * 3 * S.k;
   r.t += dt;
   if (r.leg === 0) {
-    var u = Math.min(1, r.t / 2.6), e = 1 - Math.pow(1 - u, 2.4);
-    r.x = bez(r.p0.x, r.p1.x, r.p2.x, e) + Math.sin(r.t * 1.4) * 10 * S.k * (1 - u);
-    r.y = bez(r.p0.y, r.p1.y, r.p2.y, e);
+    var u = Math.min(1, r.t / 4.2), e = 1 - Math.pow(1 - u, 3);
+    r.y = lerp(r.from, S.dog.y, e); r.x = S.dog.x + sway * (1 - e);
     if (u >= 1) { r.leg = 1; r.t = 0; deliver(); }
   } else if (r.leg === 1) {
-    r.y = r.p2.y - Math.sin(r.t * 5) * 2;
-    if (r.t > 0.5) { r.leg = 2; r.t = 0; r.from = { x: r.x, y: r.y }; }
+    r.y = S.dog.y - Math.sin(r.t * 2.4) * 1.5;
+    if (r.t > 1.2) { r.leg = 2; r.t = 0; }
   } else {
-    var v = Math.min(1, r.t / 2.6), e2 = v * v;
-    r.x = r.from.x + (S.W * 0.3 - r.from.x) * e2 + Math.sin(r.t * 1.4) * 8 * S.k;
-    r.y = r.from.y + (-260 * S.k - r.from.y) * e2;
+    var v = Math.min(1, r.t / 4.5), e2 = v * v * v;
+    r.y = lerp(S.dog.y, -330 * S.k, e2); r.x = S.dog.x + sway * e2;
     if (v >= 1) S.rocket = null;
   }
 }
@@ -2086,7 +2255,7 @@ function drawBalloon() {
   if (!r) return;
   g.save();
   g.translate(r.x, r.y);
-  g.rotate(Math.sin(S.t * 1.6) * 0.05);
+  g.rotate(Math.sin(S.t * 0.8) * 0.03);
   g.scale(S.k * 1.15, S.k * 1.15);
   g.lineJoin = 'round'; g.lineCap = 'round';
   envelope(); g.lineWidth = 10; g.strokeStyle = '#FFFFFF'; g.stroke();
@@ -2099,8 +2268,8 @@ function drawBalloon() {
   circle(0, -110, 13); paint('#FFFFFF', '#1FC39A', 2.6);
   g.fillStyle = '#1FC39A'; g.font = '800 12px ' + UI_FONT; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('UP', 0, -109.5);
   g.strokeStyle = OUTLINE; g.lineWidth = 1.4; line(-12, -60, -15, -26); line(12, -60, 15, -26);
-  if (r.leg !== 1 && Math.sin(S.t * 22) > -0.3) {
-    g.beginPath(); g.moveTo(-3, -40); g.quadraticCurveTo(0, -56 - Math.random() * 4, 3, -40); g.closePath(); paint('#FFC94D', '#FF9F6E', 1.2);
+  if (r.leg !== 1) {
+    g.beginPath(); g.moveTo(-3, -40); g.quadraticCurveTo(0, -54 - Math.sin(S.t * 9) * 2, 3, -40); g.closePath(); paint('#FFC94D', '#FF9F6E', 1.2);
   }
   if (r.leg === 0 && imgReady('dog')) {
     var dw = 44, dh = dw * ART_META.dog[1] / ART_META.dog[0];
@@ -2113,27 +2282,59 @@ function drawBalloon() {
   g.restore();
 }
 
-// UPdog's cozy look: a striped scarf that drops onto his collar when the power kicks in.
+// Scarves: a flowing tail that ripples in the breeze.
+function scarfTail(x, y, len, width, c, ph) {
+  var w1 = Math.sin(S.t * 2.6 + ph) * width * 0.5, w2 = Math.sin(S.t * 2.6 + ph + 1.3) * width * 0.8;
+  g.beginPath(); g.moveTo(x, y);
+  g.bezierCurveTo(x + len * 0.35, y + width * 0.2 + w1, x + len * 0.7, y - width * 0.2 + w2, x + len, y + width * 0.6 + w2);
+  g.lineCap = 'round';
+  if (STK) { paint(null, OUTLINE, width + 1); return; }
+  g.lineWidth = width + 1.4; g.strokeStyle = OUTLINE; g.stroke();
+  g.lineWidth = width; g.strokeStyle = c; g.stroke();
+}
+// UPdog's cozy look: a striped scarf that settles onto his collar when the light comes in.
 function dogScarf(s, drop) {
   g.save();
   g.translate(0, -drop / s);
   g.lineCap = 'round'; g.lineJoin = 'round';
+  var w1 = Math.sin(S.t * 2.2) * 8, w2 = Math.sin(S.t * 2.2 + 1.3) * 12;
+  g.beginPath(); g.moveTo(196, 166); g.bezierCurveTo(240, 176 + w1, 285, 150 + w2, 340, 176 + w2);
+  g.lineWidth = 30; g.strokeStyle = OUTLINE; g.stroke();
+  g.lineWidth = 24; g.strokeStyle = '#C8553D'; g.stroke();
+  g.lineWidth = 5; g.strokeStyle = '#F6E7CF'; g.setLineDash([9, 20]); g.stroke(); g.setLineDash([]);
   g.beginPath(); g.moveTo(44, 156); g.quadraticCurveTo(148, 194, 258, 138);
   g.lineWidth = 34; g.strokeStyle = OUTLINE; g.stroke();
   g.lineWidth = 28; g.strokeStyle = '#C8553D'; g.stroke();
   g.lineWidth = 6; g.strokeStyle = '#F6E7CF'; g.setLineDash([10, 22]); g.stroke(); g.setLineDash([]);
-  rr(176, 158, 30, 78, 8); paint('#C8553D', OUTLINE, 4);
-  g.fillStyle = '#F6E7CF'; g.fillRect(178, 190, 26, 7); g.fillRect(178, 206, 26, 7);
-  g.strokeStyle = '#C8553D'; g.lineWidth = 4;
-  for (var f = 0; f < 5; f++) line(181 + f * 6, 236, 181 + f * 6 + Math.sin(S.t * 5 + f) * 2, 250);
+  circle(198, 168, 16); paint('#B5452E', OUTLINE, 4);
+  g.restore();
+}
+function drawCozyDog() {
+  var d = S.dog;
+  if (!d.on || !imgReady('dog')) return;
+  var w = d.w, s = w / ART_META.dog[0], h = ART_META.dog[1] * s;
+  ellipse(d.x, d.y + 2, w * 0.42, 6 * S.k); paint('rgba(0,0,0,.2)');
+  g.save();
+  g.translate(d.x, d.y);
+  g.scale(1, 1 + Math.sin(S.t * 1.5) * 0.01);
+  g.drawImage(IMG.dog, -w / 2, -h, w, h);
+  if (d.glasses > 0) {
+    var e = smooth(d.glasses);
+    g.globalAlpha = e;
+    g.scale(s, s);
+    g.translate(-ART_META.dog[0] / 2, -ART_META.dog[1]);
+    dogScarf(s, (1 - e) * 40 * S.k);
+  }
   g.restore();
 }
 
-// The admin's scarf, rain umbrella, and mug.
+// The admin: an umbrella in the rain, a quiet float with eyes closed while the power-up settles in,
+// then a mug of something warm.
 function heroScarf() {
+  scarfTail(8, -56, 20, 4.6, '#C8553D', 0);
   rr(-12, -59, 24, 7, 3.5); paint('#C8553D', OUTLINE, 1.4);
-  rr(-10, -55, 7, 17, 2.5); paint('#C8553D', OUTLINE, 1.2);
-  if (!STK) { g.fillStyle = '#F6E7CF'; g.fillRect(-9.5, -47, 6, 2); g.fillRect(-9.5, -43, 6, 2); }
+  rr(-10, -55, 7, 12, 2.5); paint('#C8553D', OUTLINE, 1.2);
+  if (!STK) { g.fillStyle = '#F6E7CF'; g.fillRect(-9.5, -48, 6, 2); }
 }
 function heroUmbrella(skin) {
   g.strokeStyle = skin; g.lineWidth = 6;
@@ -2159,31 +2360,119 @@ function mugShape(x, y, rot, c, big, handle) {
     g.strokeStyle = 'rgba(255,255,255,.85)'; g.lineWidth = 0.8;
     for (var i = -1; i <= 1; i += 2) {
       g.beginPath(); g.moveTo(i * 1.1, -4.5);
-      g.quadraticCurveTo(i * 1.1 + 1.4, -6.2 - Math.sin(S.t * 5 + i) * 0.6, i * 1.1, -8);
+      g.quadraticCurveTo(i * 1.1 + 1.4, -6.2 - Math.sin(S.t * 2 + i) * 0.6, i * 1.1, -8);
       g.stroke();
     }
   }
   g.restore();
 }
 function heroMug(skin) {
-  var up = beatFrac() < 0.5;
+  var sip = smooth((Math.sin(S.t * 0.6) - 0.5) / 0.5), hx = lerp(17, 14, sip), hy = lerp(-44, -62, sip);
   g.strokeStyle = skin; g.lineWidth = 6;
-  line(12, -50, 22, up ? -70 : -60);
-  line(-12, -50, -24, -62 + Math.sin(S.t * 10) * 4);
-  circle(-25, -63 + Math.sin(S.t * 10) * 4, 4); paint(skin);
-  mugShape(26, up ? -75 : -65, -0.15, '#E8A33D', 1.6, -1);
-  circle(22, up ? -71 : -61, 4); paint(skin);
+  line(-12, -50, -16, -30);
+  circle(-16, -29, 3.6); paint(skin);
+  line(12, -50, hx, hy);
+  mugShape(hx + 5, hy - 3, -0.1, '#E8A33D', 1.6, -1);
+  circle(hx, hy, 3.8); paint(skin);
 }
 function heroHappyEyes() {
   g.strokeStyle = OUTLINE; g.lineWidth = 1.6;
   g.beginPath(); g.arc(-4.5, -66, 2.2, Math.PI * 1.1, Math.PI * 1.9); g.stroke();
   g.beginPath(); g.arc(4.5, -66, 2.2, Math.PI * 1.1, Math.PI * 1.9); g.stroke();
 }
+function heroMeditate() {
+  var skin = '#8D5524';
+  g.lineCap = 'round';
+  rr(-21, -15, 42, 11, 5.5); paint('#2B2D42');
+  ellipse(-19, -8, 5, 3.2); paint('#111111'); ellipse(19, -8, 5, 3.2); paint('#111111');
+  g.save();
+  g.translate(0, 11);
+  rr(-13, -55, 26, 33, 7); paint('#154BB7', OUTLINE, 2);
+  g.beginPath(); g.moveTo(-6, -55); g.lineTo(0, -44); g.lineTo(6, -55); g.closePath(); paint('#FFFFFF');
+  g.beginPath(); g.moveTo(-2, -50); g.lineTo(2, -50); g.lineTo(3, -34); g.lineTo(0, -31); g.lineTo(-3, -34); g.closePath(); paint('#F48FB1');
+  heroScarf();
+  g.strokeStyle = skin; g.lineWidth = 6;
+  line(-12, -50, -4, -39); line(12, -50, 4, -39);
+  ellipse(0, -40, 3.8, 5.4); paint(skin);
+  circle(0, -67, 12); paint(skin, OUTLINE, 2);
+  g.fillStyle = '#1B1B1B';
+  g.beginPath(); g.arc(0, -69, 12.5, Math.PI * 1.02, Math.PI * 1.98); g.closePath();
+  if (STK) paint('#1B1B1B'); else g.fill();
+  if (!STK) {
+    g.strokeStyle = OUTLINE; g.lineWidth = 1.5;
+    g.beginPath(); g.arc(-4.5, -68, 2.3, Math.PI * 0.15, Math.PI * 0.85); g.stroke();
+    g.beginPath(); g.arc(4.5, -68, 2.3, Math.PI * 0.15, Math.PI * 0.85); g.stroke();
+    g.beginPath(); g.arc(0, -62, 3, Math.PI * 0.2, Math.PI * 0.8); g.stroke();
+  }
+  g.restore();
+}
+function calmLift() {
+  var c = smooth(((S.chargeT || 0) - 0.9) / 1.6);
+  return c * 16 + Math.sin(S.t * 1.3) * 2.5 * c;
+}
+function drawCozyHero() {
+  var h = S.hero, ph = S.phase, lev = ph === 'charge' ? calmLift() : 0;
+  g.save();
+  g.translate(h.x, h.y);
+  g.scale(h.hs, h.hs);
+  ellipse(0, 0, 18 - lev * 0.3, 4); paint('rgba(0,0,0,.22)');
+  if (ph === 'charge' || ph === 'unlimited') {
+    var calm = ph === 'charge' ? smooth(((S.chargeT || 0) - 0.9) / 2.4) : 0.35;
+    var halo = g.createRadialGradient(0, -48 - lev, 6, 0, -48 - lev, 66);
+    halo.addColorStop(0, 'rgba(255,214,150,' + (0.15 + 0.45 * calm).toFixed(3) + ')');
+    halo.addColorStop(1, 'rgba(255,214,150,0)');
+    g.fillStyle = halo;
+    g.fillRect(-70, -120 - lev, 140, 150);
+  }
+  g.translate(0, -lev);
+  if (ph === 'charge') { STK = 7; heroMeditate(); STK = 0; heroMeditate(); }
+  else { STK = 7; heroFigure(ph, S.t); STK = 0; heroFigure(ph, S.t); }
+  g.restore();
+}
+
+// Teachers ride bicycles home instead of driving.
+function drawBike(tc, nt) {
+  var sc = S.k * depth(tc.cy) * 1.2, riding = /^(leave|arrive)/.test(tc.state), spin = riding ? S.t * 7 : 0, frame = cz(tc.car, nt);
+  g.save();
+  g.translate(tc.cx, tc.cy);
+  g.scale(sc, sc);
+  if (nt > 0.4 && riding) {
+    var beam = g.createLinearGradient(14, 0, 60, 0);
+    beam.addColorStop(0, 'rgba(255,243,176,.35)'); beam.addColorStop(1, 'rgba(255,243,176,0)');
+    g.fillStyle = beam;
+    g.beginPath(); g.moveTo(14, -18); g.lineTo(60, -26); g.lineTo(60, -6); g.closePath(); g.fill();
+  }
+  ellipse(0, 0, 17, 2.6); paint('rgba(0,0,0,.18)');
+  g.lineCap = 'round'; g.lineJoin = 'round';
+  [-10, 10].forEach(function (wx) {
+    circle(wx, -7, 6.5); g.lineWidth = 1.8; g.strokeStyle = OUTLINE; g.stroke();
+    g.lineWidth = 0.8; g.strokeStyle = 'rgba(28,34,43,.5)';
+    line(wx + Math.cos(spin) * 6, -7 + Math.sin(spin) * 6, wx - Math.cos(spin) * 6, -7 - Math.sin(spin) * 6);
+    line(wx + Math.cos(spin + 1.57) * 6, -7 + Math.sin(spin + 1.57) * 6, wx - Math.cos(spin + 1.57) * 6, -7 - Math.sin(spin + 1.57) * 6);
+  });
+  g.strokeStyle = frame; g.lineWidth = 2.2;
+  g.beginPath(); g.moveTo(-10, -7); g.lineTo(-2, -7); g.lineTo(5, -16); g.lineTo(-4, -16); g.lineTo(-2, -7); g.moveTo(5, -16); g.lineTo(10, -7); g.moveTo(-4, -16); g.lineTo(-5, -19); g.moveTo(5, -16); g.lineTo(7, -21); g.stroke();
+  g.strokeStyle = OUTLINE; g.lineWidth = 2; line(-7.5, -19.5, -2.5, -19.5); line(6, -21.5, 10, -21.5);
+  rr(8, -21, 8, 6, 1.5); paint(cz('#B07A45', nt), OUTLINE, 1);
+  circle(10.5, -21.5, 1.4); paint(cz('#E9A0B8', nt)); circle(13.5, -22, 1.4); paint(cz('#F6CF4A', nt));
+  if (nt > 0.4) { circle(15.5, -17, 1.4); paint('#FFF3B0'); }
+  if (riding) {
+    g.strokeStyle = tc.pants; g.lineWidth = 3;
+    var pd = Math.sin(spin) * 2.5;
+    line(-4, -21, 0 + pd, -10); line(-4, -21, -1 - pd, -11);
+    rr(-8, -34, 9, 14, 3.5); paint(cz(tc.shirt, nt), OUTLINE, 1.2);
+    g.strokeStyle = tc.skin; g.lineWidth = 2.4; line(-1, -31, 8, -22);
+    circle(-3, -39, 4.8); paint(tc.skin, OUTLINE, 1.2);
+    g.fillStyle = tc.hair; g.beginPath(); g.arc(-3, -39.3, 5.2, Math.PI, 0); g.closePath(); g.fill();
+    if (!tc.scarf) tc.scarf = pick(SCARVES);
+    scarfTail(-6, -33, -12, 2.2, tc.scarf, tc.i);
+  }
+  g.restore();
+}
 
 // The mug toast: kids reach in and clink twice, then lift their mugs to you and wave.
 var TOAST = { approach: 0.16, clink1: 0.4, clink2: 0.65, raise: 0.8 };
 var TOAST_SCALE = 1.15;
-function smooth(u) { u = clamp(u, 0, 1); return u * u * (3 - 2 * u); }
 function toastReach(a) {
   if (a < TOAST.clink1) return smooth((a - TOAST.approach) / (TOAST.clink1 - TOAST.approach));
   if (a < TOAST.clink2) return 1 - 0.4 * Math.sin(Math.PI * (a - TOAST.clink1) / (TOAST.clink2 - TOAST.clink1));
@@ -2206,7 +2495,7 @@ function toastBeat(k, was) {
   }
   if (at(TOAST.raise + 0.1)) {
     for (var i = 0; i < 3; i++) {
-      S.parts.push({ x: m.x + rand(-14, 14) * S.k, y: m.y, vx: rand(-15, 15), vy: rand(-75, -45) * S.k, life: rand(0.9, 1.3), c: pick(['#E85D8F', '#F48FB1', '#FF9F6E']), s: rand(3.5, 5) * S.k, shape: 'heart', rot: 0, vr: 0, grav: -10, only: PART_TAG });
+      S.parts.push({ x: m.x + rand(-14, 14) * S.k, y: m.y, vx: rand(-15, 15), vy: rand(-60, -35) * S.k, life: rand(1.2, 1.6), c: pick(['#E85D8F', '#F48FB1', '#FF9F6E']), s: rand(3.5, 5) * S.k, shape: 'heart', rot: 0, vr: 0, grav: -8, only: PART_TAG });
     }
   }
   PART_TAG = undefined;
@@ -2231,15 +2520,16 @@ function drawToaster(p, x, y, sc) {
   g.strokeStyle = p.pants; g.lineWidth = 3.4;
   line(-2.6 + lean, -L, -3.4, -1);
   line(2.6 + lean, -L, 3.4, -1);
-  g.translate(lean, -Math.pow(1 - beatFrac(), 2) * 0.8 * lift);
+  g.translate(lean, 0);
   mx -= lean;
   if (p.pack) { rr(-bw / 2 - 3, top + 1, 5, bh - 3, 2); paint(p.pack, OUTLINE, 1); }
   rr(-bw / 2, top, bw, bh + 1, 3.5); paint(p.shirt, OUTLINE, 1.3);
+  scarfTail(bw / 2 - 2, top + 1, 7, 2.2, p.scarf, p.ph);
   rr(-bw / 2 + 0.5, top - 0.6, bw - 1, 3.2, 1.6); paint(p.scarf, OUTLINE, 0.8);
   g.strokeStyle = p.skin; g.lineWidth = 2.6;
   line(sx, top + 3, mx + handle * 3.4 * big, my);
   if (lift > 0.3) {
-    var wave = Math.sin(S.t * 14) * 2.5;
+    var wave = Math.sin(S.t * 9) * 2.5;
     line(-sx, top + 3, -hs * (bw / 2 + 3 + wave), top - 8);
   } else {
     line(-sx, top + 3, -hs * (bw / 2 + 1.5), top + bh - 1);
@@ -2266,15 +2556,48 @@ function drawToaster(p, x, y, sc) {
   mugShape(mx, my, rot, p.mug, big, handle);
   g.restore();
 }
+
+// Floating messages become little paper tags with stitched edges and a serif hand.
+var TAG_STYLES = {
+  sad: ['#F1EEF6', '#5E5A86'],
+  happy: ['#EEF3E2', '#3F5E2E'],
+  win: ['#FFF8EC', '#7A3A22'],
+  tend: ['#FFF8EC', '#7A3A22'],
+  cap: ['#FFF8EC', '#A0452C']
+};
+function cozyTag(text, x, y, size, fg, bg) {
+  g.font = 'italic 600 ' + size + 'px ' + SERIF;
+  var w = g.measureText(text).width + size * 1.5, h = size * 2;
+  x = clamp(x, w / 2 + 6, S.W - w / 2 - 6);
+  g.save();
+  g.shadowColor = 'rgba(90,50,30,.2)'; g.shadowBlur = 6; g.shadowOffsetY = 2;
+  rr(x - w / 2, y - h / 2, w, h, h / 2); g.fillStyle = bg; g.fill();
+  g.restore();
+  g.save();
+  g.setLineDash([3, 3]); g.lineWidth = 1.2; g.strokeStyle = fg; g.globalAlpha *= 0.4;
+  rr(x - w / 2 + 3.5, y - h / 2 + 3.5, w - 7, h - 7, (h - 7) / 2); g.stroke();
+  g.restore();
+  g.fillStyle = fg; g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.fillText(text, x, y + 1);
+}
+function drawCozyFloats() {
+  var ks = clamp(S.k, 0.85, 1.1);
+  S.floats.forEach(function (f) {
+    var age = f.max - f.life, size = Math.round(Math.max(14, f.size * ks)), st = TAG_STYLES[f.style];
+    g.globalAlpha = Math.min(1, age / 0.5, f.life / 0.8);
+    if (st) cozyTag(f.text, f.x, f.y, size, st[1], st[0]);
+    else { g.font = '600 ' + size + 'px ' + SERIF; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = '#7A3A22'; g.fillText(f.text, f.x, f.y); }
+  });
+  g.globalAlpha = 1;
+}
 function drawCozyCursor(p) {
   g.save();
   g.globalCompositeOperation = 'lighter';
-  var r = 16 * clamp(S.k, 0.8, 1.2), glow = g.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 1.6);
-  glow.addColorStop(0, 'rgba(255,214,110,.75)'); glow.addColorStop(1, 'rgba(255,214,110,0)');
+  var r = 14 * clamp(S.k, 0.8, 1.2), glow = g.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 1.5);
+  glow.addColorStop(0, 'rgba(255,214,140,.6)'); glow.addColorStop(1, 'rgba(255,214,140,0)');
   g.fillStyle = glow; g.fillRect(p.x - r * 2, p.y - r * 2, r * 4, r * 4);
   g.restore();
-  starPath(p.x, p.y, r * 0.8, S.t * 1.5);
-  paint('#FFD27A', OUTLINE, 2);
+  circle(p.x, p.y, r * 0.32); paint('#FFF9EC', 'rgba(214,160,90,.9)', 1.2);
 }
 
 // The mode chooser: one live town painted both ways, split by a slanted divider like a before/after
@@ -2293,14 +2616,16 @@ function splitGeom() {
 function enterChooser(from) {
   S.phase = 'choose';
   S.schools = []; S.kids = []; S.parts = []; S.floats = []; S.leaves = []; S.flies = [];
-  S.gloom = 0; S.windy = 0.4; S.rainbow = 0; S.uStart = 0; S.ptr.inside = false;
+  S.gloom = 0; S.windy = 0.1; S.rainbow = 0; S.bloom = null; S.uStart = 0; S.ptr.inside = false;
   seedHoard(CROWD);
   DEMO.forEach(function (d) {
     var s = addSchool(d[0] * S.W, lerp(S.G.horizon, S.G.roadTop, d[1]), d[2]);
     s.drop = 0; s.landed = true;
   });
-  S.schools.forEach(function (s) { s.inside = s.need; });
-  seedFlies(26);
+  PART_TAG = 'cozy';
+  S.schools.forEach(function (s) { s.inside = s.need; bless(s); s.spirit.born = S.t - 5; s.ring = 0; });
+  PART_TAG = undefined;
+  seedFlies(14);
   S.dog.on = true; S.dog.glasses = 1;
   var over = TILT * S.H / S.W + 0.03;
   CH.split = from === 'party' ? 1 + over : from === 'cozy' ? -over : 0.5;
@@ -2328,8 +2653,7 @@ function pickMode(m) {
   CH.target = m === 'party' ? 1 + over : -over;
   root.classList.toggle('is-cozy', m === 'cozy');
   $('pb-choose').classList.add('is-picked');
-  $('pb-tab-sub').textContent = tx('tab');
-  $('pb-power-label').textContent = tx('power');
+  applyModeText();
   sfx.swoosh();
   say(m === 'cozy' ? 'Cozy mode.' : 'Party mode.');
 }
@@ -2352,9 +2676,8 @@ function chooseStep(dt) {
     cheer(s);
     s.ring = 1;
     PART_TAG = 'party'; burst(s.x, top, 10, POP, 150 * S.k, 'star');
-    PART_TAG = 'cozy'; burst(s.x, top, 8, LEAVES, 130 * S.k, 'leaf');
     PART_TAG = undefined;
-    addFlies(s.x, top, 2);
+    spiritCheer(s);
   }
   var b = Math.floor(S.t / (STEP * 4));
   if (b !== CH.beat) {
@@ -2422,7 +2745,7 @@ function startIntro() {
 }
 function introStep(dt) {
   S.introT += dt;
-  var u = Math.min(1, S.introT / 1.1);
+  var u = Math.min(1, S.introT / (MODE === 'cozy' ? 1.8 : 1.1));
   S.clock = lerp(S.introFrom, 34 * 60, u * u * (3 - 2 * u));
   S.schools.slice().forEach(function (s) {
     if (s.vanishAt == null || S.introT < s.vanishAt) return;
@@ -2459,7 +2782,6 @@ var UI = {
   canStamp: function () { return S.phase === 'build' && S.schools.length < MAX_SCHOOLS && $('pb-invoice').hidden; }
 };
 var INF = '<span class="pb-inf">\u221e</span>';
-var DONE_FACE = '<b>\u2713</b><small>Done</small>';
 function verb() { return touchFirst ? 'Tap' : 'Click'; }
 // Words that change with the mode. {v} becomes Click or Tap.
 var TEXT = {
@@ -2473,24 +2795,48 @@ var TEXT = {
     unlimited: 'Unlimited power!', unlimitedFlash: 'UNLIMITED POWER!',
     out: '4:30 PM: Teachers clock out.', outSub: 'UPchieve doesn\u2019t.',
     night: '8:00 PM: Study party!', lateSub: 'Late-night essay help, no extra charge.',
-    backSub: 'Power left: ' + INF, nudge: 'Keep clicking!',
+    backSub: 'Power left: ' + INF, nudge: 'Keep clicking!', nudgeSub: 'It\u2019s unlimited. We checked.',
+    unlimitedSub: '{v} your schools. As much as you want. It never runs out.', unlimitedFlashSub: '{v} your schools. As much as you want.',
+    build0: 'Kids with nowhere to go!', build0Sub: '{v} anywhere on the map to add your district\u2019s schools.',
+    buildMany: 'That\u2019s a lot of buildings!', buildManySub: 'Hit <em>Done</em> when you\u2019re ready.',
+    build: 'Add all your schools!', buildSub: '{h} a school to change its size. Hit <em>Done</em> when that\u2019s everyone.',
+    deliver: 'Power up with UPchieve!', orb: 'Power up!', tipName: 'UPchieve power-up',
+    done: 'Done', popQ: 'How many students at', copy: '+5 more like this',
     power: 'Power', tab: 'the price calculator, but fun'
   },
   cozy: {
     crisis: 'Uh oh. It\u2019s getting gloomy.', crisisSub: 'Kids are stuck on homework with no one to ask, and grades are slipping.',
     crisisLabel: 'Your schools on a rainy day. Kids are stuck on homework. UPdog is on the way with a power-up.',
     crisisSay: 'Kids are stuck on homework. UPdog is on the way with a power-up.',
-    deliverSub: '{v} UPdog\u2019s power-up to send in the help.',
+    deliverSub: '{v} UPdog\u2019s star to bring in the tutors.',
     noPower: 'Not yet!', noPowerMain: 'Not yet!',
-    charge: 'Here it comes\u2026', chargeSub: 'Unlimited tutoring, on its way.',
-    unlimited: 'Unlimited help!', unlimitedFlash: 'UNLIMITED HELP!',
+    charge: 'Take a deep breath\u2026', chargeSub: 'Unlimited tutoring is settling in.',
+    unlimited: 'Unlimited insight.', unlimitedFlash: 'Unlimited insight.',
+    unlimitedSub: 'Visit your schools whenever you like. The tutors never run out.', unlimitedFlashSub: 'Every school has a tutor looking after it now, day and night.',
     out: '4:30 PM: Teachers head home.', outSub: 'The tutors stay on.',
     night: '8:00 PM: Study night.', lateSub: 'Late-night essay help. Take your time.',
-    backSub: 'Help left: ' + INF, nudge: 'Keep going!',
-    power: 'Help', tab: 'the price calculator, but cozy'
+    backSub: 'Insight left: ' + INF, nudge: 'No rush.', nudgeSub: 'The tutors are here whenever you need them.',
+    build0: 'Every kid needs a place to learn.', build0Sub: '{v} anywhere in the meadow to add your district\u2019s schools.',
+    buildMany: 'That\u2019s a lot of schoolhouses!', buildManySub: '{v} <em>All done</em> whenever you\u2019re ready.',
+    build: 'Add all your schools.', buildSub: '{h} a schoolhouse to change its size. {v} <em>All done</em> when that\u2019s everyone.',
+    settle: 'Looks like everyone\u2019s here.', settleSub: 'Take your time. Add more, or we\u2019ll carry on shortly.',
+    deliver: 'UPdog is here!', orb: 'For you!', tipName: 'UPchieve tutoring',
+    done: 'All done', popQ: 'How many kids learn at', copy: '+5 more just like it',
+    power: 'Insight', tab: 'the price calculator, but cozy'
   }
 };
-function tx(key) { return TEXT[MODE][key].replace('{v}', verb()); }
+function tx(key) { return TEXT[MODE][key].replace('{v}', verb()).replace('{h}', touchFirst ? 'Tap' : 'Hover over'); }
+function doneFace() { return '<b>\u2713</b><small>' + tx('done') + '</small>'; }
+// Puts the current mode's words on the parts of the page that aren't redrawn every frame.
+function applyModeText() {
+  $('pb-tab-sub').textContent = tx('tab');
+  $('pb-power-label').textContent = tx('power');
+  $('pb-done-face').innerHTML = doneFace();
+  $('pb-orb-cta').textContent = tx('orb');
+  $('pb-tip-name').textContent = tx('tipName');
+  $('pb-pop-q').textContent = tx('popQ');
+  $('pb-pop-copy').textContent = tx('copy');
+}
 function say(text) { $('pb-live').textContent = text; }
 function focusQuiet(el) { try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); } }
 function once(key, fn) { if (!S.seen[key]) { S.seen[key] = 1; fn(); } }
@@ -2526,9 +2872,9 @@ function statusStep() {
 }
 function buildStatus() {
   if (S.phase !== 'build' || UI.cd != null) return;
-  if (!S.schools.length) setStatus('Kids with nowhere to go!', verb() + ' anywhere on the map to add your district\u2019s schools.');
-  else if (S.schools.length >= MAX_SCHOOLS) setStatus('That\u2019s a lot of buildings!', 'Hit <em>Done</em> when you\u2019re ready.');
-  else setStatus('Add all your schools!', (touchFirst ? 'Tap' : 'Hover over') + ' a school to change its size. Hit <em>Done</em> when that\u2019s everyone.');
+  if (!S.schools.length) setStatus(tx('build0'), tx('build0Sub'));
+  else if (S.schools.length >= MAX_SCHOOLS) setStatus(tx('buildMany'), tx('buildManySub'));
+  else setStatus(tx('build'), tx('buildSub'));
 }
 
 function totalPrice() {
@@ -2573,7 +2919,8 @@ function paintChips(s) {
   });
 }
 function openPop(s, how) {
-  UI.pop = { s: s, how: how, t: 0, dur: how === 'hover' ? 5 : 4, after: null, out: 0 };
+  var cozy = MODE === 'cozy';
+  UI.pop = { s: s, how: how, t: 0, dur: how === 'hover' ? (cozy ? 8 : 5) : (cozy ? 7 : 4), after: null, out: 0 };
   $('pb-pop-name').textContent = s.name;
   paintChips(s);
   $('pb-pop').hidden = false;
@@ -2613,13 +2960,13 @@ function chooseSize(i) {
   } else {
     setSize(s, SIZES[i].size);
   }
-  s.squash = 0.6;
+  s.squash = MODE === 'cozy' ? 0.2 : 0.6;
   sfx.chip(i);
   paintChips(s);
   updatePrices();
   positionPop();
   UI.pop.how = 'click';
-  UI.pop.after = 1.4;
+  UI.pop.after = MODE === 'cozy' ? 2.2 : 1.4;
   say(s.name + ': ' + SIZES[tierOf(s.size)].label + ' students, ' + money(priceFor(s.size)) + ' a year.');
 }
 function popStep(dt) {
@@ -2636,7 +2983,7 @@ function popStep(dt) {
     var r = srect(P.s), p = S.ptr;
     var near = p.inside && p.x > r.x - 30 && p.x < r.x + r.w + 30 && p.y > r.y - 30 && p.y < P.s.y + 30;
     P.out = near ? 0 : P.out + dt;
-    if (P.out > 0.35) { closePop(); return; }
+    if (P.out > (MODE === 'cozy' ? 0.8 : 0.35)) { closePop(); return; }
   }
   $('pb-pop-timer').style.transform = 'scaleX(' + (P.after != null ? P.after / 1.4 : 1 - P.t / P.dur) + ')';
 }
@@ -2669,23 +3016,31 @@ $('pb-pop-copy').addEventListener('click', function () {
       var p = freeSpot(), n = addSchool(p.x, p.y, tierOf(s.size));
       setSize(n, s.size);
       onSchoolsChanged();
-    }, i * 150);
+    }, i * (MODE === 'cozy' ? 280 : 150));
   }
   S.idleBuild = -0.8;
 });
 
-// The Done button doubles as the countdown.
+// The Done button doubles as the countdown. Cozy mode skips the countdown: after a longer pause it
+// says it'll carry on, waits a few more quiet seconds, and moves along.
+var COZY_WAIT = 4, COZY_SETTLE = 3.5;
 function paintRing(frac) { $('pb-done-ring').style.strokeDashoffset = String(289 * (1 - frac)); }
 function startCountdown() {
-  UI.cd = COUNTDOWN;
   UI.cdShown = 0;
+  if (MODE === 'cozy') {
+    UI.cd = COZY_SETTLE;
+    $('pb-done').classList.add('is-settling');
+    setStatus(tx('settle'), tx('settleSub'));
+    return;
+  }
+  UI.cd = COUNTDOWN;
   $('pb-done').classList.add('is-counting');
 }
 function cancelCountdown() {
   if (UI.cd == null) return;
   UI.cd = null;
-  $('pb-done').classList.remove('is-counting');
-  $('pb-done-face').innerHTML = DONE_FACE;
+  $('pb-done').classList.remove('is-counting', 'is-settling');
+  $('pb-done-face').innerHTML = doneFace();
   paintRing(0);
   buildStatus();
 }
@@ -2694,11 +3049,12 @@ function countdownStep(dt) {
     var calm = S.schools.length && (!UI.pop || UI.pop.how === 'hover') && !UI.drag && $('pb-invoice').hidden;
     if (calm && S.schools.every(function (s) { return s.landed; })) {
       S.idleBuild = (S.idleBuild || 0) + dt;
-      if (S.idleBuild >= 2) startCountdown();
+      if (S.idleBuild >= (MODE === 'cozy' ? COZY_WAIT : 2)) startCountdown();
     }
     return;
   }
   UI.cd -= dt;
+  if (MODE === 'cozy') { if (UI.cd <= 0) goCrisis(); return; }
   paintRing(Math.max(0, UI.cd / COUNTDOWN));
   var n = Math.ceil(UI.cd);
   if (n !== UI.cdShown && n > 0) {
@@ -2723,8 +3079,8 @@ function goCrisis() {
   S.dreams = 0.78;
   setStatus(tx('crisis'), tx('crisisSub'), true);
   sfx.alarm();
-  UI.rocketAt = S.t + 1.6;
-  UI.sadT = 0.4;
+  UI.rocketAt = S.t + (MODE === 'cozy' ? 2.4 : 1.6);
+  UI.sadT = MODE === 'cozy' ? 1 : 0.4;
   UI.wiggleT = 4;
   cv.setAttribute('aria-label', tx('crisisLabel'));
   say(tx('crisisSay'));
@@ -2780,7 +3136,7 @@ function deliver() {
   pu.className = 'pb-pu is-arrive';
   pu.hidden = false;
   UI.wiggleT = 3;
-  setStatus('Power up with UPchieve!', tx('deliverSub'));
+  setStatus(tx('deliver'), tx('deliverSub'));
   say('UPdog brought a power-up: unlimited tutoring for ' + money(totalPrice()) + ' a year.');
 }
 function noPower(x, y) {
@@ -2789,16 +3145,16 @@ function noPower(x, y) {
   var pw = $('pb-power');
   pw.classList.remove('is-shake');
   void pw.offsetWidth;
-  pw.classList.add('is-shake');
+  if (MODE !== 'cozy') pw.classList.add('is-shake');
   var ready = !$('pb-pu').hidden;
   flashStatus(tx('noPowerMain'), ready ? verb() + ' UPdog\u2019s power-up first.' : 'Hang on, help is on the way\u2026', 1800, true);
 }
 function crisisStep(dt) {
   UI.sadT -= dt;
-  if (UI.sadT <= 0) { sadEvent(); UI.sadT = rand(0.5, 0.8); }
+  if (UI.sadT <= 0) { sadEvent(); UI.sadT = MODE === 'cozy' ? rand(1.4, 2.2) : rand(0.5, 0.8); }
   if (UI.rocketAt && S.t >= UI.rocketAt) { UI.rocketAt = 0; launchRocket(); }
   var pu = $('pb-pu');
-  if (!pu.hidden) {
+  if (!pu.hidden && MODE !== 'cozy') {
     UI.wiggleT -= dt;
     if (UI.wiggleT <= 0) {
       UI.wiggleT = 4;
@@ -2816,15 +3172,36 @@ function give() {
   $('pb-pu').hidden = true;
   S.dog.on = true;
   S.toss = { t: 0, x0: S.dog.x - S.dog.w * 0.1, y0: S.dog.y - S.dog.w * 0.4, x1: S.hero.x, y1: S.hero.y - 50 * S.hero.hs };
+  setStatus(tx('charge'), tx('chargeSub'));
+  sfx.charge();
+  if (MODE === 'cozy') { say('Taking a deep breath.'); return; }
   var pw = $('pb-power'), r = screenRect(pw);
   pw.style.setProperty('--pb-dx', (S.W / 2 - (r.x + r.w * 2.2 / 2)) + 'px');
   pw.style.setProperty('--pb-dy', (S.H / 2 - (r.y + r.h / 2)) + 'px');
   pw.classList.add('is-charging');
-  setStatus(tx('charge'), tx('chargeSub'));
-  sfx.charge();
   say('Charging the power-up.');
 }
+// Cozy mode's charge is a calm moment: the star drifts over, the admin floats up with eyes closed,
+// and Insight fills in place. Then the light spreads.
+function calmStep(dt) {
+  S.chargeT += dt;
+  if (S.toss) {
+    S.toss.t = smooth(S.chargeT / 0.9);
+    if (S.chargeT >= 0.9) {
+      S.toss = null;
+      burst(S.hero.x, S.hero.y - 50 * S.hero.hs, 10, ['#FFE7A3', '#FFFFFF'], 70 * S.k, 'dot');
+    }
+  }
+  var t = S.chargeT - 0.9;
+  if (t <= 0) return;
+  S.power = smooth(t / 3) * 100;
+  if (Math.random() < dt * 4) {
+    S.parts.push({ x: S.hero.x + rand(-30, 30) * S.k, y: S.hero.y - rand(20, 90) * S.k, vx: rand(-6, 6), vy: rand(-26, -14) * S.k, life: rand(1.2, 1.8), c: pick(['#FFE7A3', '#FFFFFF']), s: rand(2, 3.4) * S.k, shape: 'dot', rot: 0, vr: 0, grav: 0 });
+  }
+  if (t >= 3.5) bloom();
+}
 function chargeStep(dt) {
+  if (MODE === 'cozy') { calmStep(dt); return; }
   S.chargeT += dt;
   if (S.toss) {
     S.toss.t = Math.min(1, S.chargeT / 0.45);
@@ -2839,29 +3216,30 @@ function chargeStep(dt) {
   var f = Math.min(1, t / 1.6);
   S.power = t < 1.6 ? f * 100 : 100 + Math.pow(Math.min(1, (t - 1.6) / 0.5), 2) * 899;
   chargeFx(0.5 + f * 2.5);
-  if (MODE !== 'cozy') S.shake = Math.max(S.shake, 0.03 + 0.1 * f);
+  S.shake = Math.max(S.shake, 0.03 + 0.1 * f);
   if (t >= 2.1) boom();
 }
 function boom() {
-  var cozy = MODE === 'cozy';
   S.flash = 0.55;
-  if (!reduced && !cozy) { S.shake = 0.5; S.punch = 1; }
+  if (!reduced) { S.shake = 0.5; S.punch = 1; }
   S.wave = { r: 0, v: Math.max(S.W, S.H) * 1.6, life: 0.7, max: 0.7 };
   sfx.boom();
-  if (cozy) {
-    // One big gust: leaves sweep the town, the rain stops, every bell rings, and every crew raises a mug.
-    gust();
-    rainOff();
-    S.schools.forEach(function (s) { s.squash = 1; s.ring = 1; burst(s.x, schoolTop(s), 12, LEAVES, 200 * S.k, 'leaf'); cheer(s); });
-  } else {
-    for (var i = 0; i < 6; i++) burst(rand(0, S.W), rand(0, S.H * 0.5), 16, POP, 240 * S.k, 'conf');
-    firework(); firework(); firework();
-    S.schools.forEach(function (s) { s.squash = 1; burst(s.x, schoolTop(s), 14, POP, 220 * S.k, 'star'); cheer(s); cheer(s); });
-  }
+  for (var i = 0; i < 6; i++) burst(rand(0, S.W), rand(0, S.H * 0.5), 16, POP, 240 * S.k, 'conf');
+  firework(); firework(); firework();
+  S.schools.forEach(function (s) { s.squash = 1; burst(s.x, schoolTop(s), 14, POP, 220 * S.k, 'star'); cheer(s); cheer(s); });
   S.hero.jumpT = 0;
   S.dog.jumpT = -0.12;
   S.dog.glasses = 0.001;
   $('pb-power').classList.remove('is-charging');
+  startUnlimited();
+}
+// Cozy mode's power-up lands softly: a ring of warm light spreads from the admin, the rain fades,
+// and each school it reaches lights up and gets its caretaker spirit.
+function bloom() {
+  S.bloom = { r: 0 };
+  sfx.boom();
+  rainOff();
+  S.dog.glasses = 0.001;
   startUnlimited();
 }
 function startUnlimited() {
@@ -2879,9 +3257,9 @@ function startUnlimited() {
   placePu(true);
   pu.hidden = false;
   $('pb-orb').setAttribute('aria-label', 'UPchieve power-up, active. See the price.');
-  if (MODE === 'cozy') { S.flies = []; seedFlies(14); }
-  setStatus(tx('unlimited'), verb() + ' your schools. As much as you want. It never runs out.');
-  flashStatus(tx('unlimitedFlash'), verb() + ' your schools. As much as you want.', 3600);
+  if (MODE === 'cozy') { S.flies = []; seedFlies(16); }
+  setStatus(tx('unlimited'), tx('unlimitedSub'));
+  flashStatus(tx('unlimitedFlash'), tx('unlimitedFlashSub'), MODE === 'cozy' ? 5200 : 3600);
   $('pb-clock').hidden = false;
   $('pb-again').hidden = false;
   music.on = true;
@@ -2893,20 +3271,20 @@ function startUnlimited() {
 function onDreamLoop() {
   var m = $('pb-dreams-mult');
   m.textContent = '\u00d7' + num(S.mult);
+  if (MODE === 'cozy') { if (S.phase === 'unlimited') sfx.chime(); return; }
   m.classList.remove('is-bump');
   void m.offsetWidth;
   m.classList.add('is-bump');
   if (S.phase === 'unlimited') {
     sfx.chime();
     var r = screenRect($('pb-dreams'));
-    if (MODE === 'cozy') burst(r.x + r.w / 2, r.y + 20, 14, LEAVES, 180 * S.k, 'leaf');
-    else burst(r.x + r.w / 2, r.y + 20, 16, POP, 180 * S.k, 'conf');
+    burst(r.x + r.w / 2, r.y + 20, 16, POP, 180 * S.k, 'conf');
   }
 }
 var beatTimer = null;
 function onBeat(b) {
   var party = isParty();
-  if (MODE === 'cozy') { cozyBeat(b, party); return; }
+  if (MODE === 'cozy') { cozyBeat(b); return; }
   S.schools.forEach(function (s) { s.squash = Math.max(s.squash, party ? 0.24 : 0.12); });
   root.classList.add('is-beat');
   clearTimeout(beatTimer);
@@ -2922,26 +3300,20 @@ function onBeat(b) {
     burst(c2.x, schoolTop(c2) - 20 * c2.sc, 16, POP, 220 * S.k, 'conf');
   }
 }
-// Cozy mode keeps time more gently: a soft bob, a swirl of leaves, a bell now and then, and ideas at night.
-function cozyBeat(b, night) {
-  S.schools.forEach(function (s) { s.squash = Math.max(s.squash, night ? 0.08 : 0.05); });
-  root.classList.add('is-beat');
-  clearTimeout(beatTimer);
-  beatTimer = setTimeout(function () { root.classList.remove('is-beat'); }, 160);
-  if (!S.schools.length) return;
-  if (b % 4 === 0) { var s = pick(S.schools); burst(s.x, schoolTop(s) - 10 * s.sc, 10, LEAVES, 170 * S.k, 'leaf'); }
-  if (night && b % 4 === 2) { var s2 = pick(S.schools); floatText(s2.x + rand(-30, 30) * s2.sc, schoolTop(s2), '\ud83d\udca1', '#FFFFFF', 24); }
-  if (b % 8 === 6) pick(S.schools).ring = 1;
+// Cozy mode doesn't bounce to the music. Now and then a school's bell sways, and that's all.
+function cozyBeat(b) {
+  if (b % 16 === 8 && S.schools.length) pick(S.schools).ring = 0.6;
 }
 function crossed(prev, cur, minute) {
   var a = prev % 1440, b = cur % 1440;
   return b >= a ? a < minute && b >= minute : a < minute || b >= minute;
 }
 function unlimitedStep(dt) {
-  var prev = S.clock, m = S.clock % 1440;
-  S.clock += (m >= 7.5 * 60 && m < 16 * 60 ? 60 : 30) * dt;
-  S.rainbow = Math.min(1, S.rainbow + dt / 1.2);
-  if (S.dog.glasses > 0) S.dog.glasses = Math.min(1, S.dog.glasses + dt / 0.9);
+  var prev = S.clock, m = S.clock % 1440, cozy = MODE === 'cozy', school = m >= 7.5 * 60 && m < 16 * 60;
+  // Cozy days pass about three times slower.
+  S.clock += (cozy ? (school ? 20 : 11) : (school ? 60 : 30)) * dt;
+  S.rainbow = Math.min(1, S.rainbow + dt / (cozy ? 4 : 1.2));
+  if (S.dog.glasses > 0) S.dog.glasses = Math.min(1, S.dog.glasses + dt / (cozy ? 2 : 0.9));
   if (crossed(prev, S.clock, 16 * 60 + 30)) once('out', function () { flashStatus(tx('out'), tx('outSub')); });
   if (crossed(prev, S.clock, 20 * 60)) once('party', function () { flashStatus(tx('night'), 'Tutors are still online. Of course.'); });
   if (crossed(prev, S.clock, 2 * 60)) once('2am', function () { flashStatus('2:00 AM. Still unlimited.', tx('lateSub')); });
@@ -2949,10 +3321,10 @@ function unlimitedStep(dt) {
   if (Math.floor(prev / 1440) % 7 !== 5 && Math.floor(S.clock / 1440) % 7 === 5) once('sat', function () { flashStatus('Saturday!', 'Still unlimited. No weekend surcharge.'); });
   updateTeachers(dt);
   S.idle += dt;
-  if (S.idle > 8 && S.nudges < 3 && !UI.flashUntil) {
+  if (S.idle > (cozy ? 20 : 8) && S.nudges < (cozy ? 2 : 3) && !UI.flashUntil) {
     S.nudges++;
     S.idle = 0;
-    flashStatus(tx('nudge'), 'It\u2019s unlimited. We checked.', 2800);
+    flashStatus(tx('nudge'), tx('nudgeSub'), cozy ? 4200 : 2800);
   }
   var b = Math.floor(beatPos());
   if (b !== S.beat && b >= 0) { S.beat = b; onBeat(b); }
@@ -2967,7 +3339,7 @@ function jumpStep(o, dt) {
 
 var lastClock = '';
 function paintHud() {
-  var jitter = S.phase === 'crisis' ? Math.sin(S.t * 18) * 0.03 : 0;
+  var jitter = S.phase === 'crisis' && MODE !== 'cozy' ? Math.sin(S.t * 18) * 0.03 : 0;
   $('pb-dreams-fill').style.height = clamp(S.dreams + jitter, 0.02, 1) * 100 + '%';
   var pn = $('pb-power-num');
   if (S.phase === 'unlimited') {
@@ -3066,7 +3438,7 @@ function resetGame() {
   S.dreams = 0.78; S.mult = 1; S.power = 0; S.clock = 10 * 60; S.wave = null;
   S.sessions = 0; S.combo = 0; S.nudges = 0; S.seen = {}; S.idle = 0; S.idleBuild = 0;
   S.phase = 'build';
-  S.rocket = null; S.toss = null; S.rainbow = 0; S.punch = 0;
+  S.rocket = null; S.toss = null; S.rainbow = 0; S.punch = 0; S.bloom = null;
   S.dog.on = false; S.dog.glasses = 0; S.dog.jumpT = null; S.hero.jumpT = null;
   UI.rocketAt = 0;
   UI.flashUntil = 0;
@@ -3105,8 +3477,8 @@ cv.addEventListener('pointermove', function (e) {
     if (!d.moved && Math.abs(p.x - d.sx) + Math.abs(p.y - d.sy) > 6) { d.moved = true; closePop(); }
     if (d.moved) placeSchool(d.s, p.x - d.ox, p.y - d.oy);
   }
-  if (S.phase === 'unlimited' && S.ptr.mouse && Math.random() < 0.4) {
-    S.parts.push({ x: p.x, y: p.y, vx: rand(-20, 20), vy: rand(-30, 0), life: 0.5, c: pick(MODE === 'cozy' ? ['#FFE08A', '#FFD27A', '#FFFFFF'] : POP), s: 3 * S.k, shape: 'dot', rot: 0, vr: 0, grav: 60 });
+  if (S.phase === 'unlimited' && S.ptr.mouse && MODE !== 'cozy' && Math.random() < 0.4) {
+    S.parts.push({ x: p.x, y: p.y, vx: rand(-20, 20), vy: rand(-30, 0), life: 0.5, c: pick(POP), s: 3 * S.k, shape: 'dot', rot: 0, vr: 0, grav: 60 });
   }
 });
 cv.addEventListener('pointerleave', function () { S.ptr.inside = false; });

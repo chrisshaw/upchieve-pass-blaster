@@ -49,10 +49,10 @@ function recalcNeeds() {
 }
 
 function addSchool(x, y, tier) {
-  var used = {};
+  var used = {}, names = MODE === 'cozy' ? NAMES_COZY : NAMES;
   S.schools.forEach(function (s) { used[s.name] = 1; });
   var name = null;
-  for (var i = 0; i < NAMES.length; i++) if (!used[NAMES[i]]) { name = NAMES[i]; break; }
+  for (var i = 0; i < names.length; i++) if (!used[names[i]]) { name = names[i]; break; }
   var s = {
     id: S.nextId++,
     name: name || 'School #' + (S.schools.length + 1),
@@ -194,7 +194,7 @@ function updateKids(dt) {
     if (!going && k.pause > 0) { k.pause -= dt; keep.push(k); continue; }
     var tx = going ? k.target.x : k.tx, ty = going ? k.target.y : k.ty;
     var dx = tx - k.x, dy = ty - k.y, d = Math.sqrt(dx * dx + dy * dy);
-    var sp = k.speed * S.k * (going ? 2.6 : 1);
+    var sp = k.speed * S.k * (MODE === 'cozy' ? (going ? 1.6 : 0.65) : (going ? 2.6 : 1));
     k.ph += dt * (going ? 16 : 9);
     if (d < sp * dt + 1) {
       if (going) {
@@ -221,6 +221,15 @@ function updateSchools(dt) {
     if (s.hit > 0) s.hit -= dt;
     if (s.squash > 0) s.squash = Math.max(0, s.squash - dt * 3);
     if (s.landed) return;
+    if (MODE === 'cozy') {
+      s.drop += -s.drop * Math.min(1, dt * 6);
+      if (s.drop > -1.5) {
+        s.drop = 0; s.landed = true; s.squash = 0.2;
+        sfx.stamp();
+        burst(s.x, s.y, 8, ['#FFFFFF', '#EEEAE0'], 70 * S.k, 'dot');
+      }
+      return;
+    }
     s.vy += 3400 * dt;
     s.drop += s.vy * dt;
     if (s.drop >= 0) {
@@ -264,7 +273,7 @@ function moveTo(o, kx, ky, tx, ty, sp, dt) {
   return false;
 }
 function updateTeachers(dt) {
-  var m = S.clock % 1440, walk = 32 * S.k, drive = 150 * S.k, road = S.G.roadMid;
+  var slow = MODE === 'cozy' ? 0.5 : 1, m = S.clock % 1440, walk = 32 * S.k * slow, drive = 150 * S.k * slow, road = S.G.roadMid;
   S.teachers.forEach(function (tc) {
     var s = tc.school, spot = carSpot(tc);
     tc.ph += dt * 9;
@@ -321,17 +330,18 @@ function burst(x, y, n, colors, spd, shape) {
   if (S.parts.length > 700) S.parts.splice(0, S.parts.length - 700);
 }
 function floatText(x, y, text, style, size) {
-  S.floats.push({ x: x, y: y, text: text, style: style || 'win', size: size || 15, life: 1.3, max: 1.3, rot: rand(-0.12, 0.12) });
+  var life = MODE === 'cozy' ? 2.8 : 1.3;
+  S.floats.push({ x: x, y: y, text: text, style: style || 'win', size: size || 15, life: life, max: life, rot: rand(-0.12, 0.12) });
   if (S.floats.length > 14) S.floats.shift();
 }
 function updateFx(dt) {
   S.parts = S.parts.filter(function (p) {
-    if (p.orb) { p.life -= dt; orbitStep(p, dt); return p.life > 0; }
     p.life -= dt; p.vy += (p.grav === undefined ? 340 : p.grav) * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.rot += p.vr * dt;
     if (p.shape === 'leaf') leafDrag(p, dt);
     return p.life > 0;
   });
-  S.floats = S.floats.filter(function (f) { f.life -= dt; f.y -= 38 * dt; return f.life > 0; });
+  var rise = MODE === 'cozy' ? 14 : 38;
+  S.floats = S.floats.filter(function (f) { f.life -= dt; f.y -= rise * dt; return f.life > 0; });
   if (S.wave) { S.wave.r += S.wave.v * dt; S.wave.life -= dt; if (S.wave.life <= 0) S.wave = null; }
   S.wavelets = S.wavelets.filter(function (w) { w.r += 260 * S.k * dt; w.life -= dt; return w.life > 0; });
   if (S.hero.pulse > 0) S.hero.pulse = Math.max(0, S.hero.pulse - dt * 4);
@@ -341,14 +351,14 @@ function updateFx(dt) {
 
 var SAD = ['GRADES', 'SAT SCORES', 'GRADUATION', 'COLLEGE ACCEPTANCE', 'ATTENDANCE', 'CONFIDENCE', 'HOMEWORK DONE', 'FAFSA FILED', 'AP SCORES', 'READING LEVEL'];
 var WINS = ['A+ ON THE ESSAY', 'MATH CLICKED', 'UNSTUCK!', 'LAB REPORT DONE', 'PROOF SOLVED', 'GOT IT!'];
-var SAD_COZY = ['STUCK ON FRACTIONS', 'ESSAY DUE TOMORROW', 'LOST IN CHEM', 'NO ONE TO ASK', 'FAFSA IS CONFUSING', 'GRADES SLIPPING', 'HOMEWORK PILING UP', 'MISSED THE REVIEW'];
-var UPS_COZY = ['GRADES', 'CONFIDENCE', 'HOMEWORK DONE', 'READING LEVEL', 'TEST SCORES', 'ATTENDANCE'];
-var WINS_COZY = ['FRACTIONS CLICKED', 'ESSAY OUTLINED', 'UNSTUCK!', 'LAB REPORT DONE', 'GOT IT!', 'READY FOR THE TEST', 'FAFSA FILED'];
+var SAD_COZY = ['Stuck on fractions', 'Essay due tomorrow', 'Lost in chemistry', 'No one to ask', 'FAFSA is confusing', 'Grades slipping', 'Homework piling up', 'Missed the review'];
+var UPS_COZY = ['Grades going up', 'Feeling confident', 'Homework, done', 'Reading level up', 'Test scores up', 'Showing up more'];
+var WINS_COZY = ['Fractions clicked', 'Essay outlined', 'Unstuck!', 'Lab report done', 'Got it!', 'Ready for the test', 'FAFSA filed'];
 function schoolTop(s) { return s.y - (dims(s).h + 8 + (MODE === 'cozy' ? roofRise(s) : 0)) * s.sc; }
 function sadEvent() {
   if (!S.schools.length) return;
   var s = pick(S.schools);
-  floatText(s.x + rand(-20, 20) * S.k, schoolTop(s), MODE === 'cozy' ? '🌧 ' + pick(SAD_COZY) : '🔽 ' + pick(SAD), 'sad', 15);
+  floatText(s.x + rand(-20, 20) * S.k, schoolTop(s), MODE === 'cozy' ? pick(SAD_COZY) : '🔽 ' + pick(SAD), 'sad', 15);
   if (Math.random() < 0.5) sfx.sad();
 }
 function addDreams(v) {
@@ -412,29 +422,39 @@ function firework() {
   }
   if (Math.random() < 0.5 && S.phase !== 'choose') sfx.pew();
 }
+// Cozy clicks are a visit, not a blast: a soft sparkle, the spirit does a happy loop, the bell
+// sways, the kids come out for a toast, and one note of the melody plays. No streaks.
+function visit(s, px, py) {
+  S.sessions++;
+  s.hit = 0.14;
+  s.squash = 0.08;
+  s.ring = 1;
+  burst(px, py, 5, ['#FFE08A', '#FFFFFF'], 80 * S.k, 'dot');
+  spiritCheer(s);
+  if (S.t - (s.lastFloat || -9) > 1.2) {
+    s.lastFloat = S.t;
+    var r = Math.random();
+    if (isParty() && r < 0.35) floatText(px, schoolTop(s), '🌙 ' + clockStr(S.clock) + ' · still helping', 'win', 15);
+    else if (r < 0.6) floatText(px, schoolTop(s), pick(UPS_COZY), 'happy', 15);
+    else floatText(px, schoolTop(s), pick(WINS_COZY), 'win', 15);
+  }
+  addDreams(0.06);
+  cheer(s);
+  sfx.blast(S.sessions % 10 + 1);
+  S.idle = 0;
+}
 function blast(s, px, py) {
+  if (MODE === 'cozy') { visit(s, px, py); return; }
   S.sessions++;
   S.combo = S.t - S.lastBlast < 0.6 ? S.combo + 1 : 1;
   S.lastBlast = S.t;
   s.hit = 0.18;
   s.squash = 0.45;
-  var r;
-  if (MODE === 'cozy') {
-    burst(px, py, 10, LEAVES, 170 * S.k, 'leaf');
-    burst(px, py, 6, ['#FFE08A', '#FFFFFF'], 150 * S.k, 'star');
-    addFlies(s.x, schoolTop(s), 3);
-    s.ring = 1;
-    r = Math.random();
-    if (isParty() && r < 0.35) floatText(px, schoolTop(s), '🌙 ' + clockStr(S.clock) + ': STILL HELPING', 'win', 15);
-    else if (r < 0.6) floatText(px, schoolTop(s), '🔼 ' + pick(UPS_COZY), 'happy', 15);
-    else floatText(px, schoolTop(s), pick(WINS_COZY) + ' ✨', 'win', 15);
-  } else {
-    burst(px, py, 16, POP, 190 * S.k, 'star');
-    r = Math.random();
-    if (isParty() && r < 0.35) floatText(px, schoolTop(s), '🌙 ' + clockStr(S.clock) + ': STILL ON', 'win', 15);
-    else if (r < 0.72) floatText(px, schoolTop(s), '🔼 ' + pick(SAD), 'happy', 15);
-    else floatText(px, schoolTop(s), pick(WINS) + ' ✨', 'win', 15);
-  }
+  burst(px, py, 16, POP, 190 * S.k, 'star');
+  var r = Math.random();
+  if (isParty() && r < 0.35) floatText(px, schoolTop(s), '🌙 ' + clockStr(S.clock) + ': STILL ON', 'win', 15);
+  else if (r < 0.72) floatText(px, schoolTop(s), '🔼 ' + pick(SAD), 'happy', 15);
+  else floatText(px, schoolTop(s), pick(WINS) + ' ✨', 'win', 15);
   if (S.combo >= 5 && S.combo % 5 === 0) floatText(px, py - 46 * S.k, S.combo + 'x STREAK!', 'big', 20);
   addDreams(0.1 * (1 + Math.min(S.combo, 20) * 0.03));
   cheer(s);
@@ -454,7 +474,6 @@ function schoolAt(px, py) {
 
 // Energy streaming into the admin while the power-up charges.
 function chargeFx(intensity) {
-  if (MODE === 'cozy') { leafVortex(intensity); return; }
   var n = Math.ceil(intensity * 3);
   for (var i = 0; i < n; i++) {
     var a = Math.random() * Math.PI * 2, r = rand(120, 420) * S.k;

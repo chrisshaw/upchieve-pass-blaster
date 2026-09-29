@@ -9,7 +9,6 @@ var UI = {
   canStamp: function () { return S.phase === 'build' && S.schools.length < MAX_SCHOOLS && $('pb-invoice').hidden; }
 };
 var INF = '<span class="pb-inf">∞</span>';
-var DONE_FACE = '<b>✓</b><small>Done</small>';
 function verb() { return touchFirst ? 'Tap' : 'Click'; }
 // Words that change with the mode. {v} becomes Click or Tap.
 var TEXT = {
@@ -23,24 +22,48 @@ var TEXT = {
     unlimited: 'Unlimited power!', unlimitedFlash: 'UNLIMITED POWER!',
     out: '4:30 PM: Teachers clock out.', outSub: 'UPchieve doesn’t.',
     night: '8:00 PM: Study party!', lateSub: 'Late-night essay help, no extra charge.',
-    backSub: 'Power left: ' + INF, nudge: 'Keep clicking!',
+    backSub: 'Power left: ' + INF, nudge: 'Keep clicking!', nudgeSub: 'It’s unlimited. We checked.',
+    unlimitedSub: '{v} your schools. As much as you want. It never runs out.', unlimitedFlashSub: '{v} your schools. As much as you want.',
+    build0: 'Kids with nowhere to go!', build0Sub: '{v} anywhere on the map to add your district’s schools.',
+    buildMany: 'That’s a lot of buildings!', buildManySub: 'Hit <em>Done</em> when you’re ready.',
+    build: 'Add all your schools!', buildSub: '{h} a school to change its size. Hit <em>Done</em> when that’s everyone.',
+    deliver: 'Power up with UPchieve!', orb: 'Power up!', tipName: 'UPchieve power-up',
+    done: 'Done', popQ: 'How many students at', copy: '+5 more like this',
     power: 'Power', tab: 'the price calculator, but fun'
   },
   cozy: {
     crisis: 'Uh oh. It’s getting gloomy.', crisisSub: 'Kids are stuck on homework with no one to ask, and grades are slipping.',
     crisisLabel: 'Your schools on a rainy day. Kids are stuck on homework. UPdog is on the way with a power-up.',
     crisisSay: 'Kids are stuck on homework. UPdog is on the way with a power-up.',
-    deliverSub: '{v} UPdog’s power-up to send in the help.',
+    deliverSub: '{v} UPdog’s star to bring in the tutors.',
     noPower: 'Not yet!', noPowerMain: 'Not yet!',
-    charge: 'Here it comes…', chargeSub: 'Unlimited tutoring, on its way.',
-    unlimited: 'Unlimited help!', unlimitedFlash: 'UNLIMITED HELP!',
+    charge: 'Take a deep breath…', chargeSub: 'Unlimited tutoring is settling in.',
+    unlimited: 'Unlimited insight.', unlimitedFlash: 'Unlimited insight.',
+    unlimitedSub: 'Visit your schools whenever you like. The tutors never run out.', unlimitedFlashSub: 'Every school has a tutor looking after it now, day and night.',
     out: '4:30 PM: Teachers head home.', outSub: 'The tutors stay on.',
     night: '8:00 PM: Study night.', lateSub: 'Late-night essay help. Take your time.',
-    backSub: 'Help left: ' + INF, nudge: 'Keep going!',
-    power: 'Help', tab: 'the price calculator, but cozy'
+    backSub: 'Insight left: ' + INF, nudge: 'No rush.', nudgeSub: 'The tutors are here whenever you need them.',
+    build0: 'Every kid needs a place to learn.', build0Sub: '{v} anywhere in the meadow to add your district’s schools.',
+    buildMany: 'That’s a lot of schoolhouses!', buildManySub: '{v} <em>All done</em> whenever you’re ready.',
+    build: 'Add all your schools.', buildSub: '{h} a schoolhouse to change its size. {v} <em>All done</em> when that’s everyone.',
+    settle: 'Looks like everyone’s here.', settleSub: 'Take your time. Add more, or we’ll carry on shortly.',
+    deliver: 'UPdog is here!', orb: 'For you!', tipName: 'UPchieve tutoring',
+    done: 'All done', popQ: 'How many kids learn at', copy: '+5 more just like it',
+    power: 'Insight', tab: 'the price calculator, but cozy'
   }
 };
-function tx(key) { return TEXT[MODE][key].replace('{v}', verb()); }
+function tx(key) { return TEXT[MODE][key].replace('{v}', verb()).replace('{h}', touchFirst ? 'Tap' : 'Hover over'); }
+function doneFace() { return '<b>✓</b><small>' + tx('done') + '</small>'; }
+// Puts the current mode's words on the parts of the page that aren't redrawn every frame.
+function applyModeText() {
+  $('pb-tab-sub').textContent = tx('tab');
+  $('pb-power-label').textContent = tx('power');
+  $('pb-done-face').innerHTML = doneFace();
+  $('pb-orb-cta').textContent = tx('orb');
+  $('pb-tip-name').textContent = tx('tipName');
+  $('pb-pop-q').textContent = tx('popQ');
+  $('pb-pop-copy').textContent = tx('copy');
+}
 function say(text) { $('pb-live').textContent = text; }
 function focusQuiet(el) { try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); } }
 function once(key, fn) { if (!S.seen[key]) { S.seen[key] = 1; fn(); } }
@@ -76,9 +99,9 @@ function statusStep() {
 }
 function buildStatus() {
   if (S.phase !== 'build' || UI.cd != null) return;
-  if (!S.schools.length) setStatus('Kids with nowhere to go!', verb() + ' anywhere on the map to add your district’s schools.');
-  else if (S.schools.length >= MAX_SCHOOLS) setStatus('That’s a lot of buildings!', 'Hit <em>Done</em> when you’re ready.');
-  else setStatus('Add all your schools!', (touchFirst ? 'Tap' : 'Hover over') + ' a school to change its size. Hit <em>Done</em> when that’s everyone.');
+  if (!S.schools.length) setStatus(tx('build0'), tx('build0Sub'));
+  else if (S.schools.length >= MAX_SCHOOLS) setStatus(tx('buildMany'), tx('buildManySub'));
+  else setStatus(tx('build'), tx('buildSub'));
 }
 
 function totalPrice() {
@@ -123,7 +146,8 @@ function paintChips(s) {
   });
 }
 function openPop(s, how) {
-  UI.pop = { s: s, how: how, t: 0, dur: how === 'hover' ? 5 : 4, after: null, out: 0 };
+  var cozy = MODE === 'cozy';
+  UI.pop = { s: s, how: how, t: 0, dur: how === 'hover' ? (cozy ? 8 : 5) : (cozy ? 7 : 4), after: null, out: 0 };
   $('pb-pop-name').textContent = s.name;
   paintChips(s);
   $('pb-pop').hidden = false;
@@ -163,13 +187,13 @@ function chooseSize(i) {
   } else {
     setSize(s, SIZES[i].size);
   }
-  s.squash = 0.6;
+  s.squash = MODE === 'cozy' ? 0.2 : 0.6;
   sfx.chip(i);
   paintChips(s);
   updatePrices();
   positionPop();
   UI.pop.how = 'click';
-  UI.pop.after = 1.4;
+  UI.pop.after = MODE === 'cozy' ? 2.2 : 1.4;
   say(s.name + ': ' + SIZES[tierOf(s.size)].label + ' students, ' + money(priceFor(s.size)) + ' a year.');
 }
 function popStep(dt) {
@@ -186,7 +210,7 @@ function popStep(dt) {
     var r = srect(P.s), p = S.ptr;
     var near = p.inside && p.x > r.x - 30 && p.x < r.x + r.w + 30 && p.y > r.y - 30 && p.y < P.s.y + 30;
     P.out = near ? 0 : P.out + dt;
-    if (P.out > 0.35) { closePop(); return; }
+    if (P.out > (MODE === 'cozy' ? 0.8 : 0.35)) { closePop(); return; }
   }
   $('pb-pop-timer').style.transform = 'scaleX(' + (P.after != null ? P.after / 1.4 : 1 - P.t / P.dur) + ')';
 }
@@ -219,23 +243,31 @@ $('pb-pop-copy').addEventListener('click', function () {
       var p = freeSpot(), n = addSchool(p.x, p.y, tierOf(s.size));
       setSize(n, s.size);
       onSchoolsChanged();
-    }, i * 150);
+    }, i * (MODE === 'cozy' ? 280 : 150));
   }
   S.idleBuild = -0.8;
 });
 
-// The Done button doubles as the countdown.
+// The Done button doubles as the countdown. Cozy mode skips the countdown: after a longer pause it
+// says it'll carry on, waits a few more quiet seconds, and moves along.
+var COZY_WAIT = 4, COZY_SETTLE = 3.5;
 function paintRing(frac) { $('pb-done-ring').style.strokeDashoffset = String(289 * (1 - frac)); }
 function startCountdown() {
-  UI.cd = COUNTDOWN;
   UI.cdShown = 0;
+  if (MODE === 'cozy') {
+    UI.cd = COZY_SETTLE;
+    $('pb-done').classList.add('is-settling');
+    setStatus(tx('settle'), tx('settleSub'));
+    return;
+  }
+  UI.cd = COUNTDOWN;
   $('pb-done').classList.add('is-counting');
 }
 function cancelCountdown() {
   if (UI.cd == null) return;
   UI.cd = null;
-  $('pb-done').classList.remove('is-counting');
-  $('pb-done-face').innerHTML = DONE_FACE;
+  $('pb-done').classList.remove('is-counting', 'is-settling');
+  $('pb-done-face').innerHTML = doneFace();
   paintRing(0);
   buildStatus();
 }
@@ -244,11 +276,12 @@ function countdownStep(dt) {
     var calm = S.schools.length && (!UI.pop || UI.pop.how === 'hover') && !UI.drag && $('pb-invoice').hidden;
     if (calm && S.schools.every(function (s) { return s.landed; })) {
       S.idleBuild = (S.idleBuild || 0) + dt;
-      if (S.idleBuild >= 2) startCountdown();
+      if (S.idleBuild >= (MODE === 'cozy' ? COZY_WAIT : 2)) startCountdown();
     }
     return;
   }
   UI.cd -= dt;
+  if (MODE === 'cozy') { if (UI.cd <= 0) goCrisis(); return; }
   paintRing(Math.max(0, UI.cd / COUNTDOWN));
   var n = Math.ceil(UI.cd);
   if (n !== UI.cdShown && n > 0) {
@@ -273,8 +306,8 @@ function goCrisis() {
   S.dreams = 0.78;
   setStatus(tx('crisis'), tx('crisisSub'), true);
   sfx.alarm();
-  UI.rocketAt = S.t + 1.6;
-  UI.sadT = 0.4;
+  UI.rocketAt = S.t + (MODE === 'cozy' ? 2.4 : 1.6);
+  UI.sadT = MODE === 'cozy' ? 1 : 0.4;
   UI.wiggleT = 4;
   cv.setAttribute('aria-label', tx('crisisLabel'));
   say(tx('crisisSay'));
@@ -330,7 +363,7 @@ function deliver() {
   pu.className = 'pb-pu is-arrive';
   pu.hidden = false;
   UI.wiggleT = 3;
-  setStatus('Power up with UPchieve!', tx('deliverSub'));
+  setStatus(tx('deliver'), tx('deliverSub'));
   say('UPdog brought a power-up: unlimited tutoring for ' + money(totalPrice()) + ' a year.');
 }
 function noPower(x, y) {
@@ -339,16 +372,16 @@ function noPower(x, y) {
   var pw = $('pb-power');
   pw.classList.remove('is-shake');
   void pw.offsetWidth;
-  pw.classList.add('is-shake');
+  if (MODE !== 'cozy') pw.classList.add('is-shake');
   var ready = !$('pb-pu').hidden;
   flashStatus(tx('noPowerMain'), ready ? verb() + ' UPdog’s power-up first.' : 'Hang on, help is on the way…', 1800, true);
 }
 function crisisStep(dt) {
   UI.sadT -= dt;
-  if (UI.sadT <= 0) { sadEvent(); UI.sadT = rand(0.5, 0.8); }
+  if (UI.sadT <= 0) { sadEvent(); UI.sadT = MODE === 'cozy' ? rand(1.4, 2.2) : rand(0.5, 0.8); }
   if (UI.rocketAt && S.t >= UI.rocketAt) { UI.rocketAt = 0; launchRocket(); }
   var pu = $('pb-pu');
-  if (!pu.hidden) {
+  if (!pu.hidden && MODE !== 'cozy') {
     UI.wiggleT -= dt;
     if (UI.wiggleT <= 0) {
       UI.wiggleT = 4;
@@ -366,15 +399,36 @@ function give() {
   $('pb-pu').hidden = true;
   S.dog.on = true;
   S.toss = { t: 0, x0: S.dog.x - S.dog.w * 0.1, y0: S.dog.y - S.dog.w * 0.4, x1: S.hero.x, y1: S.hero.y - 50 * S.hero.hs };
+  setStatus(tx('charge'), tx('chargeSub'));
+  sfx.charge();
+  if (MODE === 'cozy') { say('Taking a deep breath.'); return; }
   var pw = $('pb-power'), r = screenRect(pw);
   pw.style.setProperty('--pb-dx', (S.W / 2 - (r.x + r.w * 2.2 / 2)) + 'px');
   pw.style.setProperty('--pb-dy', (S.H / 2 - (r.y + r.h / 2)) + 'px');
   pw.classList.add('is-charging');
-  setStatus(tx('charge'), tx('chargeSub'));
-  sfx.charge();
   say('Charging the power-up.');
 }
+// Cozy mode's charge is a calm moment: the star drifts over, the admin floats up with eyes closed,
+// and Insight fills in place. Then the light spreads.
+function calmStep(dt) {
+  S.chargeT += dt;
+  if (S.toss) {
+    S.toss.t = smooth(S.chargeT / 0.9);
+    if (S.chargeT >= 0.9) {
+      S.toss = null;
+      burst(S.hero.x, S.hero.y - 50 * S.hero.hs, 10, ['#FFE7A3', '#FFFFFF'], 70 * S.k, 'dot');
+    }
+  }
+  var t = S.chargeT - 0.9;
+  if (t <= 0) return;
+  S.power = smooth(t / 3) * 100;
+  if (Math.random() < dt * 4) {
+    S.parts.push({ x: S.hero.x + rand(-30, 30) * S.k, y: S.hero.y - rand(20, 90) * S.k, vx: rand(-6, 6), vy: rand(-26, -14) * S.k, life: rand(1.2, 1.8), c: pick(['#FFE7A3', '#FFFFFF']), s: rand(2, 3.4) * S.k, shape: 'dot', rot: 0, vr: 0, grav: 0 });
+  }
+  if (t >= 3.5) bloom();
+}
 function chargeStep(dt) {
+  if (MODE === 'cozy') { calmStep(dt); return; }
   S.chargeT += dt;
   if (S.toss) {
     S.toss.t = Math.min(1, S.chargeT / 0.45);
@@ -389,29 +443,30 @@ function chargeStep(dt) {
   var f = Math.min(1, t / 1.6);
   S.power = t < 1.6 ? f * 100 : 100 + Math.pow(Math.min(1, (t - 1.6) / 0.5), 2) * 899;
   chargeFx(0.5 + f * 2.5);
-  if (MODE !== 'cozy') S.shake = Math.max(S.shake, 0.03 + 0.1 * f);
+  S.shake = Math.max(S.shake, 0.03 + 0.1 * f);
   if (t >= 2.1) boom();
 }
 function boom() {
-  var cozy = MODE === 'cozy';
   S.flash = 0.55;
-  if (!reduced && !cozy) { S.shake = 0.5; S.punch = 1; }
+  if (!reduced) { S.shake = 0.5; S.punch = 1; }
   S.wave = { r: 0, v: Math.max(S.W, S.H) * 1.6, life: 0.7, max: 0.7 };
   sfx.boom();
-  if (cozy) {
-    // One big gust: leaves sweep the town, the rain stops, every bell rings, and every crew raises a mug.
-    gust();
-    rainOff();
-    S.schools.forEach(function (s) { s.squash = 1; s.ring = 1; burst(s.x, schoolTop(s), 12, LEAVES, 200 * S.k, 'leaf'); cheer(s); });
-  } else {
-    for (var i = 0; i < 6; i++) burst(rand(0, S.W), rand(0, S.H * 0.5), 16, POP, 240 * S.k, 'conf');
-    firework(); firework(); firework();
-    S.schools.forEach(function (s) { s.squash = 1; burst(s.x, schoolTop(s), 14, POP, 220 * S.k, 'star'); cheer(s); cheer(s); });
-  }
+  for (var i = 0; i < 6; i++) burst(rand(0, S.W), rand(0, S.H * 0.5), 16, POP, 240 * S.k, 'conf');
+  firework(); firework(); firework();
+  S.schools.forEach(function (s) { s.squash = 1; burst(s.x, schoolTop(s), 14, POP, 220 * S.k, 'star'); cheer(s); cheer(s); });
   S.hero.jumpT = 0;
   S.dog.jumpT = -0.12;
   S.dog.glasses = 0.001;
   $('pb-power').classList.remove('is-charging');
+  startUnlimited();
+}
+// Cozy mode's power-up lands softly: a ring of warm light spreads from the admin, the rain fades,
+// and each school it reaches lights up and gets its caretaker spirit.
+function bloom() {
+  S.bloom = { r: 0 };
+  sfx.boom();
+  rainOff();
+  S.dog.glasses = 0.001;
   startUnlimited();
 }
 function startUnlimited() {
@@ -429,9 +484,9 @@ function startUnlimited() {
   placePu(true);
   pu.hidden = false;
   $('pb-orb').setAttribute('aria-label', 'UPchieve power-up, active. See the price.');
-  if (MODE === 'cozy') { S.flies = []; seedFlies(14); }
-  setStatus(tx('unlimited'), verb() + ' your schools. As much as you want. It never runs out.');
-  flashStatus(tx('unlimitedFlash'), verb() + ' your schools. As much as you want.', 3600);
+  if (MODE === 'cozy') { S.flies = []; seedFlies(16); }
+  setStatus(tx('unlimited'), tx('unlimitedSub'));
+  flashStatus(tx('unlimitedFlash'), tx('unlimitedFlashSub'), MODE === 'cozy' ? 5200 : 3600);
   $('pb-clock').hidden = false;
   $('pb-again').hidden = false;
   music.on = true;
@@ -443,20 +498,20 @@ function startUnlimited() {
 function onDreamLoop() {
   var m = $('pb-dreams-mult');
   m.textContent = '×' + num(S.mult);
+  if (MODE === 'cozy') { if (S.phase === 'unlimited') sfx.chime(); return; }
   m.classList.remove('is-bump');
   void m.offsetWidth;
   m.classList.add('is-bump');
   if (S.phase === 'unlimited') {
     sfx.chime();
     var r = screenRect($('pb-dreams'));
-    if (MODE === 'cozy') burst(r.x + r.w / 2, r.y + 20, 14, LEAVES, 180 * S.k, 'leaf');
-    else burst(r.x + r.w / 2, r.y + 20, 16, POP, 180 * S.k, 'conf');
+    burst(r.x + r.w / 2, r.y + 20, 16, POP, 180 * S.k, 'conf');
   }
 }
 var beatTimer = null;
 function onBeat(b) {
   var party = isParty();
-  if (MODE === 'cozy') { cozyBeat(b, party); return; }
+  if (MODE === 'cozy') { cozyBeat(b); return; }
   S.schools.forEach(function (s) { s.squash = Math.max(s.squash, party ? 0.24 : 0.12); });
   root.classList.add('is-beat');
   clearTimeout(beatTimer);
@@ -472,26 +527,20 @@ function onBeat(b) {
     burst(c2.x, schoolTop(c2) - 20 * c2.sc, 16, POP, 220 * S.k, 'conf');
   }
 }
-// Cozy mode keeps time more gently: a soft bob, a swirl of leaves, a bell now and then, and ideas at night.
-function cozyBeat(b, night) {
-  S.schools.forEach(function (s) { s.squash = Math.max(s.squash, night ? 0.08 : 0.05); });
-  root.classList.add('is-beat');
-  clearTimeout(beatTimer);
-  beatTimer = setTimeout(function () { root.classList.remove('is-beat'); }, 160);
-  if (!S.schools.length) return;
-  if (b % 4 === 0) { var s = pick(S.schools); burst(s.x, schoolTop(s) - 10 * s.sc, 10, LEAVES, 170 * S.k, 'leaf'); }
-  if (night && b % 4 === 2) { var s2 = pick(S.schools); floatText(s2.x + rand(-30, 30) * s2.sc, schoolTop(s2), '💡', '#FFFFFF', 24); }
-  if (b % 8 === 6) pick(S.schools).ring = 1;
+// Cozy mode doesn't bounce to the music. Now and then a school's bell sways, and that's all.
+function cozyBeat(b) {
+  if (b % 16 === 8 && S.schools.length) pick(S.schools).ring = 0.6;
 }
 function crossed(prev, cur, minute) {
   var a = prev % 1440, b = cur % 1440;
   return b >= a ? a < minute && b >= minute : a < minute || b >= minute;
 }
 function unlimitedStep(dt) {
-  var prev = S.clock, m = S.clock % 1440;
-  S.clock += (m >= 7.5 * 60 && m < 16 * 60 ? 60 : 30) * dt;
-  S.rainbow = Math.min(1, S.rainbow + dt / 1.2);
-  if (S.dog.glasses > 0) S.dog.glasses = Math.min(1, S.dog.glasses + dt / 0.9);
+  var prev = S.clock, m = S.clock % 1440, cozy = MODE === 'cozy', school = m >= 7.5 * 60 && m < 16 * 60;
+  // Cozy days pass about three times slower.
+  S.clock += (cozy ? (school ? 20 : 11) : (school ? 60 : 30)) * dt;
+  S.rainbow = Math.min(1, S.rainbow + dt / (cozy ? 4 : 1.2));
+  if (S.dog.glasses > 0) S.dog.glasses = Math.min(1, S.dog.glasses + dt / (cozy ? 2 : 0.9));
   if (crossed(prev, S.clock, 16 * 60 + 30)) once('out', function () { flashStatus(tx('out'), tx('outSub')); });
   if (crossed(prev, S.clock, 20 * 60)) once('party', function () { flashStatus(tx('night'), 'Tutors are still online. Of course.'); });
   if (crossed(prev, S.clock, 2 * 60)) once('2am', function () { flashStatus('2:00 AM. Still unlimited.', tx('lateSub')); });
@@ -499,10 +548,10 @@ function unlimitedStep(dt) {
   if (Math.floor(prev / 1440) % 7 !== 5 && Math.floor(S.clock / 1440) % 7 === 5) once('sat', function () { flashStatus('Saturday!', 'Still unlimited. No weekend surcharge.'); });
   updateTeachers(dt);
   S.idle += dt;
-  if (S.idle > 8 && S.nudges < 3 && !UI.flashUntil) {
+  if (S.idle > (cozy ? 20 : 8) && S.nudges < (cozy ? 2 : 3) && !UI.flashUntil) {
     S.nudges++;
     S.idle = 0;
-    flashStatus(tx('nudge'), 'It’s unlimited. We checked.', 2800);
+    flashStatus(tx('nudge'), tx('nudgeSub'), cozy ? 4200 : 2800);
   }
   var b = Math.floor(beatPos());
   if (b !== S.beat && b >= 0) { S.beat = b; onBeat(b); }
@@ -517,7 +566,7 @@ function jumpStep(o, dt) {
 
 var lastClock = '';
 function paintHud() {
-  var jitter = S.phase === 'crisis' ? Math.sin(S.t * 18) * 0.03 : 0;
+  var jitter = S.phase === 'crisis' && MODE !== 'cozy' ? Math.sin(S.t * 18) * 0.03 : 0;
   $('pb-dreams-fill').style.height = clamp(S.dreams + jitter, 0.02, 1) * 100 + '%';
   var pn = $('pb-power-num');
   if (S.phase === 'unlimited') {
@@ -616,7 +665,7 @@ function resetGame() {
   S.dreams = 0.78; S.mult = 1; S.power = 0; S.clock = 10 * 60; S.wave = null;
   S.sessions = 0; S.combo = 0; S.nudges = 0; S.seen = {}; S.idle = 0; S.idleBuild = 0;
   S.phase = 'build';
-  S.rocket = null; S.toss = null; S.rainbow = 0; S.punch = 0;
+  S.rocket = null; S.toss = null; S.rainbow = 0; S.punch = 0; S.bloom = null;
   S.dog.on = false; S.dog.glasses = 0; S.dog.jumpT = null; S.hero.jumpT = null;
   UI.rocketAt = 0;
   UI.flashUntil = 0;
@@ -655,8 +704,8 @@ cv.addEventListener('pointermove', function (e) {
     if (!d.moved && Math.abs(p.x - d.sx) + Math.abs(p.y - d.sy) > 6) { d.moved = true; closePop(); }
     if (d.moved) placeSchool(d.s, p.x - d.ox, p.y - d.oy);
   }
-  if (S.phase === 'unlimited' && S.ptr.mouse && Math.random() < 0.4) {
-    S.parts.push({ x: p.x, y: p.y, vx: rand(-20, 20), vy: rand(-30, 0), life: 0.5, c: pick(MODE === 'cozy' ? ['#FFE08A', '#FFD27A', '#FFFFFF'] : POP), s: 3 * S.k, shape: 'dot', rot: 0, vr: 0, grav: 60 });
+  if (S.phase === 'unlimited' && S.ptr.mouse && MODE !== 'cozy' && Math.random() < 0.4) {
+    S.parts.push({ x: p.x, y: p.y, vx: rand(-20, 20), vy: rand(-30, 0), life: 0.5, c: pick(POP), s: 3 * S.k, shape: 'dot', rot: 0, vr: 0, grav: 60 });
   }
 });
 cv.addEventListener('pointerleave', function () { S.ptr.inside = false; });

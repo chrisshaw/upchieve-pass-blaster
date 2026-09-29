@@ -9,8 +9,8 @@
       <button class="pb-pick pb-pick-party" id="pb-pick-party" type="button" aria-label="Play party mode: unlimited power, zero chill">
         <span class="pb-pick-label" id="pb-pick-party-label"><b>Party mode</b><small>Unlimited power. Zero chill.</small><i>Play &#9656;</i></span>
       </button>
-      <button class="pb-pick pb-pick-cozy" id="pb-pick-cozy" type="button" aria-label="Play cozy mode: unlimited help, extra cozy">
-        <span class="pb-pick-label" id="pb-pick-cozy-label"><b>Cozy mode</b><small>Unlimited help. Extra cozy.</small><i>Play &#9656;</i></span>
+      <button class="pb-pick pb-pick-cozy" id="pb-pick-cozy" type="button" aria-label="Play cozy mode: take your time, it&rsquo;s unlimited">
+        <span class="pb-pick-label" id="pb-pick-cozy-label"><b>Cozy mode</b><small>Take your time. It&rsquo;s unlimited.</small><i>Play &#9656;</i></span>
       </button>
       <span class="pb-split" id="pb-split" aria-hidden="true"><span class="pb-split-knob"><svg viewBox="0 0 26 14" width="26" height="14"><path d="M8 2 3 7l5 5M18 2l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
     </div>
@@ -42,10 +42,10 @@
       <button class="pb-orb" id="pb-orb" type="button" aria-describedby="pb-tip" aria-label="UPchieve power-up from UPdog. Click to power up.">
         <span class="pb-orb-rays" aria-hidden="true"></span>
         <img class="pb-orb-img" id="pb-orb-img" alt="">
-        <span class="pb-orb-cta" aria-hidden="true">Power up!</span>
+        <span class="pb-orb-cta" id="pb-orb-cta" aria-hidden="true">Power up!</span>
       </button>
       <div class="pb-tip" id="pb-tip" role="tooltip">
-        <p class="pb-tip-name">UPchieve power-up</p>
+        <p class="pb-tip-name" id="pb-tip-name">UPchieve power-up</p>
         <p class="pb-tip-desc">Unlimited tutoring for every student in every school</p>
         <p class="pb-tip-price"><span id="pb-tip-price">$0</span><small>/year</small></p>
         <button class="pb-textbtn" id="pb-tip-invoice" type="button">See the invoice</button>
@@ -59,7 +59,7 @@
 
     <div class="pb-pop" id="pb-pop" hidden role="dialog" aria-labelledby="pb-pop-title">
       <div class="pb-pop-head">
-        <p class="pb-pop-title" id="pb-pop-title">How many students at <b id="pb-pop-name"></b>?</p>
+        <p class="pb-pop-title" id="pb-pop-title"><span id="pb-pop-q">How many students at</span> <b id="pb-pop-name"></b>?</p>
         <button class="pb-pop-del" id="pb-pop-del" type="button" aria-label="Remove this school">&times;</button>
       </div>
       <div class="pb-chips" id="pb-chips"></div>
