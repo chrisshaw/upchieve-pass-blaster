@@ -194,7 +194,7 @@ function updateKids(dt) {
     if (!going && k.pause > 0) { k.pause -= dt; keep.push(k); continue; }
     var tx = going ? k.target.x : k.tx, ty = going ? k.target.y : k.ty;
     var dx = tx - k.x, dy = ty - k.y, d = Math.sqrt(dx * dx + dy * dy);
-    var sp = k.speed * S.k * (MODE === 'cozy' ? (going ? 1.6 : 0.65) : (going ? 2.6 : 1));
+    var sp = k.speed * S.k * (MODE === 'cozy' ? (going ? 2 : 0.8) : (going ? 2.6 : 1));
     k.ph += dt * (going ? 16 : 9);
     if (d < sp * dt + 1) {
       if (going) {
@@ -222,7 +222,7 @@ function updateSchools(dt) {
     if (s.squash > 0) s.squash = Math.max(0, s.squash - dt * 3);
     if (s.landed) return;
     if (MODE === 'cozy') {
-      s.drop += -s.drop * Math.min(1, dt * 6);
+      s.drop += -s.drop * Math.min(1, dt * 8);
       if (s.drop > -1.5) {
         s.drop = 0; s.landed = true; s.squash = 0.2;
         sfx.stamp();
@@ -273,7 +273,7 @@ function moveTo(o, kx, ky, tx, ty, sp, dt) {
   return false;
 }
 function updateTeachers(dt) {
-  var slow = MODE === 'cozy' ? 0.5 : 1, m = S.clock % 1440, walk = 32 * S.k * slow, drive = 150 * S.k * slow, road = S.G.roadMid;
+  var slow = MODE === 'cozy' ? 0.7 : 1, m = S.clock % 1440, walk = 32 * S.k * slow, drive = 150 * S.k * slow, road = S.G.roadMid;
   S.teachers.forEach(function (tc) {
     var s = tc.school, spot = carSpot(tc);
     tc.ph += dt * 9;
@@ -330,7 +330,7 @@ function burst(x, y, n, colors, spd, shape) {
   if (S.parts.length > 700) S.parts.splice(0, S.parts.length - 700);
 }
 function floatText(x, y, text, style, size) {
-  var life = MODE === 'cozy' ? 2.8 : 1.3;
+  var life = MODE === 'cozy' ? 2.3 : 1.3;
   S.floats.push({ x: x, y: y, text: text, style: style || 'win', size: size || 15, life: life, max: life, rot: rand(-0.12, 0.12) });
   if (S.floats.length > 14) S.floats.shift();
 }
@@ -340,7 +340,7 @@ function updateFx(dt) {
     if (p.shape === 'leaf') leafDrag(p, dt);
     return p.life > 0;
   });
-  var rise = MODE === 'cozy' ? 14 : 38;
+  var rise = MODE === 'cozy' ? 18 : 38;
   S.floats = S.floats.filter(function (f) { f.life -= dt; f.y -= rise * dt; return f.life > 0; });
   if (S.wave) { S.wave.r += S.wave.v * dt; S.wave.life -= dt; if (S.wave.life <= 0) S.wave = null; }
   S.wavelets = S.wavelets.filter(function (w) { w.r += 260 * S.k * dt; w.life -= dt; return w.life > 0; });

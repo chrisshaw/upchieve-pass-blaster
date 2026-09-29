@@ -115,6 +115,8 @@
   display:block;
   touch-action:manipulation;
 }
+/* Cozy mode draws the front half of the power-up wisp's turns here, above the meter */
+.pb-screen > .pb-over{ z-index:6; pointer-events:none; }
 /* Unlimited mode: the whole frame glows and pulses on the beat */
 .pb.is-unlimited .pb-screen::after{
   content:"";
@@ -589,7 +591,6 @@
 .pb.is-cozy .pb-done-face small{ font-family:var(--pb-serif); font-weight:600; }
 .pb.is-cozy .pb-done-ring{ display:none; }
 
-.pb.is-cozy .pb-pop{ animation:pb-soft .35s ease-out; }
 .pb.is-cozy .pb-pop-tail{ background:var(--pb-paper); box-shadow:2px 2px 0 0 var(--pb-bark); }
 .pb.is-cozy .pb-pop.is-below .pb-pop-tail{ box-shadow:-2px -2px 0 0 var(--pb-bark); }
 .pb.is-cozy .pb-pop-title{ color:#3E2A20; }
@@ -602,6 +603,25 @@
 .pb.is-cozy .pb-invoice-head h3{ font-family:var(--pb-serif); }
 .pb.is-cozy .pb-line{ border-color:#EADBC2; }
 @keyframes pb-soft{ 0%{ opacity:0; } 100%{ opacity:1; } }
+
+/* Cozy cards settle in like a leaf landing, and drift up and away when they close */
+.pb.is-cozy .pb-pop{ animation:pb-settle-tilt .45s cubic-bezier(.2,.8,.3,1) both; }
+.pb.is-cozy .pb-pop.is-leaving{ animation:pb-drift-tilt .42s ease-in forwards; pointer-events:none; }
+.pb.is-cozy .pb-invoice{ animation:pb-soft .35s ease-out both; }
+.pb.is-cozy .pb-invoice .pb-invoice-card{ animation:pb-settle .45s cubic-bezier(.2,.8,.3,1) both; }
+.pb.is-cozy .pb-invoice.is-leaving{ animation:pb-fade-out .42s ease-in forwards; pointer-events:none; }
+.pb.is-cozy .pb-invoice.is-leaving .pb-invoice-card{ animation:pb-drift .42s ease-in forwards; }
+.pb.is-cozy .pb-done.is-leaving{ animation:pb-drift .42s ease-in forwards; pointer-events:none; }
+.pb.is-cozy .pb-pu.is-leaving{ pointer-events:none; }
+.pb.is-cozy .pb-pu.is-leaving .pb-orb{ animation:pb-orb-away .42s ease-in forwards; }
+.pb.is-cozy .pb-tip{ transition:opacity .35s ease, transform .35s ease, visibility 0s .35s; }
+.pb.is-cozy .pb-pu:hover .pb-tip, .pb.is-cozy .pb-pu:focus-within .pb-tip{ transition:opacity .35s ease, transform .35s ease; }
+@keyframes pb-settle-tilt{ 0%{ opacity:0; transform:translateY(8px) rotate(-3deg) scale(.96); } 100%{ opacity:1; transform:rotate(-1deg); } }
+@keyframes pb-drift-tilt{ 0%{ opacity:1; transform:rotate(-1deg); } 100%{ opacity:0; transform:translateY(-10px) rotate(1deg) scale(.97); } }
+@keyframes pb-settle{ 0%{ opacity:0; transform:translateY(10px) scale(.97); } 100%{ opacity:1; transform:none; } }
+@keyframes pb-drift{ 0%{ opacity:1; transform:none; } 100%{ opacity:0; transform:translateY(-10px) scale(.96); } }
+@keyframes pb-fade-out{ to{ opacity:0; } }
+@keyframes pb-orb-away{ 0%{ opacity:1; transform:translateX(-50%); } 100%{ opacity:0; transform:translateX(-50%) translateY(-14px) scale(.85); } }
 
 .pb-inf{ font-family:system-ui, -apple-system, "Segoe UI", sans-serif; font-weight:700; }
 .pb-sr{ position:absolute !important; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }

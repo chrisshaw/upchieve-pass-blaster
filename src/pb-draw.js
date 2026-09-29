@@ -665,6 +665,7 @@ function drawCursor(nt) {
 }
 
 function render() {
+  renderOver();
   if (S.phase === 'choose') { renderChooser(); return; }
   g.save();
   g.setTransform(DPR, 0, 0, DPR, 0, 0);
@@ -699,6 +700,8 @@ function drawScene() {
     if (tc.state !== 'away') list.push({ y: tc.cy, k: 2, o: tc });
     if (tc.state === 'walkout' || tc.state === 'walkin') list.push({ y: tc.py, k: 3, o: tc });
   });
+  // Cozy wisps sort just in front of or just behind their school as they circle it.
+  if (cozy) S.schools.forEach(function (s) { if (s.spirit) list.push({ y: s.y + (spiritPos(s).front ? 0.05 : -0.05), k: 4, o: s }); });
   list.sort(function (a, b) { return a.y - b.y; });
   if (isParty()) S.schools.forEach(cozy ? drawCozyGlow : drawPartyLights);
   list.forEach(function (e) {
@@ -711,14 +714,15 @@ function drawScene() {
       drawPerson(o, o.x, ky, ksc, km);
     }
     else if (e.k === 2) drawCar(o, nt);
+    else if (e.k === 4) drawSpirit(o, nt);
     else drawPerson(o, o.px, o.py, S.k * depth(o.py) * 1.3, true);
   });
 
-  if (cozy) { drawSpirits(nt); drawBloom(); drawFlies(nt); }
+  if (cozy) { drawBloom(); drawFlies(nt); }
   drawHero();
   drawDog();
   drawRocket();
-  if (cozy) { drawRain(); drawLeaves(nt); }
+  if (cozy) { drawRain(); drawLeaves(nt); drawCharm(false); }
   if (S.toss) {
     var tt = S.toss.t, tx = lerp(S.toss.x0, S.toss.x1, tt), ty = lerp(S.toss.y0, S.toss.y1, tt) - Math.sin(tt * Math.PI) * 90 * S.k;
     starPath(tx, ty, 26 * S.k, S.t * (cozy ? 1.5 : 10)); g.lineJoin = 'round';

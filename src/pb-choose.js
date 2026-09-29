@@ -14,7 +14,7 @@ function splitGeom() {
 function enterChooser(from) {
   S.phase = 'choose';
   S.schools = []; S.kids = []; S.parts = []; S.floats = []; S.leaves = []; S.flies = [];
-  S.gloom = 0; S.windy = 0.1; S.rainbow = 0; S.bloom = null; S.uStart = 0; S.ptr.inside = false;
+  S.gloom = 0; S.windy = 0.1; S.rainbow = 0; S.bloom = null; S.charm = null; S.duo = null; S.uStart = 0; S.ptr.inside = false;
   seedHoard(CROWD);
   DEMO.forEach(function (d) {
     var s = addSchool(d[0] * S.W, lerp(S.G.horizon, S.G.roadTop, d[1]), d[2]);
@@ -23,7 +23,7 @@ function enterChooser(from) {
   PART_TAG = 'cozy';
   S.schools.forEach(function (s) { s.inside = s.need; bless(s); s.spirit.born = S.t - 5; s.ring = 0; });
   PART_TAG = undefined;
-  seedFlies(14);
+  seedFlies(20);
   S.dog.on = true; S.dog.glasses = 1;
   var over = TILT * S.H / S.W + 0.03;
   CH.split = from === 'party' ? 1 + over : from === 'cozy' ? -over : 0.5;
@@ -143,7 +143,7 @@ function startIntro() {
 }
 function introStep(dt) {
   S.introT += dt;
-  var u = Math.min(1, S.introT / (MODE === 'cozy' ? 1.8 : 1.1));
+  var u = Math.min(1, S.introT / (MODE === 'cozy' ? 1.4 : 1.1));
   S.clock = lerp(S.introFrom, 34 * 60, u * u * (3 - 2 * u));
   S.schools.slice().forEach(function (s) {
     if (s.vanishAt == null || S.introT < s.vanishAt) return;

@@ -5,7 +5,7 @@ A game that replaces the price calculator on upchieve.org/schools. You stamp you
 It opens on a chooser: the same town painted two ways, split by a slanted divider. Hover a side and it grows to about three quarters of the frame; click or tap it to play that version.
 
 - **Party mode** is the original: disco lights, fireworks, a fast chiptune loop.
-- **Cozy mode** is the same game and the same prices at a slower pace, in a meadow of old-fashioned schoolhouses. There's no countdown, no streaks, and nothing bounces to the beat. The crisis is a gray, rainy spell, UPdog floats down under a hot-air balloon, and the power-up is a quiet moment: the admin floats up with eyes closed while Insight fills, then a ring of warm light spreads out and wakes each school. After that every school has a small caretaker spirit that drifts over the roof and now and then visits a window to help a kid inside, day and night. Clicking a school brings its kids out to clink mugs and raise them to you.
+- **Cozy mode** is the same game and the same prices at a slower pace, in a meadow of old-fashioned schoolhouses. There's no countdown, no streaks, and nothing bounces to the beat. The crisis is a gray, rainy spell, UPdog floats down under a hot-air balloon, and the power-up is a quiet moment: the admin floats up with eyes closed while UPdog's star, turned into a will-o'-wisp, winds around the Tutoring bar and fills it. Then a ring of warm light spreads out and wakes each school, and the admin and UPdog clink mugs. After that every school has a wisp circling it that now and then visits a window to help a kid inside, day and night. Clicking a school sends its wisp spiraling and brings its kids out to clink mugs and raise them to you.
 
 "Play again" goes back to the chooser.
 
@@ -23,7 +23,7 @@ Play it: https://chrisshaw.github.io/upchieve-pass-blaster/
 
 3. Remove the old calculator. In the Code block that holds the "Affordable pricing" section, delete the `<div class="fs-card fs-card--calc">…</div>` card. That block's script already handles the card being gone.
 
-The snippet loads the game from this repo's GitHub Pages site, so pushing a new build updates the live page (Pages caches for about 10 minutes). That also means the page depends on this repo staying public with Pages turned on. If that's a problem, paste the whole of `pass-blaster-embed.html` into the Code block instead: it's the same game with nothing loaded from outside, about 235KB.
+The snippet loads the game from this repo's GitHub Pages site, so pushing a new build updates the live page (Pages caches for about 10 minutes). That also means the page depends on this repo staying public with Pages turned on. If that's a problem, paste the whole of `pass-blaster-embed.html` into the Code block instead: it's the same game with nothing loaded from outside, about 245KB.
 
 ## Build
 
@@ -48,6 +48,7 @@ Commit `docs/` after building so the live page and the Squarespace embed update.
 - `build.py` escapes every non-ASCII character in the JS, so the embed works no matter what encoding the host page declares.
 - The art in `src/assets/` comes from the UPchieve Illustrations library in Figma. `build.py` inlines it, so the game loads no image files.
 - Cozy mode's headlines use Fraunces, loaded from Google Fonts next to Work Sans.
+- In cozy mode a second canvas (`#pb-over`) sits above the page's meters, so the power-up wisp can pass in front of the Tutoring bar as well as behind it.
 - Party mode's drawing lives in `src/pb-draw.js` and cozy mode's in `src/pb-cozy.js`. Each check of `MODE` picks one or the other, so changing one mode doesn't touch the other. Wording that differs between the modes is in the `TEXT` table in `src/pb-ui.js`.
 - The chooser (`src/pb-choose.js`) draws the whole scene twice per frame, once for each half. Particles tagged with `PART_TAG` show on one half only.
 

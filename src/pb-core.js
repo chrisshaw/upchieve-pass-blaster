@@ -259,7 +259,7 @@ Object.keys(SFX_PARTY).concat(['clink']).forEach(function (k) {
 // Cozy mode plays a slow lo-fi loop instead (IV-iii-ii-I sevenths, swung hats), with soft drums at night.
 var music = { on: false, next: 0, step: 0, t0: 0 };
 var STEP = 60 / 138 / 4;
-var COZY_STEP = 60 / 72 / 4;
+var COZY_STEP = 60 / 80 / 4;
 function stepLen() { return MODE === 'cozy' ? COZY_STEP : STEP; }
 var PROG = [[48, 52, 55, 60], [43, 47, 50, 55], [45, 48, 52, 57], [41, 45, 48, 53]];
 var COZY_PROG = [[53, 57, 60, 64], [52, 55, 59, 62], [50, 53, 57, 60], [48, 52, 55, 59]];
@@ -339,6 +339,6 @@ var S = {
   wave: null,
   beat: -1,
   // Cozy mode: how gray and rainy it is (0-1), how hard the wind blows, and the leaves and fireflies it carries.
-  gloom: 0, windy: 0, cloudShift: 0, leaves: [], flies: [], bloom: null,
+  gloom: 0, windy: 0, cloudShift: 0, leaves: [], flies: [], bloom: null, charm: null, duo: null,
   W: 0, H: 0, k: 1, t: 0
 };

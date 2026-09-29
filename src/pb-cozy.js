@@ -414,7 +414,7 @@ function drawRain() {
   g.restore();
 }
 
-// Leaves: a few drift by on a light breeze.
+// Leaves tumble across the meadow on the breeze, faster when a gust comes through.
 function leafShape(x, y, s, rot, flip, c) {
   g.save();
   g.translate(x, y); g.rotate(rot); g.scale(1, 0.35 + 0.65 * Math.abs(Math.sin(flip)));
@@ -433,24 +433,25 @@ function heartShape(x, y, s) {
 }
 function leafTarget() {
   if (S.phase === 'crisis' || S.phase === 'charge') return 0;
-  return reduced ? 3 : 6;
+  if (reduced) return 5;
+  return S.phase === 'build' || S.phase === 'intro' ? 10 : 15;
 }
 function spawnLeaf(anywhere) {
   S.leaves.push({
     x: anywhere ? rand(0, S.W) : rand(-40, -10), y: anywhere ? rand(0, S.G.roadTop) : rand(-20, S.G.roadTop * 0.8),
-    vx: rand(12, 24) * S.k, vy: rand(8, 16) * S.k, rot: rand(0, 6), vr: rand(-1.5, 1.5), flip: rand(0, 6),
-    c: pick(LEAVES), s: rand(4, 6.5) * S.k
+    vx: rand(20, 40) * S.k, vy: rand(8, 16) * S.k, rot: rand(0, 6), vr: rand(-3, 3), flip: rand(0, 6),
+    c: pick(LEAVES), s: rand(5, 8) * S.k
   });
 }
 function stepLeaves(dt) {
-  var want = leafTarget(), wind = (14 + S.windy * 60) * S.k, eddy = 12 * S.k;
-  if (S.leaves.length < want && Math.random() < dt * 2) spawnLeaf(!S.leaves.length);
+  var want = leafTarget(), wind = (26 + S.windy * 150) * S.k, eddy = 20 * S.k;
+  if (S.leaves.length < want && Math.random() < dt * 3) spawnLeaf(!S.leaves.length);
   S.leaves = S.leaves.filter(function (l) {
     var a = Math.sin(l.x * 0.005 + S.t * 0.3) * Math.cos(l.y * 0.007 - S.t * 0.22) * Math.PI * 2;
     var tx = wind + Math.cos(a) * eddy, ty = 12 * S.k + Math.sin(a) * eddy, e = Math.min(1, dt);
     l.vx += (tx - l.vx) * e; l.vy += (ty - l.vy) * e;
     l.x += l.vx * dt; l.y += l.vy * dt;
-    l.rot += l.vr * dt; l.flip += dt * 1.8;
+    l.rot += l.vr * dt * (1 + S.windy * 3); l.flip += dt * (3 + S.windy * 8);
     if (l.x > S.W + 30 || l.y > S.H + 20 || l.y < -60) {
       if (S.leaves.length > want) return false;
       l.x = rand(-40, -10); l.y = rand(-20, S.G.roadTop * 0.8);
@@ -466,14 +467,22 @@ function leafDrag(p, dt) {
   if (p.vy > 60 * S.k) p.vy = 60 * S.k;
 }
 
-// Fireflies come out at dusk: a few, low over the meadow, blinking yellow-green on and off.
+// Fireflies come out at dusk, low over the meadow, blinking yellow-green on and off. Once a school is
+// powered, a few of them gather around it.
 function seedFlies(n) {
   for (var i = 0; i < n; i++) S.flies.push({ x: rand(0, S.W), y: rand(S.G.horizon, S.G.roadTop - 10 * S.k), ph: rand(0, 10), sp: rand(0.6, 1.3) });
 }
 function stepFlies(dt) {
   var top = S.G.horizon - 20 * S.k, bottom = S.G.roadTop - 8 * S.k;
+  S.flies = S.flies.filter(function (f) { return !f.home || !f.home.dead; });
   S.flies.forEach(function (f) {
     var t = S.t * f.sp * 0.6 + f.ph;
+    if (f.home) {
+      var s = f.home, d = dims(s);
+      var tx = s.x + f.ox * d.w * s.sc * 0.75 + Math.cos(t * 0.9) * 12 * S.k, ty = s.y - f.oy * d.h * s.sc + Math.sin(t * 1.2) * 9 * S.k;
+      f.x += (tx - f.x) * Math.min(1, dt * 1.2); f.y += (ty - f.y) * Math.min(1, dt * 1.2);
+      return;
+    }
     f.x += (Math.cos(t * 0.8) * 12 + Math.cos(t * 0.3 + f.ph) * 8) * S.k * dt;
     f.y += Math.sin(t * 1.1) * 9 * S.k * dt;
     if (f.x > S.W + 10) f.x = -10; else if (f.x < -10) f.x = S.W + 10;
@@ -486,6 +495,7 @@ function drawFlies(nt) {
   g.save();
   g.globalCompositeOperation = 'lighter';
   S.flies.forEach(function (f) {
+    if (CULL && !CULL(f.x)) return;
     var blink = Math.pow(Math.max(0, Math.sin(S.t * 1.1 * f.sp + f.ph)), 5) * night;
     if (blink < 0.02) return;
     g.globalAlpha = blink * 0.4; circle(f.x, f.y, 4.2 * S.k); g.fillStyle = '#B8F04A'; g.fill();
@@ -494,31 +504,61 @@ function drawFlies(nt) {
   g.restore();
 }
 
-// Caretaker spirits: after the light reaches a school, a small glowing spirit with a leaf hat drifts
-// over its roof, two leaves circling it. Now and then it floats down to a window, the window glows,
-// and a kid inside gets unstuck. It keeps doing that day and night, whether or not you click.
+// Will-o'-wisps: a warm glowing point with a soft trail behind it.
+function drawTrail(trail, r, alpha, keep) {
+  for (var i = 0; i < trail.length; i++) {
+    var q = trail[i];
+    if (keep && !keep(q)) continue;
+    var f = (i + 1) / (trail.length + 1);
+    g.globalAlpha = alpha * f * 0.6;
+    circle(q.x, q.y, r * (0.25 + 0.6 * f)); g.fillStyle = '#FFD27A'; g.fill();
+  }
+  g.globalAlpha = 1;
+}
+function drawWisp(x, y, r, alpha, boost) {
+  g.save();
+  g.globalCompositeOperation = 'lighter';
+  var R = r * (3.4 + boost), glow = g.createRadialGradient(x, y, 0, x, y, R);
+  glow.addColorStop(0, 'rgba(255,214,130,.7)'); glow.addColorStop(1, 'rgba(255,214,130,0)');
+  g.globalAlpha = alpha; g.fillStyle = glow; g.fillRect(x - R, y - R, R * 2, R * 2);
+  g.globalCompositeOperation = 'source-over';
+  circle(x, y, r); g.fillStyle = '#FFF4D6'; g.fill();
+  g.lineWidth = Math.max(1, r * 0.22); g.strokeStyle = 'rgba(232,150,50,.7)'; g.stroke();
+  circle(x, y, r * 0.45); g.fillStyle = '#FFFFFF'; g.fill();
+  g.restore();
+}
+
+// Each powered school has a wisp that circles it, passing in front and behind. Now and then it
+// dips to a window, the window glows, and a kid inside gets unstuck, day and night, whether or not
+// you click. A click sends it spiraling up and back down (or down and back up) with more energy.
 var TENDS = ['Got unstuck on fractions', 'Essay outline, sorted', 'Chemistry finally clicked', 'Ready for the quiz', 'FAFSA, filed', 'Proof makes sense now', 'Lab report, done'];
-function bless(s) {
+function bless(s, from) {
   if (s.spirit) return;
   s.blessed = true;
-  s.spirit = { ph: rand(0, 6), born: S.t, tendAt: S.t + rand(2.5, 6), tend: 0, loop: 0, fw: 0 };
+  s.spirit = { a: rand(0, 6.28), born: S.t, from: from || null, tendAt: S.t + rand(3, 6), tend: 0, swirl: 0, dir: -1, fw: 0, trail: [], lastT: 0 };
   s.ring = 1;
-  var t = spiritHome(s, S.t);
-  burst(t.x, t.y, 8, ['#FFF3C4', '#FFFFFF'], 60 * S.k, 'dot');
+  for (var i = 0; i < 3; i++) S.flies.push({ home: s, ox: rand(-0.7, 0.7), oy: rand(0.1, 0.9), ph: rand(0, 10), sp: rand(0.7, 1.3), x: s.x, y: s.y });
 }
-function spiritHome(s, t) {
-  var d = dims(s), sp = s.spirit, top = s.y - (d.h + (d.mega ? 22 : gableH(d.w) * 0.6)) * s.sc;
-  return { x: s.x + Math.sin(t * 0.32 + sp.ph) * d.w * s.sc * 0.4, y: top - (16 + Math.sin(t * 0.65 + sp.ph) * 5) * s.sc };
+function orbitPos(s) {
+  var d = dims(s), sp = s.spirit, sc = s.sc, cy = s.y - d.h * sc * 0.5;
+  var up = sp.swirl > 0 ? Math.sin(Math.PI * (1 - sp.swirl)) * 46 * sc * sp.dir : 0;
+  return {
+    x: s.x + Math.cos(sp.a) * (d.w / 2 + 16) * sc,
+    y: cy + Math.sin(sp.a) * 10 * sc - up + Math.sin(S.t * 1.3 + sp.a * 0.3) * 3 * sc,
+    front: Math.sin(sp.a) > 0
+  };
 }
-function spiritPos(s, t) {
-  var sp = s.spirit, p = spiritHome(s, t);
+function spiritPos(s) {
+  var sp = s.spirit, p = orbitPos(s);
   if (sp.tend > 0 && s.wins && s.wins[sp.fw]) {
     var w = winOnScreen(s, s.wins[sp.fw]), e = smooth(Math.sin(Math.PI * Math.min(1, sp.tend)) * 1.15);
-    p.x = lerp(p.x, w.x + 9 * s.sc, e); p.y = lerp(p.y, w.y - 6 * s.sc, e);
+    p.x = lerp(p.x, w.x + 8 * s.sc, e); p.y = lerp(p.y, w.y - 5 * s.sc, e);
+    if (e > 0.4) p.front = true;
   }
-  if (sp.loop > 0) {
-    var a = (1 - sp.loop) * Math.PI * 2;
-    p.x += Math.sin(a) * 12 * s.sc; p.y -= (1 - Math.cos(a)) * 9 * s.sc;
+  var u = (S.t - sp.born) / 1.3;
+  if (sp.from && u < 1) {
+    var e2 = smooth(u);
+    p.x = lerp(sp.from.x, p.x, e2); p.y = lerp(sp.from.y, p.y, e2) - Math.sin(Math.PI * e2) * 70 * S.k; p.front = true;
   }
   return p;
 }
@@ -527,16 +567,23 @@ function stepSpirits(dt) {
   S.schools.forEach(function (s) {
     var sp = s.spirit;
     if (!sp) return;
-    if (sp.loop > 0) sp.loop = Math.max(0, sp.loop - dt / 1.2);
-    if (s.flare > 0) s.flare = Math.max(0, s.flare - dt / 1.8);
+    sp.a += dt * (0.9 + sp.swirl * 5);
+    if (sp.swirl > 0) sp.swirl = Math.max(0, sp.swirl - dt / 1.3);
+    if (s.flare > 0) s.flare = Math.max(0, s.flare - dt / 1.6);
     if (sp.tend > 0) {
       var was = sp.tend;
-      sp.tend += dt / 3.2;
+      sp.tend += dt / 2.6;
       if (was < 0.5 && sp.tend >= 0.5) tended(s);
-      if (sp.tend >= 1) { sp.tend = 0; sp.tendAt = S.t + rand(6, 12); }
-    } else if (live && S.t >= sp.tendAt && s.wins && s.wins.length) {
+      if (sp.tend >= 1) { sp.tend = 0; sp.tendAt = S.t + rand(5, 9); }
+    } else if (live && !sp.swirl && S.t >= sp.tendAt && s.wins && s.wins.length) {
       sp.fw = (Math.random() * s.wins.length) | 0;
       sp.tend = 0.001;
+    }
+    if (S.t - sp.lastT > 0.04) {
+      sp.lastT = S.t;
+      var p = spiritPos(s);
+      sp.trail.push({ x: p.x, y: p.y });
+      if (sp.trail.length > 14) sp.trail.shift();
     }
   });
 }
@@ -550,51 +597,116 @@ function tended(s) {
   PART_TAG = undefined;
   if (S.phase !== 'unlimited') return;
   addDreams(0.03);
-  if (S.t - (UI.tendFloat || 0) > 4.5 && Math.random() < 0.6) {
+  if (S.t - (UI.tendFloat || 0) > 4 && Math.random() < 0.6) {
     UI.tendFloat = S.t;
     floatText(p.x, p.y - 26 * s.sc, isParty() ? clockStr(S.clock) + ' · still helping' : '💡 ' + pick(TENDS), 'tend', 14);
   }
 }
-function spiritCheer(s) { if (s.spirit) s.spirit.loop = 1; }
-function drawSpirits(nt) {
-  S.schools.forEach(function (s, idx) {
-    var sp = s.spirit;
-    if (!sp || (CULL && !CULL(s.x))) return;
-    var age = smooth((S.t - sp.born) / 1.4), k = s.sc * 1.3, p = spiritPos(s, S.t);
-    if (age <= 0) return;
-    g.save();
-    g.globalAlpha = age;
-    for (var i = 3; i >= 1; i--) {
-      var q = spiritPos(s, S.t - i * 0.14);
-      circle(q.x, q.y, (4.6 - i * 0.9) * k); g.fillStyle = 'rgba(255,244,214,' + (0.22 * (1 - i / 4)).toFixed(3) + ')'; g.fill();
-    }
-    g.globalCompositeOperation = 'lighter';
-    var R = (16 + 6 * nt + 6 * (s.flare || 0)) * k, glow = g.createRadialGradient(p.x, p.y, 0, p.x, p.y, R);
-    glow.addColorStop(0, 'rgba(255,230,170,' + (0.35 + 0.3 * nt).toFixed(3) + ')'); glow.addColorStop(1, 'rgba(255,230,170,0)');
-    g.fillStyle = glow; g.fillRect(p.x - R, p.y - R, R * 2, R * 2);
-    g.globalCompositeOperation = 'source-over';
-    circle(p.x, p.y, 5.8 * k); g.fillStyle = '#FFF9EC'; g.fill();
-    g.lineWidth = 1; g.strokeStyle = 'rgba(214,160,90,.8)'; g.stroke();
-    g.fillStyle = '#3A2A2A';
-    circle(p.x - 1.9 * k, p.y - 0.2 * k, 0.8 * k); g.fill(); circle(p.x + 1.9 * k, p.y - 0.2 * k, 0.8 * k); g.fill();
-    g.fillStyle = 'rgba(233,140,150,.55)';
-    circle(p.x - 3.4 * k, p.y + 1.4 * k, 1 * k); g.fill(); circle(p.x + 3.4 * k, p.y + 1.4 * k, 1 * k); g.fill();
-    leafShape(p.x + 0.8 * k, p.y - 6.2 * k, 3.6 * k, -0.5, 1.57, LEAVES[idx % LEAVES.length]);
-    for (var j = 0; j < 2; j++) {
-      var a = S.t * (1.1 + sp.loop * 5) + sp.ph + j * Math.PI, r = 11 * k;
-      leafShape(p.x + Math.cos(a) * r, p.y + Math.sin(a) * r * 0.45, 2.6 * k, a + 1.5, S.t * 1.4 + j, LEAVES[(idx + j + 1) % LEAVES.length]);
-    }
-    g.restore();
+function spiritCheer(s) {
+  var sp = s.spirit;
+  if (!sp) return;
+  sp.dir = -sp.dir; sp.swirl = 1; sp.tend = 0;
+}
+function drawSpirit(s, nt) {
+  var sp = s.spirit, p = spiritPos(s), k = s.sc, fade = smooth((S.t - sp.born) / 0.6), r = 4.6 * k * (p.front ? 1.1 : 0.9);
+  drawTrail(sp.trail, r, fade * (p.front ? 1 : 0.7));
+  drawWisp(p.x, p.y, r, fade * (p.front ? 1 : 0.75), nt + (s.flare || 0) + sp.swirl);
+}
+
+// The power-up: UPdog's star turns into a wisp that winds around the Tutoring bar, filling it as it
+// goes, with a few leaves tumbling after it. The half of each turn that passes in front of the bar is
+// drawn on an overlay canvas above the page's meter. When the bar is full it rises to the admin and
+// the ring of light spreads.
+function barRect() { return screenRect($('pb-power').querySelector('.pb-bar')); }
+function startCharm() {
+  var x = S.dog.x, y = S.dog.y - S.dog.w * 0.5;
+  S.charm = { stage: 0, t: 0, x: x, y: y, fx: x, fy: y, a: Math.PI, z: 1, trail: [], lt: 0 };
+}
+function charmStep(dt) {
+  var c = S.charm;
+  if (!c) return;
+  c.t += dt;
+  var b = barRect(), cy = b.y + b.h / 2, ry = b.h / 2 + 13;
+  if (c.stage === 0) {
+    var u = smooth(c.t / 0.7);
+    c.x = lerp(c.fx, b.x + 2, u); c.y = lerp(c.fy, cy - ry, u) - Math.sin(Math.PI * u) * 50 * S.k; c.z = 1;
+    if (c.t >= 0.7) { c.stage = 1; c.t = 0; }
+  } else if (c.stage === 1) {
+    var p = 1 - Math.pow(1 - Math.min(1, c.t / 2.3), 1.3);
+    S.power = p * 100;
+    c.a += dt * 9;
+    c.x = b.x + b.w * p; c.y = cy + Math.cos(c.a) * ry; c.z = Math.sin(c.a);
+    if (p >= 1) { c.stage = 2; c.t = 0; c.fx = c.x; c.fy = c.y; }
+  } else {
+    var v = smooth(c.t / 0.6);
+    c.x = lerp(c.fx, S.hero.x, v); c.y = lerp(c.fy, S.hero.y - 50 * S.hero.hs, v) - Math.sin(Math.PI * v) * 30 * S.k; c.z = 1;
+    if (c.t >= 0.6) { S.charm = null; bloom(); return; }
+  }
+  if (S.t - c.lt > 0.025) {
+    c.lt = S.t;
+    c.trail.push({ x: c.x, y: c.y, z: c.z });
+    if (c.trail.length > 14) c.trail.shift();
+  }
+}
+function drawCharm(front) {
+  var c = S.charm;
+  if (!c) return;
+  var k = clamp(S.k, 0.85, 1.2), r = 6 * k, side = function (q) { return (q.z > 0) === front; };
+  drawTrail(c.trail, r, 1, side);
+  [3, 7, 11].forEach(function (back, j) {
+    var q = c.trail[c.trail.length - 1 - back];
+    if (q && side(q)) leafShape(q.x, q.y + (j - 1) * 2 * k, 6.5 * k, S.t * 4 + j * 2, S.t * 5 + j, LEAVES[j + 1]);
   });
+  if (side(c)) drawWisp(c.x, c.y, r * (1 + 0.15 * c.z), 1, 1.2);
+}
+var og = null, overDirty = false;
+function renderOver() {
+  if (!og) og = $('pb-over').getContext('2d');
+  if (!S.charm && !overDirty) return;
+  og.setTransform(1, 0, 0, 1, 0, 0);
+  og.clearRect(0, 0, og.canvas.width, og.canvas.height);
+  overDirty = false;
+  if (!S.charm) return;
+  var main = g;
+  g = og;
+  g.setTransform(DPR, 0, 0, DPR, 0, 0);
+  drawCharm(true);
+  g = main;
+  overDirty = true;
+}
+
+// After the power-up, the admin and UPdog each get a warm mug, clink them, and raise them.
+// They clink again every so often.
+function duoPose() {
+  var D = S.duo;
+  if (!D || S.phase !== 'unlimited' || S.t < D.got) return null;
+  var c = S.t - D.clink, back = 1 - smooth((c - 2) / 0.6);
+  return { fade: smooth((S.t - D.got) / 0.4), reach: c < 0 ? 0 : toastReach(c) * back, lift: c < 0 ? 0 : toastLift(c) * back };
+}
+function duoMeet() { var h = S.hero; return { x: h.x + 43 * h.hs, y: h.y - 50 * h.hs }; }
+function stepDuo(dt) {
+  var D = S.duo;
+  if (!D || S.phase !== 'unlimited') return;
+  var c = S.t - D.clink, was = c - dt, m = duoMeet();
+  if (was < 0 && c >= 0 && S.t - D.got < 1) burst(m.x, m.y + 30 * S.k, 8, ['#FFF3C4', '#FFFFFF'], 60 * S.k, 'dot');
+  if ((was < TOAST.clink1 && c >= TOAST.clink1) || (was < TOAST.clink2 && c >= TOAST.clink2)) {
+    sfx.clink();
+    burst(m.x, m.y - 6 * S.k, 5, ['#FFFFFF', '#FFE08A'], 55 * S.k, 'dot');
+  }
+  if (was < TOAST.raise + 0.1 && c >= TOAST.raise + 0.1) {
+    for (var i = 0; i < 3; i++) S.parts.push({ x: m.x + rand(-12, 12) * S.k, y: m.y - 16 * S.k, vx: rand(-15, 15), vy: rand(-55, -35) * S.k, life: rand(1.2, 1.6), c: pick(['#E85D8F', '#F48FB1', '#FF9F6E']), s: rand(4, 5.5) * S.k, shape: 'heart', rot: 0, vr: 0, grav: -8 });
+  }
+  if (c > 3) D.clink = S.t + rand(16, 26);
 }
 
 // The power-up's ring of light: it spreads out from the admin and wakes each school as it passes.
+// Each school's wisp flies out from the admin to meet it.
 function stepBloom(dt) {
   var b = S.bloom;
   if (!b) return;
   var cx = S.hero.x, cy = S.hero.y - 40 * S.k, maxR = Math.hypot(S.W, S.H);
-  b.r += maxR / 3.2 * dt;
-  S.schools.forEach(function (s) { if (!s.spirit && Math.hypot(s.x - cx, s.y - cy) < b.r) bless(s); });
+  b.r += maxR / 2.6 * dt;
+  S.schools.forEach(function (s) { if (!s.spirit && Math.hypot(s.x - cx, s.y - cy) < b.r) bless(s, { x: cx, y: cy }); });
   if (b.r > maxR * 1.1) S.bloom = null;
 }
 function drawBloom() {
@@ -615,15 +727,18 @@ function drawBloom() {
 // Weather and critters that tick along whenever cozy mode is on screen.
 function cozyStep(dt) {
   var gloomy = S.phase === 'crisis' || S.phase === 'charge';
-  if (gloomy) S.gloom = Math.min(1, S.gloom + dt * 0.5);
+  if (gloomy) S.gloom = Math.min(1, S.gloom + dt * 0.6);
   else if (S.bloom) S.gloom = Math.min(S.gloom, Math.max(0, 1 - S.bloom.r / Math.hypot(S.W, S.H) * 1.4));
-  else S.gloom = Math.max(0, S.gloom - dt * 0.6);
-  S.windy += (0.1 + 0.05 * Math.sin(S.t * 0.3) - S.windy) * Math.min(1, dt);
+  else S.gloom = Math.max(0, S.gloom - dt * 0.7);
+  // A light breeze with a gentle gust every half minute or so.
+  S.windy += (0.1 + 0.16 * Math.pow(Math.max(0, Math.sin(S.t * 0.22)), 3) - S.windy) * Math.min(1, dt);
   S.cloudShift += (gloomy ? 0 : 0.004) * dt + (S.bloom ? 0.03 * dt : 0);
+  if (S.phase === 'charge') charmStep(dt);
   stepBloom(dt);
   stepLeaves(dt);
   stepFlies(dt);
   stepSpirits(dt);
+  stepDuo(dt);
   S.schools.forEach(function (s) { if (s.ring > 0) s.ring = Math.max(0, s.ring - dt * 0.45); });
 }
 
@@ -637,14 +752,14 @@ function balloonStep(dt) {
   var r = S.rocket, sway = Math.sin(S.t * 0.8) * 3 * S.k;
   r.t += dt;
   if (r.leg === 0) {
-    var u = Math.min(1, r.t / 4.2), e = 1 - Math.pow(1 - u, 3);
+    var u = Math.min(1, r.t / 3.2), e = 1 - Math.pow(1 - u, 3);
     r.y = lerp(r.from, S.dog.y, e); r.x = S.dog.x + sway * (1 - e);
     if (u >= 1) { r.leg = 1; r.t = 0; deliver(); }
   } else if (r.leg === 1) {
     r.y = S.dog.y - Math.sin(r.t * 2.4) * 1.5;
-    if (r.t > 1.2) { r.leg = 2; r.t = 0; }
+    if (r.t > 0.7) { r.leg = 2; r.t = 0; }
   } else {
-    var v = Math.min(1, r.t / 4.5), e2 = v * v * v;
+    var v = Math.min(1, r.t / 3.4), e2 = v * v * v;
     r.y = lerp(S.dog.y, -330 * S.k, e2); r.x = S.dog.x + sway * e2;
     if (v >= 1) S.rocket = null;
   }
@@ -714,13 +829,34 @@ function dogScarf(s, drop) {
   circle(198, 168, 16); paint('#B5452E', OUTLINE, 4);
   g.restore();
 }
+function dogMug(d, w, h, P) {
+  var m = duoMeet(), hs = S.hero.hs, lean = 0.08 * P.reach * h;
+  var rx = d.x - 0.27 * w, ry = d.y - 0.52 * h;
+  var mx = lerp(lerp(rx, m.x + 4.5 * hs, P.reach), rx - 0.02 * w, P.lift), my = lerp(lerp(ry, m.y, P.reach), ry - 0.2 * h, P.lift);
+  var sx = d.x - 0.12 * w - lean, sy = d.y - 0.42 * h;
+  g.save();
+  g.globalAlpha = P.fade;
+  g.lineCap = 'round';
+  g.beginPath(); g.moveTo(sx, sy); g.lineTo(mx + 0.05 * w, my + 0.01 * w);
+  g.lineWidth = 0.13 * w + 5; g.strokeStyle = '#FFFFFF'; g.stroke();
+  g.lineWidth = 0.13 * w; g.strokeStyle = '#E4AE4E'; g.stroke();
+  g.translate(mx, my); g.scale(hs, hs);
+  mugShape(0, 0, 0.1 - 0.2 * P.reach, '#6FA8C8', 1.6, 1);
+  g.restore();
+  g.save();
+  g.globalAlpha = P.fade;
+  circle(mx + 0.05 * w, my + 0.012 * w, 0.055 * w); g.fillStyle = '#E4AE4E'; g.fill();
+  g.lineWidth = 1.2; g.strokeStyle = 'rgba(150,100,40,.55)'; g.stroke();
+  g.restore();
+}
 function drawCozyDog() {
   var d = S.dog;
   if (!d.on || !imgReady('dog')) return;
-  var w = d.w, s = w / ART_META.dog[0], h = ART_META.dog[1] * s;
+  var w = d.w, s = w / ART_META.dog[0], h = ART_META.dog[1] * s, P = duoPose();
   ellipse(d.x, d.y + 2, w * 0.42, 6 * S.k); paint('rgba(0,0,0,.2)');
   g.save();
   g.translate(d.x, d.y);
+  if (P) g.rotate(-0.08 * P.reach);
   g.scale(1, 1 + Math.sin(S.t * 1.5) * 0.01);
   g.drawImage(IMG.dog, -w / 2, -h, w, h);
   if (d.glasses > 0) {
@@ -731,6 +867,7 @@ function drawCozyDog() {
     dogScarf(s, (1 - e) * 40 * S.k);
   }
   g.restore();
+  if (P) dogMug(d, w, h, P);
 }
 
 // The admin: an umbrella in the rain, a quiet float with eyes closed while the power-up settles in,
@@ -772,12 +909,25 @@ function mugShape(x, y, rot, c, big, handle) {
   g.restore();
 }
 function heroMug(skin) {
-  var sip = smooth((Math.sin(S.t * 0.6) - 0.5) / 0.5), hx = lerp(17, 14, sip), hy = lerp(-44, -62, sip);
+  var P = duoPose();
   g.strokeStyle = skin; g.lineWidth = 6;
   line(-12, -50, -16, -30);
   circle(-16, -29, 3.6); paint(skin);
+  if (!P) {
+    g.strokeStyle = skin; g.lineWidth = 6;
+    line(12, -50, 16, -30);
+    circle(16, -29, 3.6); paint(skin);
+    return;
+  }
+  var sip = smooth((Math.sin(S.t * 0.6) - 0.5) / 0.5) * (1 - P.reach);
+  var mx = lerp(lerp(lerp(22, 19, sip), 38.5, P.reach), 24, P.lift), my = lerp(lerp(lerp(-47, -65, sip), -50, P.reach), -76, P.lift);
+  var hx = mx - 5, hy = my + 3;
+  g.strokeStyle = skin; g.lineWidth = 6;
   line(12, -50, hx, hy);
-  mugShape(hx + 5, hy - 3, -0.1, '#E8A33D', 1.6, -1);
+  var a = g.globalAlpha;
+  g.globalAlpha = a * P.fade;
+  mugShape(mx, my, -0.1 + 0.2 * P.reach, '#E8A33D', 1.6, -1);
+  g.globalAlpha = a;
   circle(hx, hy, 3.8); paint(skin);
 }
 function heroHappyEyes() {
@@ -812,7 +962,7 @@ function heroMeditate() {
   g.restore();
 }
 function calmLift() {
-  var c = smooth(((S.chargeT || 0) - 0.9) / 1.6);
+  var c = smooth(((S.chargeT || 0) - 0.3) / 1.4);
   return c * 16 + Math.sin(S.t * 1.3) * 2.5 * c;
 }
 function drawCozyHero() {
@@ -822,7 +972,7 @@ function drawCozyHero() {
   g.scale(h.hs, h.hs);
   ellipse(0, 0, 18 - lev * 0.3, 4); paint('rgba(0,0,0,.22)');
   if (ph === 'charge' || ph === 'unlimited') {
-    var calm = ph === 'charge' ? smooth(((S.chargeT || 0) - 0.9) / 2.4) : 0.35;
+    var calm = ph === 'charge' ? smooth(((S.chargeT || 0) - 0.3) / 2.4) : 0.35;
     var halo = g.createRadialGradient(0, -48 - lev, 6, 0, -48 - lev, 66);
     halo.addColorStop(0, 'rgba(255,214,150,' + (0.15 + 0.45 * calm).toFixed(3) + ')');
     halo.addColorStop(1, 'rgba(255,214,150,0)');
