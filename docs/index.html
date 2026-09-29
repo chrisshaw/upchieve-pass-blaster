@@ -3068,7 +3068,7 @@ function duoPose() {
   return { fade: smooth((S.t - D.got) / 0.6), reach: c < 0 ? 0 : toastReach(c) * back, lift: c < 0 ? 0 : toastLift(c) * back };
 }
 // Where the two mugs touch, in screen coordinates: just in front of UPdog, at the admin's chest height.
-function duoMeet() { var h = S.hero; return { x: h.x + 36 * h.hs, y: h.y - 41 * h.hs }; }
+function duoMeet() { var h = S.hero; return { x: h.x + 38 * h.hs, y: h.y - 41 * h.hs }; }
 function stepDuo(dt) {
   var D = S.duo;
   if (!D || S.phase !== 'unlimited') return;
@@ -3199,117 +3199,154 @@ function scarfTail(x, y, len, width, c, ph) {
   g.lineWidth = width + 1.4; g.strokeStyle = OUTLINE; g.stroke();
   g.lineWidth = width; g.strokeStyle = c; g.stroke();
 }
-// UPdog's cozy look: a striped scarf that settles onto his collar when the light comes in.
-function dogScarf(s, drop) {
+// UPdog's cozy pose: sitting up, made once from the power-up art (makeUpright) with the star taken out,
+// so he matches the power-up he just delivered. His front paws are drawn each frame, so he can hold
+// a mug, sip from it, and reach over to clink. UP_* points are in the star art's own pixels.
+var UP_PAD = 16, UP_FUR = '#E5B551', UP_EDGE = '#C48E34', UP_MUG = 2.1;
+var UP_NEAR = [138, 252], UP_FAR = [266, 262];                  // shoulders: nearest the admin, and the other
+var UP_HOLD = [200, 290], UP_SIP = [200, 226], UP_LIFT = [96, 186], UP_REST = [250, 322];
+var UP_PAWS = [[185, 304], [216, 304]];                         // empty paws, together at his chest
+var upright = null;
+function makeUpright() {
+  var im = IMG.star, W = im.naturalWidth, H = im.naturalHeight, P = UP_PAD;
+  var a = document.createElement('canvas'), x = a.getContext('2d');
+  a.width = W + P * 2; a.height = H + P * 2;
+  x.drawImage(im, P, P);
+  var d;
+  try { d = x.getImageData(0, 0, a.width, a.height); } catch (e) { upright = a; return; }
+  var p = d.data, fur = [229, 181, 81];
+  for (var i = 0; i < p.length; i += 4) {
+    if (p[i + 3] < 8) continue;
+    var r = p[i], gr = p[i + 1], b = p[i + 2], px = (i / 4) % a.width - P, py = Math.floor(i / 4 / a.width) - P;
+    var mx = Math.max(r, gr, b), mn = Math.min(r, gr, b);
+    // The logo in the corner goes.
+    if (py < 206 && px < 240 && gr > 150 && b > 120 && r < 170) { p[i + 3] = 0; continue; }
+    // The old white border goes (a fresh one is drawn below), keeping only its soft inner edge as fur.
+    if (mn > 150 && mx - mn < 90 && b > 120) {
+      var wt = Math.min(1, (b - 90) / 150);
+      p[i + 3] = Math.round(p[i + 3] * (1 - wt));
+      p[i] = fur[0]; p[i + 1] = fur[1]; p[i + 2] = fur[2];
+      if (!(px > 95 && py > 88) || p[i + 3] < 40) p[i + 3] = 0;
+      continue;
+    }
+    // The star's yellows become fur.
+    if (r > 222 && gr > 181 && b < 150) {
+      var t = Math.min(1, (gr - 181) / 9);
+      p[i] = Math.round(r + (fur[0] - r) * t); p[i + 1] = Math.round(gr + (fur[1] - gr) * t); p[i + 2] = Math.round(b + (fur[2] - b) * t);
+    }
+  }
+  x.putImageData(d, 0, 0);
+  // The star hid the front of his collar; finish it under his chin.
+  x.globalCompositeOperation = 'source-atop';
+  x.translate(P, P);
+  x.beginPath(); x.moveTo(100, 222); x.quadraticCurveTo(196, 276, 270, 245);
+  x.lineWidth = 23; x.strokeStyle = '#14D1A6'; x.stroke();
+  x.setTransform(1, 0, 0, 1, 0, 0);
+  x.globalCompositeOperation = 'source-over';
+  var o = document.createElement('canvas'), y = o.getContext('2d');
+  o.width = a.width; o.height = a.height;
+  for (var k = 0; k < 24; k++) { var an = k / 24 * Math.PI * 2; y.drawImage(a, Math.cos(an) * 9, Math.sin(an) * 9); }
+  y.globalCompositeOperation = 'source-in'; y.fillStyle = '#FFFFFF'; y.fillRect(0, 0, o.width, o.height);
+  y.globalCompositeOperation = 'source-over'; y.drawImage(a, 0, 0);
+  upright = o;
+}
+// His striped scarf, drawn over the collar and settling into place when the light comes in.
+function uprightScarf(drop) {
   g.save();
-  g.translate(0, -drop / s);
+  g.translate(0, -drop);
   g.lineCap = 'round'; g.lineJoin = 'round';
   var w1 = Math.sin(S.t * 2.2) * 8, w2 = Math.sin(S.t * 2.2 + 1.3) * 12;
-  g.beginPath(); g.moveTo(196, 166); g.bezierCurveTo(240, 176 + w1, 285, 150 + w2, 340, 176 + w2);
+  g.beginPath(); g.moveTo(278, 252); g.bezierCurveTo(318, 262 + w1, 356, 244 + w2, 404, 272 + w2);
   g.lineWidth = 30; g.strokeStyle = OUTLINE; g.stroke();
   g.lineWidth = 24; g.strokeStyle = '#C8553D'; g.stroke();
   g.lineWidth = 5; g.strokeStyle = '#F6E7CF'; g.setLineDash([9, 20]); g.stroke(); g.setLineDash([]);
-  g.beginPath(); g.moveTo(44, 156); g.quadraticCurveTo(148, 194, 258, 138);
+  g.beginPath(); g.moveTo(104, 220); g.quadraticCurveTo(200, 280, 334, 222);
   g.lineWidth = 34; g.strokeStyle = OUTLINE; g.stroke();
   g.lineWidth = 28; g.strokeStyle = '#C8553D'; g.stroke();
   g.lineWidth = 6; g.strokeStyle = '#F6E7CF'; g.setLineDash([10, 22]); g.stroke(); g.setLineDash([]);
-  circle(198, 168, 16); paint('#B5452E', OUTLINE, 4);
+  circle(278, 250, 16); paint('#B5452E', OUTLINE, 4);
   g.restore();
 }
-// UPdog's cozy pose. The art has no raised paw, so a copy of it has the front leg nearest the admin
-// cut away (makeDogCut, once), and that leg is redrawn each frame as a two-part leg that can lift a
-// mug and reach over to clink. DOG_* points are in the art's own pixels.
-var DOG_PAD = [110, 70], DOG_SHOULDER = [70, 236], DOG_GROUND = [76, 318], DOG_REST = [42, 188], DOG_UP = [46, 160];
-var DOG_FUR = '#E5B551', DOG_EDGE = '#C9953C', DOG_BONE = 42, DOG_LEG_W = 42;
-var dogCut = null, dogLayer = null;
-function makeDogCut() {
-  var W = ART_META.dog[0], H = ART_META.dog[1], c = document.createElement('canvas'), x = c.getContext('2d');
-  c.width = W + DOG_PAD[0]; c.height = H + DOG_PAD[1];
-  x.translate(DOG_PAD[0], DOG_PAD[1]);
-  x.drawImage(IMG.dog, 0, 0);
-  // Cut the leg away below a new rounded chest line that runs into the other front leg.
-  var chest = function () { x.moveTo(30, 240); x.bezierCurveTo(58, 258, 92, 272, 108, 298); x.bezierCurveTo(114, 312, 116, 326, 118, 360); };
-  x.globalCompositeOperation = 'destination-out';
-  x.beginPath(); chest(); x.lineTo(-10, 360); x.closePath(); x.fill();
-  // Give the new edge the same white sticker border, tucked behind the fur.
-  x.globalCompositeOperation = 'destination-over';
-  x.beginPath(); chest(); x.lineWidth = 20; x.lineCap = 'round'; x.strokeStyle = '#FFFFFF'; x.stroke();
-  dogCut = c;
-  dogLayer = document.createElement('canvas');
-  dogLayer.width = c.width; dogLayer.height = c.height;
+// A front leg from the shoulder to the paw, with a soft elbow that hangs a little.
+function armPath(sh, pw) {
+  g.beginPath(); g.moveTo(sh[0], sh[1]);
+  g.quadraticCurveTo((sh[0] + pw[0]) / 2, (sh[1] + pw[1]) / 2 + 10, pw[0], pw[1]);
 }
-// A two-part leg from the shoulder to the paw, bending at the elbow.
-function legPath(x, tx, ty) {
-  var sx = DOG_SHOULDER[0], sy = DOG_SHOULDER[1], dx = tx - sx, dy = ty - sy;
-  var dd = Math.min(Math.hypot(dx, dy), DOG_BONE * 1.98), th = Math.atan2(dy, dx), ph = Math.acos(dd / (2 * DOG_BONE));
-  x.beginPath(); x.moveTo(sx, sy);
-  x.quadraticCurveTo(sx + Math.cos(th - ph) * DOG_BONE, sy + Math.sin(th - ph) * DOG_BONE, tx, ty);
+function dogArm(sh, pw, w, pass) {
+  var ang = Math.atan2(pw[1] - sh[1], pw[0] - sh[0]);
+  g.lineCap = 'round';
+  if (pass === 'border') {
+    armPath(sh, pw); g.lineWidth = w + 18; g.strokeStyle = '#FFFFFF'; g.stroke();
+    g.beginPath(); g.ellipse(pw[0], pw[1], 15 + 9, 13 + 9, ang, 0, Math.PI * 2); g.fillStyle = '#FFFFFF'; g.fill();
+    return;
+  }
+  armPath(sh, pw); g.lineWidth = w + 5; g.strokeStyle = UP_EDGE; g.stroke();
+  armPath(sh, pw); g.lineWidth = w; g.strokeStyle = UP_FUR; g.stroke();
+  // The leg grows out of his chest: no edge where it meets the body.
+  circle(sh[0], sh[1], w / 2 + 4); g.fillStyle = UP_FUR; g.fill();
+  g.beginPath(); g.ellipse(pw[0], pw[1], 15, 13, ang, 0, Math.PI * 2);
+  g.fillStyle = UP_FUR; g.fill(); g.lineWidth = 2.5; g.strokeStyle = UP_EDGE; g.stroke();
+  // Toes, curled over whatever the paw is holding.
+  g.save(); g.translate(pw[0], pw[1]); g.rotate(ang);
+  g.strokeStyle = 'rgba(150,100,40,.6)'; g.lineWidth = 2;
+  for (var t = -1; t <= 1; t += 2) { g.beginPath(); g.moveTo(7, t * 4.3); g.lineTo(14, t * 4.8); g.stroke(); }
+  g.restore();
 }
-function drawDogLayer(paw) {
-  var x = dogLayer.getContext('2d');
-  x.setTransform(1, 0, 0, 1, 0, 0);
-  x.globalCompositeOperation = 'source-over';
-  x.clearRect(0, 0, dogLayer.width, dogLayer.height);
-  x.translate(DOG_PAD[0], DOG_PAD[1]);
-  x.lineCap = 'round'; x.lineJoin = 'round';
-  legPath(x, paw[0], paw[1]); x.lineWidth = DOG_LEG_W + 3; x.strokeStyle = DOG_EDGE; x.stroke();
-  legPath(x, paw[0], paw[1]); x.lineWidth = DOG_LEG_W - 1; x.strokeStyle = DOG_FUR; x.stroke();
-  x.globalCompositeOperation = 'destination-over';
-  x.drawImage(dogCut, -DOG_PAD[0], -DOG_PAD[1]);
-  legPath(x, paw[0], paw[1]); x.lineWidth = DOG_LEG_W + 20; x.strokeStyle = '#FFFFFF'; x.stroke();
-  x.beginPath(); x.arc(paw[0], paw[1], 34, 0, Math.PI * 2); x.fillStyle = '#FFFFFF'; x.fill();
+// Screen point to the upright art's pixels, for a dog leaning by rot.
+function uprightArt(wx, wy, rot, s) {
+  var d = S.dog, dx = wx - d.x, dy = wy - d.y, c = Math.cos(-rot), sn = Math.sin(-rot);
+  return [(dx * c - dy * sn) / s + ART_META.star[0] / 2, (dx * sn + dy * c) / s + ART_META.star[1]];
 }
-function dogToArt(wx, wy, rot) {
-  var d = S.dog, s = d.w / ART_META.dog[0], dx = wx - d.x, dy = wy - d.y, c = Math.cos(-rot), sn = Math.sin(-rot);
-  return [(dx * c - dy * sn) / s + ART_META.dog[0] / 2, (dx * sn + dy * c) / s + ART_META.dog[1]];
+function lerp2(a, b, t) { return [lerp(a[0], b[0], t), lerp(a[1], b[1], t)]; }
+function add2(a, b) { return [a[0] + b[0], a[1] + b[1]]; }
+// Where his mug and paws are this frame: mug held in both paws at his chest, now and then a sip; for
+// the toast, the near paw carries it over to the admin's mug and then raises it to you.
+function uprightPose(P, rot, s) {
+  if (!P) return { near: UP_PAWS[0], far: UP_PAWS[1], mug: null };
+  var u = smooth(P.fade), hs = S.hero.hs, m = duoMeet();
+  var meet = uprightArt(m.x + 2.8 * UP_MUG * hs, m.y, rot, s);
+  var sip = smooth((Math.sin(S.t * 0.55 + 2.2) - 0.55) / 0.45) * (1 - P.reach) * u;
+  var mug = lerp2(lerp2(lerp2(UP_HOLD, UP_SIP, sip), meet, P.reach), UP_LIFT, P.lift);
+  var near = add2(mug, lerp2([-22, 14], [24, 10], P.reach));
+  var far = lerp2(add2(mug, [24, 12]), UP_REST, P.reach);
+  return { near: lerp2(UP_PAWS[0], near, u), far: lerp2(UP_PAWS[1], far, u), mug: mug, fade: P.fade };
 }
-function dogLean(P) { return P ? -0.05 * P.reach + 0.03 * P.lift : 0; }
-// Where the lifted paw is, in art pixels. The mug sits just left of it, toward the admin.
-function dogPaw(P, rot) {
-  var m = duoMeet(), mug = dogToArt(m.x + 4.2 * S.hero.hs, m.y, rot), u = smooth(P.fade);
-  var rx = lerp(DOG_GROUND[0], DOG_REST[0], u), ry = lerp(DOG_GROUND[1], DOG_REST[1], u);
-  return [lerp(lerp(rx, mug[0] + 25, P.reach), DOG_UP[0], P.lift), lerp(lerp(ry, mug[1] + 6, P.reach), DOG_UP[1], P.lift)];
-}
+function dogLean(P) { return P ? -0.06 * P.reach * (1 - 0.4 * P.lift) : 0; }
 function drawCozyDog() {
   var d = S.dog;
-  if (!d.on || !imgReady('dog')) return;
-  var w = d.w, s = w / ART_META.dog[0], h = ART_META.dog[1] * s, P = duoPose(), rot = dogLean(P), paw = null;
-  ellipse(d.x, d.y + 2, w * 0.42, 6 * S.k); paint('rgba(0,0,0,.2)');
+  if (!d.on || !imgReady('star')) return;
+  if (!upright) makeUpright();
+  // Same size and spot as the power-up he came in, so the swap is seamless.
+  var AW = ART_META.star[0], AH = ART_META.star[1], s = d.w * 1.25 / AW, P = duoPose(), rot = dogLean(P);
+  var pose = uprightPose(P, rot, s), mugK = UP_MUG * S.hero.hs / s;
+  ellipse(d.x, d.y + 2, d.w * 0.44, 6 * S.k); paint('rgba(0,0,0,.2)');
   g.save();
   g.translate(d.x, d.y);
   g.rotate(rot);
-  g.save();
-  g.scale(1, 1 + Math.sin(S.t * 1.5) * 0.01);
-  if (P) {
-    if (!dogCut) makeDogCut();
-    paw = dogPaw(P, rot);
-    drawDogLayer(paw);
-    g.drawImage(dogLayer, -w / 2 - DOG_PAD[0] * s, -h - DOG_PAD[1] * s, dogLayer.width * s, dogLayer.height * s);
-  } else {
-    g.drawImage(IMG.dog, -w / 2, -h, w, h);
-  }
+  g.scale(s, s * (1 + Math.sin(S.t * 1.5) * 0.008));
+  g.translate(-AW / 2, -AH);
+  var mug = function () {
+    g.save();
+    g.translate(pose.mug[0], pose.mug[1]);
+    g.scale(mugK / UP_MUG, mugK / UP_MUG);
+    mugShape(0, 0, 0, '#6FA8C8', UP_MUG, 1);
+    g.restore();
+  };
+  // The white sticker border for his paws and mug goes first, so it only shows outside his outline.
+  dogArm(UP_FAR, pose.far, 31, 'border');
+  dogArm(UP_NEAR, pose.near, 33, 'border');
+  var a0 = g.globalAlpha;
+  if (pose.mug) { g.globalAlpha = a0 * pose.fade; STK = 18 / mugK; mug(); STK = 0; g.globalAlpha = a0; }
+  g.drawImage(upright, -UP_PAD, -UP_PAD);
   if (d.glasses > 0) {
     var e = smooth(d.glasses);
-    g.globalAlpha = e;
-    g.scale(s, s);
-    g.translate(-ART_META.dog[0] / 2, -ART_META.dog[1]);
-    dogScarf(s, (1 - e) * 40 * S.k);
+    g.globalAlpha = a0 * e;
+    uprightScarf((1 - e) * 40 * S.k / s);
+    g.globalAlpha = a0;
   }
-  g.restore();
-  if (paw) {
-    // The mug in his lifted paw, with the paw wrapped over its side.
-    var ax = -w / 2 + paw[0] * s, ay = -h + paw[1] * s;
-    g.save();
-    g.globalAlpha = P.fade;
-    g.translate(ax - 25 * s, ay - 6 * s);
-    g.scale(S.hero.hs, S.hero.hs);
-    mugShape(0, 0, 0.08, '#6FA8C8', 1.4, 1);
-    g.restore();
-    circle(ax, ay, 23 * s); g.fillStyle = DOG_FUR; g.fill();
-    g.lineWidth = 1.2; g.strokeStyle = DOG_EDGE; g.stroke();
-    g.strokeStyle = 'rgba(150,100,40,.6)'; g.lineWidth = 1;
-    for (var t = -1; t <= 1; t++) { g.beginPath(); g.arc(ax - 13 * s, ay + t * 8 * s, 5 * s, -0.6, 0.6); g.stroke(); }
-  }
+  if (pose.mug) { g.globalAlpha = a0 * pose.fade; mug(); g.globalAlpha = a0; }
+  dogArm(UP_FAR, pose.far, 31);
+  dogArm(UP_NEAR, pose.near, 33);
   g.restore();
 }
 
@@ -3935,7 +3972,7 @@ function paintChips(s) {
 }
 function openPop(s, how) {
   var cozy = MODE === 'cozy';
-  UI.pop = { s: s, how: how, t: 0, dur: how === 'hover' ? (cozy ? 7 : 5) : (cozy ? 6 : 4), after: null, out: 0 };
+  UI.pop = { s: s, how: how, t: 0, dur: how === 'hover' ? (cozy ? 4.5 : 5) : 4, after: null, out: 0 };
   $('pb-pop-name').textContent = s.name;
   paintChips(s);
   softShow($('pb-pop'));
@@ -3981,7 +4018,7 @@ function chooseSize(i) {
   updatePrices();
   positionPop();
   UI.pop.how = 'click';
-  UI.pop.after = MODE === 'cozy' ? 1.8 : 1.4;
+  UI.pop.after = UI.pop.afterDur = MODE === 'cozy' ? 1.1 : 1.4;
   say(s.name + ': ' + SIZES[tierOf(s.size)].label + ' students, ' + money(priceFor(s.size)) + ' a year.');
 }
 function popStep(dt) {
@@ -3998,9 +4035,9 @@ function popStep(dt) {
     var r = srect(P.s), p = S.ptr;
     var near = p.inside && p.x > r.x - 30 && p.x < r.x + r.w + 30 && p.y > r.y - 30 && p.y < P.s.y + 30;
     P.out = near ? 0 : P.out + dt;
-    if (P.out > (MODE === 'cozy' ? 0.8 : 0.35)) { closePop(); return; }
+    if (P.out > (MODE === 'cozy' ? 0.45 : 0.35)) { closePop(); return; }
   }
-  $('pb-pop-timer').style.transform = 'scaleX(' + (P.after != null ? P.after / 1.4 : 1 - P.t / P.dur) + ')';
+  $('pb-pop-timer').style.transform = 'scaleX(' + (P.after != null ? P.after / P.afterDur : 1 - P.t / P.dur) + ')';
 }
 function hoverStep(dt) {
   if (!S.ptr.mouse || !S.ptr.inside || UI.drag) { UI.hoverS = null; return; }

@@ -160,7 +160,7 @@ function paintChips(s) {
 }
 function openPop(s, how) {
   var cozy = MODE === 'cozy';
-  UI.pop = { s: s, how: how, t: 0, dur: how === 'hover' ? (cozy ? 7 : 5) : (cozy ? 6 : 4), after: null, out: 0 };
+  UI.pop = { s: s, how: how, t: 0, dur: how === 'hover' ? (cozy ? 4.5 : 5) : 4, after: null, out: 0 };
   $('pb-pop-name').textContent = s.name;
   paintChips(s);
   softShow($('pb-pop'));
@@ -206,7 +206,7 @@ function chooseSize(i) {
   updatePrices();
   positionPop();
   UI.pop.how = 'click';
-  UI.pop.after = MODE === 'cozy' ? 1.8 : 1.4;
+  UI.pop.after = UI.pop.afterDur = MODE === 'cozy' ? 1.1 : 1.4;
   say(s.name + ': ' + SIZES[tierOf(s.size)].label + ' students, ' + money(priceFor(s.size)) + ' a year.');
 }
 function popStep(dt) {
@@ -223,9 +223,9 @@ function popStep(dt) {
     var r = srect(P.s), p = S.ptr;
     var near = p.inside && p.x > r.x - 30 && p.x < r.x + r.w + 30 && p.y > r.y - 30 && p.y < P.s.y + 30;
     P.out = near ? 0 : P.out + dt;
-    if (P.out > (MODE === 'cozy' ? 0.8 : 0.35)) { closePop(); return; }
+    if (P.out > (MODE === 'cozy' ? 0.45 : 0.35)) { closePop(); return; }
   }
-  $('pb-pop-timer').style.transform = 'scaleX(' + (P.after != null ? P.after / 1.4 : 1 - P.t / P.dur) + ')';
+  $('pb-pop-timer').style.transform = 'scaleX(' + (P.after != null ? P.after / P.afterDur : 1 - P.t / P.dur) + ')';
 }
 function hoverStep(dt) {
   if (!S.ptr.mouse || !S.ptr.inside || UI.drag) { UI.hoverS = null; return; }

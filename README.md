@@ -23,7 +23,7 @@ Play it: https://chrisshaw.github.io/upchieve-pass-blaster/
 
 3. Remove the old calculator. In the Code block that holds the "Affordable pricing" section, delete the `<div class="fs-card fs-card--calc">…</div>` card. That block's script already handles the card being gone.
 
-The snippet loads the game from this repo's GitHub Pages site, so pushing a new build updates the live page (Pages caches for about 10 minutes). That also means the page depends on this repo staying public with Pages turned on. If that's a problem, paste the whole of `pass-blaster-embed.html` into the Code block instead: it's the same game with nothing loaded from outside, about 245KB.
+The snippet loads the game from this repo's GitHub Pages site, so pushing a new build updates the live page (Pages caches for about 10 minutes). That also means the page depends on this repo staying public with Pages turned on. If that's a problem, paste the whole of `pass-blaster-embed.html` into the Code block instead: it's the same game with nothing loaded from outside, about 250KB.
 
 ## Build
 
@@ -48,7 +48,7 @@ Commit `docs/` after building so the live page and the Squarespace embed update.
 - `build.py` escapes every non-ASCII character in the JS, so the embed works no matter what encoding the host page declares.
 - The art in `src/assets/` comes from the UPchieve Illustrations library in Figma. `build.py` inlines it, so the game loads no image files.
 - Cozy mode's headlines use Fraunces, loaded from Google Fonts next to Work Sans.
-- UPdog's cozy pose is built from the same art: a copy with his front leg nearest the admin cut away, and that leg redrawn each frame so he can lift a mug and reach over to clink. The cut and the leg's joint positions are in `src/pb-cozy.js` (`DOG_*`), in the art's own pixels, so they need updating if `dog.webp` changes.
+- In cozy mode UPdog sits up, so he's built from the power-up art (`star.webp`) instead of `dog.webp`: when the game first draws him, a copy has the star turned to fur, the logo taken out and a fresh white border drawn, and his front paws are drawn each frame so he can hold a mug, sip, and reach over to clink. The recoloring thresholds and the shoulder, paw and mug positions are in `src/pb-cozy.js` (`makeUpright` and `UP_*`), in the art's own pixels, so they need updating if `star.webp` changes.
 - In cozy mode a second canvas (`#pb-over`) sits above the page's meters, so the power-up wisp can pass in front of the Tutoring bar as well as behind it.
 - Party mode's drawing lives in `src/pb-draw.js` and cozy mode's in `src/pb-cozy.js`. Each check of `MODE` picks one or the other, so changing one mode doesn't touch the other. Wording that differs between the modes is in the `TEXT` table in `src/pb-ui.js`.
 - The chooser (`src/pb-choose.js`) draws the whole scene twice per frame, once for each half. Particles tagged with `PART_TAG` show on one half only.
