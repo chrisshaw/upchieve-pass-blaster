@@ -1,9 +1,19 @@
 <div class="pb" id="pb-root">
   <div class="pb-tabrow">
-    <span class="pb-tab"><span class="pb-tab-label">Pass Blaster <small>the price calculator, but fun</small></span></span>
+    <span class="pb-tab"><span class="pb-tab-label">Pass Blaster <small id="pb-tab-sub">the price calculator, but fun</small></span></span>
   </div>
   <div class="pb-screen" id="pb-screen">
     <canvas id="pb-canvas" tabindex="0" role="img" aria-label="A school district map. Click the map to add a school."></canvas>
+
+    <div class="pb-choose" id="pb-choose" hidden>
+      <button class="pb-pick pb-pick-party" id="pb-pick-party" type="button" aria-label="Play party mode: unlimited power, zero chill">
+        <span class="pb-pick-label" id="pb-pick-party-label"><b>Party mode</b><small>Unlimited power. Zero chill.</small><i>Play &#9656;</i></span>
+      </button>
+      <button class="pb-pick pb-pick-cozy" id="pb-pick-cozy" type="button" aria-label="Play cozy mode: unlimited help, extra cozy">
+        <span class="pb-pick-label" id="pb-pick-cozy-label"><b>Cozy mode</b><small>Unlimited help. Extra cozy.</small><i>Play &#9656;</i></span>
+      </button>
+      <span class="pb-split" id="pb-split" aria-hidden="true"><span class="pb-split-knob"><svg viewBox="0 0 26 14" width="26" height="14"><path d="M8 2 3 7l5 5M18 2l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
+    </div>
 
     <div class="pb-status" id="pb-status" aria-hidden="true">
       <p class="pb-status-main" id="pb-status-main"></p>
@@ -23,7 +33,7 @@
     </div>
 
     <div class="pb-meter pb-power" id="pb-power">
-      <span class="pb-meter-label">Power</span>
+      <span class="pb-meter-label" id="pb-power-label">Power</span>
       <span class="pb-bar"><span class="pb-fill" id="pb-power-fill"></span></span>
       <span class="pb-meter-num" id="pb-power-num">0</span>
     </div>

@@ -2,6 +2,13 @@
 
 A game that replaces the price calculator on upchieve.org/schools. You stamp your schools, pick each one's size, hand the admin the power-up, and click forever.
 
+It opens on a chooser: the same town painted two ways, split by a slanted divider. Hover a side and it grows to about three quarters of the frame; click or tap it to play that version.
+
+- **Party mode** is the original: disco lights, fireworks, a fast chiptune loop.
+- **Cozy mode** is the same game and the same prices on an autumn afternoon. The schools are old-fashioned schoolhouses, the crisis is a gray, rainy spell, and the power-up arrives as a gust of wind that clears the sky. In unlimited mode the windows glow, leaves swirl, fireflies pile up with every click, and each school's kids clink mugs and raise them to you.
+
+"Play again" goes back to the chooser.
+
 Play it: https://chrisshaw.github.io/upchieve-pass-blaster/
 
 ## Put it on upchieve.org/schools
@@ -16,7 +23,7 @@ Play it: https://chrisshaw.github.io/upchieve-pass-blaster/
 
 3. Remove the old calculator. In the Code block that holds the "Affordable pricing" section, delete the `<div class="fs-card fs-card--calc">…</div>` card. That block's script already handles the card being gone.
 
-The snippet loads the game from this repo's GitHub Pages site, so pushing a new build updates the live page (Pages caches for about 10 minutes). That also means the page depends on this repo staying public with Pages turned on. If that's a problem, paste the whole of `pass-blaster-embed.html` into the Code block instead: it's the same game with nothing loaded from outside, about 155KB.
+The snippet loads the game from this repo's GitHub Pages site, so pushing a new build updates the live page (Pages caches for about 10 minutes). That also means the page depends on this repo staying public with Pages turned on. If that's a problem, paste the whole of `pass-blaster-embed.html` into the Code block instead: it's the same game with nothing loaded from outside, about 215KB.
 
 ## Build
 
@@ -40,5 +47,7 @@ Commit `docs/` after building so the live page and the Squarespace embed update.
 - Its styles are scoped under `.pb` and reset buttons and headings, since Squarespace themes style those globally.
 - `build.py` escapes every non-ASCII character in the JS, so the embed works no matter what encoding the host page declares.
 - The art in `src/assets/` comes from the UPchieve Illustrations library in Figma. `build.py` inlines it, so the game loads no image files.
+- Party mode's drawing lives in `src/pb-draw.js` and cozy mode's in `src/pb-cozy.js`. Each check of `MODE` picks one or the other, so changing one mode doesn't touch the other. Wording that differs between the modes is in the `TEXT` table in `src/pb-ui.js`.
+- The chooser (`src/pb-choose.js`) draws the whole scene twice per frame, once for each half. Particles tagged with `PART_TAG` show on one half only.
 
 `archive/` holds v1 and v2 for comparison.

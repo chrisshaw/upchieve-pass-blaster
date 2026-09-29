@@ -11,6 +11,36 @@ var UI = {
 var INF = '<span class="pb-inf">∞</span>';
 var DONE_FACE = '<b>✓</b><small>Done</small>';
 function verb() { return touchFirst ? 'Tap' : 'Click'; }
+// Words that change with the mode. {v} becomes Click or Tap.
+var TEXT = {
+  party: {
+    crisis: 'Oh no! Dreams are dropping!', crisisSub: 'Grades, test scores, graduation, college plans: all sliding.',
+    crisisLabel: 'Your schools. Grades and dreams are dropping. UPdog is on the way with a power-up.',
+    crisisSay: 'Dreams are dropping. UPdog is on the way with a power-up.',
+    deliverSub: '{v} UPdog’s power-up to save the day.',
+    noPower: 'No power!', noPowerMain: 'No power yet!',
+    charge: 'Charging…', chargeSub: 'Unlimited tutoring, loading up.',
+    unlimited: 'Unlimited power!', unlimitedFlash: 'UNLIMITED POWER!',
+    out: '4:30 PM: Teachers clock out.', outSub: 'UPchieve doesn’t.',
+    night: '8:00 PM: Study party!', lateSub: 'Late-night essay help, no extra charge.',
+    backSub: 'Power left: ' + INF, nudge: 'Keep clicking!',
+    power: 'Power', tab: 'the price calculator, but fun'
+  },
+  cozy: {
+    crisis: 'Uh oh. It’s getting gloomy.', crisisSub: 'Kids are stuck on homework with no one to ask, and grades are slipping.',
+    crisisLabel: 'Your schools on a rainy day. Kids are stuck on homework. UPdog is on the way with a power-up.',
+    crisisSay: 'Kids are stuck on homework. UPdog is on the way with a power-up.',
+    deliverSub: '{v} UPdog’s power-up to send in the help.',
+    noPower: 'Not yet!', noPowerMain: 'Not yet!',
+    charge: 'Here it comes…', chargeSub: 'Unlimited tutoring, on its way.',
+    unlimited: 'Unlimited help!', unlimitedFlash: 'UNLIMITED HELP!',
+    out: '4:30 PM: Teachers head home.', outSub: 'The tutors stay on.',
+    night: '8:00 PM: Study night.', lateSub: 'Late-night essay help. Take your time.',
+    backSub: 'Help left: ' + INF, nudge: 'Keep going!',
+    power: 'Help', tab: 'the price calculator, but cozy'
+  }
+};
+function tx(key) { return TEXT[MODE][key].replace('{v}', verb()); }
 function say(text) { $('pb-live').textContent = text; }
 function focusQuiet(el) { try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); } }
 function once(key, fn) { if (!S.seen[key]) { S.seen[key] = 1; fn(); } }
@@ -241,18 +271,19 @@ function goCrisis() {
   root.classList.add('is-crisis');
   $('pb-dreams').hidden = false;
   S.dreams = 0.78;
-  setStatus('Oh no! Dreams are dropping!', 'Grades, test scores, graduation, college plans: all sliding.', true);
+  setStatus(tx('crisis'), tx('crisisSub'), true);
   sfx.alarm();
   UI.rocketAt = S.t + 1.6;
   UI.sadT = 0.4;
   UI.wiggleT = 4;
-  cv.setAttribute('aria-label', 'Your schools. Grades and dreams are dropping. UPdog is on the way with a power-up.');
-  say('Dreams are dropping. UPdog is on the way with a power-up.');
+  cv.setAttribute('aria-label', tx('crisisLabel'));
+  say(tx('crisisSay'));
 }
 
 // UPdog's rocket swoops in, drops off the power-up next to the admin, and flies away.
 function bez(a, b, c, t) { var u = 1 - t; return u * u * a + 2 * u * t * b + t * t * c; }
 function launchRocket() {
+  if (MODE === 'cozy') { launchBalloon(); return; }
   var p0 = { x: S.W + 160, y: S.H * 0.2 };
   S.rocket = { t: 0, leg: 0, p0: p0, p1: { x: S.W * 0.55, y: -S.H * 0.2 }, p2: { x: S.dog.x, y: S.dog.y - 80 * S.k }, x: p0.x, y: p0.y, ang: Math.PI };
   sfx.rocket();
@@ -260,6 +291,7 @@ function launchRocket() {
 function rocketStep(dt) {
   var r = S.rocket;
   if (!r) return;
+  if (MODE === 'cozy') { balloonStep(dt); return; }
   r.t += dt;
   var px = r.x, py = r.y;
   if (r.leg === 0) {
@@ -298,18 +330,18 @@ function deliver() {
   pu.className = 'pb-pu is-arrive';
   pu.hidden = false;
   UI.wiggleT = 3;
-  setStatus('Power up with UPchieve!', verb() + ' UPdog’s power-up to save the day.');
+  setStatus('Power up with UPchieve!', tx('deliverSub'));
   say('UPdog brought a power-up: unlimited tutoring for ' + money(totalPrice()) + ' a year.');
 }
 function noPower(x, y) {
-  floatText(x, y - 10, 'No power!', 'sad', 16);
+  floatText(x, y - 10, tx('noPower'), 'sad', 16);
   sfx.buzz();
   var pw = $('pb-power');
   pw.classList.remove('is-shake');
   void pw.offsetWidth;
   pw.classList.add('is-shake');
   var ready = !$('pb-pu').hidden;
-  flashStatus('No power yet!', ready ? verb() + ' UPdog’s power-up first.' : 'Hang on, help is on the way…', 1800, true);
+  flashStatus(tx('noPowerMain'), ready ? verb() + ' UPdog’s power-up first.' : 'Hang on, help is on the way…', 1800, true);
 }
 function crisisStep(dt) {
   UI.sadT -= dt;
@@ -338,7 +370,7 @@ function give() {
   pw.style.setProperty('--pb-dx', (S.W / 2 - (r.x + r.w * 2.2 / 2)) + 'px');
   pw.style.setProperty('--pb-dy', (S.H / 2 - (r.y + r.h / 2)) + 'px');
   pw.classList.add('is-charging');
-  setStatus('Charging…', 'Unlimited tutoring, loading up.');
+  setStatus(tx('charge'), tx('chargeSub'));
   sfx.charge();
   say('Charging the power-up.');
 }
@@ -357,17 +389,25 @@ function chargeStep(dt) {
   var f = Math.min(1, t / 1.6);
   S.power = t < 1.6 ? f * 100 : 100 + Math.pow(Math.min(1, (t - 1.6) / 0.5), 2) * 899;
   chargeFx(0.5 + f * 2.5);
-  S.shake = Math.max(S.shake, 0.03 + 0.1 * f);
+  if (MODE !== 'cozy') S.shake = Math.max(S.shake, 0.03 + 0.1 * f);
   if (t >= 2.1) boom();
 }
 function boom() {
+  var cozy = MODE === 'cozy';
   S.flash = 0.55;
-  if (!reduced) { S.shake = 0.5; S.punch = 1; }
+  if (!reduced && !cozy) { S.shake = 0.5; S.punch = 1; }
   S.wave = { r: 0, v: Math.max(S.W, S.H) * 1.6, life: 0.7, max: 0.7 };
   sfx.boom();
-  for (var i = 0; i < 6; i++) burst(rand(0, S.W), rand(0, S.H * 0.5), 16, POP, 240 * S.k, 'conf');
-  firework(); firework(); firework();
-  S.schools.forEach(function (s) { s.squash = 1; burst(s.x, schoolTop(s), 14, POP, 220 * S.k, 'star'); cheer(s); cheer(s); });
+  if (cozy) {
+    // One big gust: leaves sweep the town, the rain stops, every bell rings, and every crew raises a mug.
+    gust();
+    rainOff();
+    S.schools.forEach(function (s) { s.squash = 1; s.ring = 1; burst(s.x, schoolTop(s), 12, LEAVES, 200 * S.k, 'leaf'); cheer(s); });
+  } else {
+    for (var i = 0; i < 6; i++) burst(rand(0, S.W), rand(0, S.H * 0.5), 16, POP, 240 * S.k, 'conf');
+    firework(); firework(); firework();
+    S.schools.forEach(function (s) { s.squash = 1; burst(s.x, schoolTop(s), 14, POP, 220 * S.k, 'star'); cheer(s); cheer(s); });
+  }
   S.hero.jumpT = 0;
   S.dog.jumpT = -0.12;
   S.dog.glasses = 0.001;
@@ -389,8 +429,9 @@ function startUnlimited() {
   placePu(true);
   pu.hidden = false;
   $('pb-orb').setAttribute('aria-label', 'UPchieve power-up, active. See the price.');
-  setStatus('Unlimited power!', verb() + ' your schools. As much as you want. It never runs out.');
-  flashStatus('UNLIMITED POWER!', verb() + ' your schools. As much as you want.', 3600);
+  if (MODE === 'cozy') { S.flies = []; seedFlies(14); }
+  setStatus(tx('unlimited'), verb() + ' your schools. As much as you want. It never runs out.');
+  flashStatus(tx('unlimitedFlash'), verb() + ' your schools. As much as you want.', 3600);
   $('pb-clock').hidden = false;
   $('pb-again').hidden = false;
   music.on = true;
@@ -408,12 +449,14 @@ function onDreamLoop() {
   if (S.phase === 'unlimited') {
     sfx.chime();
     var r = screenRect($('pb-dreams'));
-    burst(r.x + r.w / 2, r.y + 20, 16, POP, 180 * S.k, 'conf');
+    if (MODE === 'cozy') burst(r.x + r.w / 2, r.y + 20, 14, LEAVES, 180 * S.k, 'leaf');
+    else burst(r.x + r.w / 2, r.y + 20, 16, POP, 180 * S.k, 'conf');
   }
 }
 var beatTimer = null;
 function onBeat(b) {
   var party = isParty();
+  if (MODE === 'cozy') { cozyBeat(b, party); return; }
   S.schools.forEach(function (s) { s.squash = Math.max(s.squash, party ? 0.24 : 0.12); });
   root.classList.add('is-beat');
   clearTimeout(beatTimer);
@@ -429,6 +472,17 @@ function onBeat(b) {
     burst(c2.x, schoolTop(c2) - 20 * c2.sc, 16, POP, 220 * S.k, 'conf');
   }
 }
+// Cozy mode keeps time more gently: a soft bob, a swirl of leaves, a bell now and then, and ideas at night.
+function cozyBeat(b, night) {
+  S.schools.forEach(function (s) { s.squash = Math.max(s.squash, night ? 0.08 : 0.05); });
+  root.classList.add('is-beat');
+  clearTimeout(beatTimer);
+  beatTimer = setTimeout(function () { root.classList.remove('is-beat'); }, 160);
+  if (!S.schools.length) return;
+  if (b % 4 === 0) { var s = pick(S.schools); burst(s.x, schoolTop(s) - 10 * s.sc, 10, LEAVES, 170 * S.k, 'leaf'); }
+  if (night && b % 4 === 2) { var s2 = pick(S.schools); floatText(s2.x + rand(-30, 30) * s2.sc, schoolTop(s2), '💡', '#FFFFFF', 24); }
+  if (b % 8 === 6) pick(S.schools).ring = 1;
+}
 function crossed(prev, cur, minute) {
   var a = prev % 1440, b = cur % 1440;
   return b >= a ? a < minute && b >= minute : a < minute || b >= minute;
@@ -438,17 +492,17 @@ function unlimitedStep(dt) {
   S.clock += (m >= 7.5 * 60 && m < 16 * 60 ? 60 : 30) * dt;
   S.rainbow = Math.min(1, S.rainbow + dt / 1.2);
   if (S.dog.glasses > 0) S.dog.glasses = Math.min(1, S.dog.glasses + dt / 0.9);
-  if (crossed(prev, S.clock, 16 * 60 + 30)) once('out', function () { flashStatus('4:30 PM: Teachers clock out.', 'UPchieve doesn’t.'); });
-  if (crossed(prev, S.clock, 20 * 60)) once('party', function () { flashStatus('8:00 PM: Study party!', 'Tutors are still online. Of course.'); });
-  if (crossed(prev, S.clock, 2 * 60)) once('2am', function () { flashStatus('2:00 AM. Still unlimited.', 'Late-night essay help, no extra charge.'); });
-  if (crossed(prev, S.clock, 7 * 60 + 30)) once('back', function () { flashStatus('7:30 AM: Teachers are back.', 'Power left: ' + INF); });
+  if (crossed(prev, S.clock, 16 * 60 + 30)) once('out', function () { flashStatus(tx('out'), tx('outSub')); });
+  if (crossed(prev, S.clock, 20 * 60)) once('party', function () { flashStatus(tx('night'), 'Tutors are still online. Of course.'); });
+  if (crossed(prev, S.clock, 2 * 60)) once('2am', function () { flashStatus('2:00 AM. Still unlimited.', tx('lateSub')); });
+  if (crossed(prev, S.clock, 7 * 60 + 30)) once('back', function () { flashStatus('7:30 AM: Teachers are back.', tx('backSub')); });
   if (Math.floor(prev / 1440) % 7 !== 5 && Math.floor(S.clock / 1440) % 7 === 5) once('sat', function () { flashStatus('Saturday!', 'Still unlimited. No weekend surcharge.'); });
   updateTeachers(dt);
   S.idle += dt;
   if (S.idle > 8 && S.nudges < 3 && !UI.flashUntil) {
     S.nudges++;
     S.idle = 0;
-    flashStatus('Keep clicking!', 'It’s unlimited. We checked.', 2800);
+    flashStatus(tx('nudge'), 'It’s unlimited. We checked.', 2800);
   }
   var b = Math.floor(beatPos());
   if (b !== S.beat && b >= 0) { S.beat = b; onBeat(b); }
@@ -540,6 +594,8 @@ $('pb-done').addEventListener('click', goCrisis);
 $('pb-again').addEventListener('click', resetGame);
 $('pb-mute').addEventListener('click', function () {
   muted = !muted;
+  if (muted) rainOff(true);
+  else if (MODE === 'cozy' && (S.phase === 'crisis' || S.phase === 'charge')) rainOn();
   this.innerHTML = muted ? '&#128263;' : '&#128266;';
   this.setAttribute('aria-pressed', String(muted));
   this.setAttribute('aria-label', muted ? 'Unmute sound' : 'Mute sound');
@@ -551,6 +607,8 @@ root.addEventListener('keydown', function (e) {
 });
 
 function resetGame() {
+  var from = MODE;
+  rainOff(true);
   closePop();
   cancelCountdown();
   $('pb-invoice').hidden = true;
@@ -573,8 +631,7 @@ function resetGame() {
   $('pb-power-fill').style.width = '0%';
   $('pb-orb').setAttribute('aria-label', 'UPchieve power-up. Click to charge up.');
   cv.setAttribute('aria-label', 'A school district map. Click the map to add a school.');
-  seedHoard(CROWD);
-  onSchoolsChanged();
+  enterChooser(from);
 }
 
 // Input
@@ -599,7 +656,7 @@ cv.addEventListener('pointermove', function (e) {
     if (d.moved) placeSchool(d.s, p.x - d.ox, p.y - d.oy);
   }
   if (S.phase === 'unlimited' && S.ptr.mouse && Math.random() < 0.4) {
-    S.parts.push({ x: p.x, y: p.y, vx: rand(-20, 20), vy: rand(-30, 0), life: 0.5, c: pick(POP), s: 3 * S.k, shape: 'dot', rot: 0, vr: 0, grav: 60 });
+    S.parts.push({ x: p.x, y: p.y, vx: rand(-20, 20), vy: rand(-30, 0), life: 0.5, c: pick(MODE === 'cozy' ? ['#FFE08A', '#FFD27A', '#FFFFFF'] : POP), s: 3 * S.k, shape: 'dot', rot: 0, vr: 0, grav: 60 });
   }
 });
 cv.addEventListener('pointerleave', function () { S.ptr.inside = false; });
@@ -672,7 +729,9 @@ function updateCursor() {
 
 function step(dt) {
   S.t += dt;
-  if (S.phase === 'build') { hoverStep(dt); countdownStep(dt); }
+  if (S.phase === 'choose') chooseStep(dt);
+  else if (S.phase === 'intro') introStep(dt);
+  else if (S.phase === 'build') { hoverStep(dt); countdownStep(dt); }
   else if (S.phase === 'crisis') crisisStep(dt);
   else if (S.phase === 'charge') chargeStep(dt);
   else if (S.phase === 'unlimited') unlimitedStep(dt);
@@ -688,6 +747,7 @@ function step(dt) {
   updateSchools(dt);
   updateDreams(dt);
   updateFx(dt);
+  if (MODE === 'cozy' || S.phase === 'choose') cozyStep(dt);
   updateCursor();
   S.uiT = (S.uiT || 0) - dt;
   if (S.uiT <= 0) { paintHud(); S.uiT = 0.06; }
@@ -702,12 +762,12 @@ function resize() {
   setGeometry(w, h);
   placePu(S.phase === 'unlimited');
   positionPop();
+  if (S.phase === 'choose') paintChooser();
 }
 if (window.ResizeObserver) new ResizeObserver(resize).observe($('pb-screen'));
 else window.addEventListener('resize', resize);
 resize();
-seedHoard(CROWD);
-onSchoolsChanged();
+enterChooser();
 
 var visible = true, last = 0;
 if (window.IntersectionObserver) {

@@ -5,7 +5,7 @@ src = Path(__file__).parent / 'src'
 fonts = '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700;1,800&display=swap">'
 css = (src / 'pb.css').read_text()
 html = (src / 'pb.html').read_text()
-js = '\n'.join((src / f).read_text() for f in ['pb-core.js', 'pb-world.js', 'pb-draw.js', 'pb-ui.js'])
+js = '\n'.join((src / f).read_text() for f in ['pb-core.js', 'pb-world.js', 'pb-draw.js', 'pb-cozy.js', 'pb-choose.js', 'pb-ui.js'])
 import base64, json
 # Art from the UPchieve Illustrations library in Figma, inlined so the snippet has no outside files.
 art = {p.stem: 'data:image/webp;base64,' + base64.b64encode(p.read_bytes()).decode() for p in sorted((src / 'assets').glob('*.webp'))}

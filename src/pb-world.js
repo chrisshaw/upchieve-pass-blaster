@@ -8,7 +8,7 @@ function depth(y) {
   return lerp(0.7, 1.08, t);
 }
 function srect(s) {
-  var d = dims(s), sc = s.sc, extra = d.mega ? 16 : 30;
+  var d = dims(s), sc = s.sc, extra = MODE === 'cozy' ? roofRise(s) - 8 : d.mega ? 16 : 30;
   return { x: s.x - d.w * sc / 2, y: s.y - (d.h + extra) * sc, w: d.w * sc, h: (d.h + extra) * sc };
 }
 
@@ -91,12 +91,12 @@ function setSize(s, size) {
 
 function removeSchool(s) {
   s.dead = true;
-  S.kids.forEach(function (k) { if (k.target === s) { k.mode = 'wander'; k.target = null; k.pause = 0; } });
+  S.kids.forEach(function (k) { if (k.target === s) { k.mode = 'wander'; k.target = null; k.pause = 0; k.roof = false; k.mug = null; } });
   if (s.landed) eject(s, s.inside);
   S.schools = S.schools.filter(function (o) { return o !== s; });
   S.teachers = S.teachers.filter(function (t) { return t.school !== s; });
   recalcNeeds();
-  if (S.phase !== 'build') sendEveryoneInside();
+  if (S.phase !== 'build' && S.phase !== 'intro') sendEveryoneInside();
 }
 
 function makeKid(x, y) {
@@ -180,10 +180,12 @@ function updateKids(dt) {
     if (going && k.target.dead) { k.mode = 'wander'; k.target = null; groundPoint(k); going = false; }
     if (going && !k.target.landed) { keep.push(k); continue; }
     if (k.mode === 'cheer') {
+      var was = k.age;
       k.age += dt;
       k.cheer -= dt;
       if (k.target.dead) continue;
       placeDancer(k);
+      if (k.mug && k.slot === 0) toastBeat(k, was);
       if (k.cheer > 0) { keep.push(k); continue; }
       k.target.inside++;
       burst(k.x, k.y - 12 * S.k, 5, ['#FFFFFF', '#FFC94D'], 70, 'dot');
@@ -305,13 +307,15 @@ function clockStr(m) {
   return (h % 12 || 12) + ':' + (mm < 10 ? '0' : '') + mm + ' ' + (h < 12 ? 'AM' : 'PM');
 }
 
+// The chooser paints both versions at once; it sets PART_TAG so an effect only shows on its own half.
+var PART_TAG;
 function burst(x, y, n, colors, spd, shape) {
   if (reduced) n = Math.ceil(n / 3);
   for (var i = 0; i < n; i++) {
     var a = Math.random() * Math.PI * 2, v = rand(0.3, 1) * spd;
     S.parts.push({
       x: x, y: y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - spd * 0.5, life: rand(0.5, 1.1),
-      c: pick(colors), s: rand(3, 7) * S.k, shape: shape || 'star', rot: Math.random() * 6, vr: rand(-8, 8), grav: 340
+      c: pick(colors), s: rand(3, 7) * S.k, shape: shape || 'star', rot: Math.random() * 6, vr: rand(-8, 8), grav: 340, only: PART_TAG
     });
   }
   if (S.parts.length > 700) S.parts.splice(0, S.parts.length - 700);
@@ -322,7 +326,9 @@ function floatText(x, y, text, style, size) {
 }
 function updateFx(dt) {
   S.parts = S.parts.filter(function (p) {
+    if (p.orb) { p.life -= dt; orbitStep(p, dt); return p.life > 0; }
     p.life -= dt; p.vy += (p.grav === undefined ? 340 : p.grav) * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.rot += p.vr * dt;
+    if (p.shape === 'leaf') leafDrag(p, dt);
     return p.life > 0;
   });
   S.floats = S.floats.filter(function (f) { f.life -= dt; f.y -= 38 * dt; return f.life > 0; });
@@ -335,11 +341,14 @@ function updateFx(dt) {
 
 var SAD = ['GRADES', 'SAT SCORES', 'GRADUATION', 'COLLEGE ACCEPTANCE', 'ATTENDANCE', 'CONFIDENCE', 'HOMEWORK DONE', 'FAFSA FILED', 'AP SCORES', 'READING LEVEL'];
 var WINS = ['A+ ON THE ESSAY', 'MATH CLICKED', 'UNSTUCK!', 'LAB REPORT DONE', 'PROOF SOLVED', 'GOT IT!'];
-function schoolTop(s) { return s.y - (dims(s).h + 8) * s.sc; }
+var SAD_COZY = ['STUCK ON FRACTIONS', 'ESSAY DUE TOMORROW', 'LOST IN CHEM', 'NO ONE TO ASK', 'FAFSA IS CONFUSING', 'GRADES SLIPPING', 'HOMEWORK PILING UP', 'MISSED THE REVIEW'];
+var UPS_COZY = ['GRADES', 'CONFIDENCE', 'HOMEWORK DONE', 'READING LEVEL', 'TEST SCORES', 'ATTENDANCE'];
+var WINS_COZY = ['FRACTIONS CLICKED', 'ESSAY OUTLINED', 'UNSTUCK!', 'LAB REPORT DONE', 'GOT IT!', 'READY FOR THE TEST', 'FAFSA FILED'];
+function schoolTop(s) { return s.y - (dims(s).h + 8 + (MODE === 'cozy' ? roofRise(s) : 0)) * s.sc; }
 function sadEvent() {
   if (!S.schools.length) return;
   var s = pick(S.schools);
-  floatText(s.x + rand(-20, 20) * S.k, schoolTop(s), '🔽 ' + pick(SAD), 'sad', 15);
+  floatText(s.x + rand(-20, 20) * S.k, schoolTop(s), MODE === 'cozy' ? '🌧 ' + pick(SAD_COZY) : '🔽 ' + pick(SAD), 'sad', 15);
   if (Math.random() < 0.5) sfx.sad();
 }
 function addDreams(v) {
@@ -358,6 +367,10 @@ function updateDreams(dt) {
 // Clicking a school pops a dance crew out all at once: three in a row by the door and one
 // on the roof. Clicking again while they're out keeps the party going.
 var DANCE_SPOTS = [{ ox: -22, oy: 11 }, { ox: 0, oy: 13 }, { ox: 22, oy: 11 }, { roof: true }];
+// In cozy mode (and on the chooser) three kids step out with mugs, clink them, then raise them to you.
+// Clicking again while they're out starts another round of clinks.
+var TOAST_SPOTS = DANCE_SPOTS.slice(0, 3);
+var MUGS = ['#F2CC60', '#E07A5F', '#6FA8C8', '#8FBF7F', '#C9A7E8', '#F48FB1'];
 function placeDancer(k) {
   var s = k.target, d = dims(s);
   if (k.roof) {
@@ -369,26 +382,35 @@ function placeDancer(k) {
   }
 }
 function cheer(s) {
+  var toast = MODE === 'cozy' || S.phase === 'choose';
   var crew = S.kids.filter(function (k) { return k.mode === 'cheer' && k.target === s; });
-  if (crew.length) { crew.forEach(function (k) { k.cheer = Math.max(k.cheer, 1.3); }); return; }
-  DANCE_SPOTS.forEach(function (spot, i) {
+  if (crew.length) {
+    crew.forEach(function (k) {
+      if (!toast) { k.cheer = Math.max(k.cheer, 1.3); return; }
+      if (k.age > TOAST.raise) k.age = TOAST.approach;
+      k.cheer = Math.max(k.cheer, 1.75);
+    });
+    return;
+  }
+  (toast ? TOAST_SPOTS : DANCE_SPOTS).forEach(function (spot, i) {
     if (s.inside < 1) return;
     s.inside--;
     var k = makeKid(s.x, s.y);
     k.mode = 'cheer'; k.target = s; k.cheer = 1.8; k.age = 0; k.slot = i;
     k.roof = !!spot.roof; k.ox = spot.ox || 0; k.oy = spot.oy || 0;
+    if (toast) { k.mug = pick(MUGS); k.cheer = 1.95; }
     placeDancer(k);
     S.kids.push(k);
   });
-  burst(s.x, s.y - dims(s).h * s.sc * 0.5, 10, POP, 150 * S.k, 'star');
+  if (!toast) burst(s.x, s.y - dims(s).h * s.sc * 0.5, 10, POP, 150 * S.k, 'star');
 }
 function firework() {
   var x = rand(S.W * 0.15, S.W * 0.85), y = rand(S.H * 0.08, S.G.horizon - 20 * S.k), cols = [pick(POP), pick(POP), '#FFFFFF'];
   for (var i = 0; i < 22; i++) {
     var a = i / 22 * Math.PI * 2, v = rand(120, 190) * S.k;
-    S.parts.push({ x: x, y: y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: rand(0.7, 1), c: pick(cols), s: rand(3, 5) * S.k, shape: 'star', rot: 0, vr: rand(-6, 6), grav: 90 });
+    S.parts.push({ x: x, y: y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: rand(0.7, 1), c: pick(cols), s: rand(3, 5) * S.k, shape: 'star', rot: 0, vr: rand(-6, 6), grav: 90, only: PART_TAG });
   }
-  if (Math.random() < 0.5) sfx.pew();
+  if (Math.random() < 0.5 && S.phase !== 'choose') sfx.pew();
 }
 function blast(s, px, py) {
   S.sessions++;
@@ -396,11 +418,23 @@ function blast(s, px, py) {
   S.lastBlast = S.t;
   s.hit = 0.18;
   s.squash = 0.45;
-  burst(px, py, 16, POP, 190 * S.k, 'star');
-  var r = Math.random();
-  if (isParty() && r < 0.35) floatText(px, schoolTop(s), '🌙 ' + clockStr(S.clock) + ': STILL ON', 'win', 15);
-  else if (r < 0.72) floatText(px, schoolTop(s), '🔼 ' + pick(SAD), 'happy', 15);
-  else floatText(px, schoolTop(s), pick(WINS) + ' ✨', 'win', 15);
+  var r;
+  if (MODE === 'cozy') {
+    burst(px, py, 10, LEAVES, 170 * S.k, 'leaf');
+    burst(px, py, 6, ['#FFE08A', '#FFFFFF'], 150 * S.k, 'star');
+    addFlies(s.x, schoolTop(s), 3);
+    s.ring = 1;
+    r = Math.random();
+    if (isParty() && r < 0.35) floatText(px, schoolTop(s), '🌙 ' + clockStr(S.clock) + ': STILL HELPING', 'win', 15);
+    else if (r < 0.6) floatText(px, schoolTop(s), '🔼 ' + pick(UPS_COZY), 'happy', 15);
+    else floatText(px, schoolTop(s), pick(WINS_COZY) + ' ✨', 'win', 15);
+  } else {
+    burst(px, py, 16, POP, 190 * S.k, 'star');
+    r = Math.random();
+    if (isParty() && r < 0.35) floatText(px, schoolTop(s), '🌙 ' + clockStr(S.clock) + ': STILL ON', 'win', 15);
+    else if (r < 0.72) floatText(px, schoolTop(s), '🔼 ' + pick(SAD), 'happy', 15);
+    else floatText(px, schoolTop(s), pick(WINS) + ' ✨', 'win', 15);
+  }
   if (S.combo >= 5 && S.combo % 5 === 0) floatText(px, py - 46 * S.k, S.combo + 'x STREAK!', 'big', 20);
   addDreams(0.1 * (1 + Math.min(S.combo, 20) * 0.03));
   cheer(s);
@@ -420,6 +454,7 @@ function schoolAt(px, py) {
 
 // Energy streaming into the admin while the power-up charges.
 function chargeFx(intensity) {
+  if (MODE === 'cozy') { leafVortex(intensity); return; }
   var n = Math.ceil(intensity * 3);
   for (var i = 0; i < n; i++) {
     var a = Math.random() * Math.PI * 2, r = rand(120, 420) * S.k;
