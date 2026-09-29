@@ -466,7 +466,7 @@ function boom() {
 // and each school it reaches lights up and gets its caretaker spirit.
 function bloom() {
   S.bloom = { r: 0 };
-  S.duo = { got: S.t + 1.1, clink: S.t + 1.7 };
+  S.duo = { got: S.t + 2.2, clink: S.t + 3.2 };
   sfx.boom();
   rainOff();
   S.dog.glasses = 0.001;
@@ -487,7 +487,7 @@ function startUnlimited() {
   placePu(true);
   softShow(pu);
   $('pb-orb').setAttribute('aria-label', 'UPchieve power-up, active. See the price.');
-  if (MODE === 'cozy') seedFlies(24);
+  if (MODE === 'cozy') seedFlies(36);
   setStatus(tx('unlimited'), tx('unlimitedSub'));
   flashStatus(tx('unlimitedFlash'), tx('unlimitedFlashSub'), MODE === 'cozy' ? 4400 : 3600);
   $('pb-clock').hidden = false;

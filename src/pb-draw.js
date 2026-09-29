@@ -444,6 +444,9 @@ function heroFigure(ph, t) {
     circle(-20, -66, 3.5); paint(skin); circle(20, -66, 3.5); paint(skin);
   } else if (ph === 'charge') {
     line(-12, -50, -26, -54); line(12, -50, 26, -54);
+  } else if (cozy && ph !== 'unlimited') {
+    line(-12, -50, -16, -30); line(12, -50, 16, -30);
+    circle(-16, -29, 3.6); paint(skin); circle(16, -29, 3.6); paint(skin);
   } else if (ph === 'unlimited') {
     var up = beatFrac() < 0.5;
     line(-12, -50, -22, up ? -66 : -40); line(12, -50, 22, up ? -40 : -66);
@@ -703,7 +706,7 @@ function drawScene() {
   // Cozy wisps sort just in front of or just behind their school as they circle it.
   if (cozy) S.schools.forEach(function (s) {
     if (!s.spirit) return;
-    list.push({ y: s.y + (spiritPos(s).front ? 0.05 : -0.05), k: 4, o: s });
+    list.push({ y: s.y - 0.05, k: 4, o: s, f: false }, { y: s.y + 0.05, k: 4, o: s, f: true });
     for (var i = 0; i < ORBIT_LEAVES; i++) list.push({ y: s.y + (leafOrbit(s, i).front ? 0.04 : -0.04), k: 5, o: s, i: i });
   });
   list.sort(function (a, b) { return a.y - b.y; });
@@ -718,7 +721,7 @@ function drawScene() {
       drawPerson(o, o.x, ky, ksc, km);
     }
     else if (e.k === 2) drawCar(o, nt);
-    else if (e.k === 4) drawSpirit(o, nt);
+    else if (e.k === 4) drawSpirit(o, nt, e.f);
     else if (e.k === 5) drawOrbitLeaf(o, e.i, nt);
     else drawPerson(o, o.px, o.py, S.k * depth(o.py) * 1.3, true);
   });

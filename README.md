@@ -48,6 +48,7 @@ Commit `docs/` after building so the live page and the Squarespace embed update.
 - `build.py` escapes every non-ASCII character in the JS, so the embed works no matter what encoding the host page declares.
 - The art in `src/assets/` comes from the UPchieve Illustrations library in Figma. `build.py` inlines it, so the game loads no image files.
 - Cozy mode's headlines use Fraunces, loaded from Google Fonts next to Work Sans.
+- UPdog's cozy pose is built from the same art: a copy with his front leg nearest the admin cut away, and that leg redrawn each frame so he can lift a mug and reach over to clink. The cut and the leg's joint positions are in `src/pb-cozy.js` (`DOG_*`), in the art's own pixels, so they need updating if `dog.webp` changes.
 - In cozy mode a second canvas (`#pb-over`) sits above the page's meters, so the power-up wisp can pass in front of the Tutoring bar as well as behind it.
 - Party mode's drawing lives in `src/pb-draw.js` and cozy mode's in `src/pb-cozy.js`. Each check of `MODE` picks one or the other, so changing one mode doesn't touch the other. Wording that differs between the modes is in the `TEXT` table in `src/pb-ui.js`.
 - The chooser (`src/pb-choose.js`) draws the whole scene twice per frame, once for each half. Particles tagged with `PART_TAG` show on one half only.

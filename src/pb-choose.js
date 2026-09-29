@@ -23,7 +23,7 @@ function enterChooser(from) {
   PART_TAG = 'cozy';
   S.schools.forEach(function (s) { s.inside = s.need; bless(s); s.spirit.born = S.t - 5; s.ring = 0; });
   PART_TAG = undefined;
-  seedFlies(20);
+  seedFlies(28);
   S.dog.on = true; S.dog.glasses = 1;
   var over = TILT * S.H / S.W + 0.03;
   CH.split = from === 'party' ? 1 + over : from === 'cozy' ? -over : 0.5;
