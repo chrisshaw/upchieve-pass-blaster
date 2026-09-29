@@ -535,7 +535,7 @@ var TENDS = ['Got unstuck on fractions', 'Essay outline, sorted', 'Chemistry fin
 function bless(s, from) {
   if (s.spirit) return;
   s.blessed = true;
-  s.spirit = { a: rand(0, 6.28), born: S.t, from: from || null, tendAt: S.t + rand(3, 6), tend: 0, swirl: 0, dir: -1, fw: 0, trail: [], lastT: 0 };
+  s.spirit = { a: rand(0, 6.28), la: rand(0, 6.28), born: S.t, from: from || null, tendAt: S.t + rand(3, 6), tend: 0, swirl: 0, dir: -1, fw: 0, trail: [], lastT: 0 };
   s.ring = 1;
   for (var i = 0; i < 3; i++) S.flies.push({ home: s, ox: rand(-0.7, 0.7), oy: rand(0.1, 0.9), ph: rand(0, 10), sp: rand(0.7, 1.3), x: s.x, y: s.y });
 }
@@ -568,6 +568,7 @@ function stepSpirits(dt) {
     var sp = s.spirit;
     if (!sp) return;
     sp.a += dt * (0.9 + sp.swirl * 5);
+    sp.la += dt * (0.5 + sp.swirl * 3.5);
     if (sp.swirl > 0) sp.swirl = Math.max(0, sp.swirl - dt / 1.3);
     if (s.flare > 0) s.flare = Math.max(0, s.flare - dt / 1.6);
     if (sp.tend > 0) {
@@ -606,6 +607,25 @@ function spiritCheer(s) {
   var sp = s.spirit;
   if (!sp) return;
   sp.dir = -sp.dir; sp.swirl = 1; sp.tend = 0;
+}
+// A few leaves circle each powered school too, on a wider, slower loop than its wisp, passing in
+// front and behind the same way. A click sends them swirling along with the wisp.
+var ORBIT_LEAVES = 4;
+function leafOrbit(s, i) {
+  var d = dims(s), sp = s.spirit, sc = s.sc, a = sp.la + i * Math.PI * 2 / ORBIT_LEAVES;
+  var up = sp.swirl > 0 ? Math.sin(Math.PI * (1 - sp.swirl)) * 30 * sc * sp.dir : 0;
+  return {
+    x: s.x + Math.cos(a) * (d.w / 2 + 24) * sc,
+    y: s.y - d.h * sc * (0.32 + 0.12 * Math.sin(a * 2 + i)) + Math.sin(a) * 13 * sc - up,
+    front: Math.sin(a) > 0, a: a
+  };
+}
+function drawOrbitLeaf(s, i, nt) {
+  var sp = s.spirit, p = leafOrbit(s, i), fade = smooth((S.t - sp.born - 0.8) / 0.8);
+  if (fade <= 0) return;
+  g.globalAlpha = fade;
+  leafShape(p.x, p.y, 6.6 * s.sc * (p.front ? 1.1 : 0.9), p.a * 1.7 + i, S.t * 2.4 + i * 1.3, cz(LEAVES[(i + (s.id || 0)) % LEAVES.length], nt * 0.6));
+  g.globalAlpha = 1;
 }
 function drawSpirit(s, nt) {
   var sp = s.spirit, p = spiritPos(s), k = s.sc, fade = smooth((S.t - sp.born) / 0.6), r = 4.6 * k * (p.front ? 1.1 : 0.9);
@@ -683,7 +703,7 @@ function duoPose() {
   var c = S.t - D.clink, back = 1 - smooth((c - 2) / 0.6);
   return { fade: smooth((S.t - D.got) / 0.4), reach: c < 0 ? 0 : toastReach(c) * back, lift: c < 0 ? 0 : toastLift(c) * back };
 }
-function duoMeet() { var h = S.hero; return { x: h.x + 43 * h.hs, y: h.y - 50 * h.hs }; }
+function duoMeet() { var m = dogMugAt(-0.14); return { x: m.x - 4.5 * S.hero.hs, y: m.y }; }
 function stepDuo(dt) {
   var D = S.duo;
   if (!D || S.phase !== 'unlimited') return;
@@ -829,25 +849,17 @@ function dogScarf(s, drop) {
   circle(198, 168, 16); paint('#B5452E', OUTLINE, 4);
   g.restore();
 }
-function dogMug(d, w, h, P) {
-  var m = duoMeet(), hs = S.hero.hs, lean = 0.08 * P.reach * h;
-  var rx = d.x - 0.27 * w, ry = d.y - 0.52 * h;
-  var mx = lerp(lerp(rx, m.x + 4.5 * hs, P.reach), rx - 0.02 * w, P.lift), my = lerp(lerp(ry, m.y, P.reach), ry - 0.2 * h, P.lift);
-  var sx = d.x - 0.12 * w - lean, sy = d.y - 0.42 * h;
-  g.save();
-  g.globalAlpha = P.fade;
-  g.lineCap = 'round';
-  g.beginPath(); g.moveTo(sx, sy); g.lineTo(mx + 0.05 * w, my + 0.01 * w);
-  g.lineWidth = 0.13 * w + 5; g.strokeStyle = '#FFFFFF'; g.stroke();
-  g.lineWidth = 0.13 * w; g.strokeStyle = '#E4AE4E'; g.stroke();
-  g.translate(mx, my); g.scale(hs, hs);
-  mugShape(0, 0, 0.1 - 0.2 * P.reach, '#6FA8C8', 1.6, 1);
-  g.restore();
-  g.save();
-  g.globalAlpha = P.fade;
-  circle(mx + 0.05 * w, my + 0.012 * w, 0.055 * w); g.fillStyle = '#E4AE4E'; g.fill();
-  g.lineWidth = 1.2; g.strokeStyle = 'rgba(150,100,40,.55)'; g.stroke();
-  g.restore();
+// UPdog carries his mug by the handle in his mouth, the way dogs carry things, and leans in to clink.
+// DOG_MOUTH is where the handle sits, in the art's pixels.
+var DOG_MOUTH = [124, 116];
+function dogLean(P) { return P ? lerp(-0.14 * P.reach, 0.05, P.lift) : 0; }
+function dogMugLocal() {
+  var d = S.dog, s = d.w / ART_META.dog[0], hs = S.hero.hs;
+  return { x: (DOG_MOUTH[0] - ART_META.dog[0] / 2) * s - 4.2 * hs, y: (DOG_MOUTH[1] - ART_META.dog[1]) * s + 2.5 * hs };
+}
+function dogMugAt(rot) {
+  var d = S.dog, m = dogMugLocal(), c = Math.cos(rot), sn = Math.sin(rot);
+  return { x: d.x + m.x * c - m.y * sn, y: d.y + m.x * sn + m.y * c };
 }
 function drawCozyDog() {
   var d = S.dog;
@@ -856,7 +868,8 @@ function drawCozyDog() {
   ellipse(d.x, d.y + 2, w * 0.42, 6 * S.k); paint('rgba(0,0,0,.2)');
   g.save();
   g.translate(d.x, d.y);
-  if (P) g.rotate(-0.08 * P.reach);
+  g.rotate(dogLean(P));
+  g.save();
   g.scale(1, 1 + Math.sin(S.t * 1.5) * 0.01);
   g.drawImage(IMG.dog, -w / 2, -h, w, h);
   if (d.glasses > 0) {
@@ -867,7 +880,14 @@ function drawCozyDog() {
     dogScarf(s, (1 - e) * 40 * S.k);
   }
   g.restore();
-  if (P) dogMug(d, w, h, P);
+  if (P) {
+    var m = dogMugLocal();
+    g.globalAlpha = P.fade;
+    g.translate(m.x, m.y);
+    g.scale(S.hero.hs, S.hero.hs);
+    mugShape(0, 0, 0.12, '#6FA8C8', 1.4, 1);
+  }
+  g.restore();
 }
 
 // The admin: an umbrella in the rain, a quiet float with eyes closed while the power-up settles in,
@@ -919,8 +939,10 @@ function heroMug(skin) {
     circle(16, -29, 3.6); paint(skin);
     return;
   }
+  // The admin steps 8 units toward UPdog to meet his mug (see drawCozyHero).
+  var hs = S.hero.hs, dm = dogMugAt(-0.14), meetX = (dm.x - 8.5 * hs - S.hero.x) / hs - 8, meetY = (dm.y - S.hero.y) / hs;
   var sip = smooth((Math.sin(S.t * 0.6) - 0.5) / 0.5) * (1 - P.reach);
-  var mx = lerp(lerp(lerp(22, 19, sip), 38.5, P.reach), 24, P.lift), my = lerp(lerp(lerp(-47, -65, sip), -50, P.reach), -76, P.lift);
+  var mx = lerp(lerp(lerp(22, 19, sip), meetX, P.reach), 24, P.lift), my = lerp(lerp(lerp(-47, -65, sip), meetY, P.reach), -76, P.lift);
   var hx = mx - 5, hy = my + 3;
   g.strokeStyle = skin; g.lineWidth = 6;
   line(12, -50, hx, hy);
@@ -980,6 +1002,8 @@ function drawCozyHero() {
     g.fillRect(-70, -120 - lev, 140, 150);
   }
   g.translate(0, -lev);
+  var P = ph === 'unlimited' ? duoPose() : null;
+  if (P) g.translate(8 * P.reach, 0);
   if (ph === 'charge') { STK = 7; heroMeditate(); STK = 0; heroMeditate(); }
   else { STK = 7; heroFigure(ph, S.t); STK = 0; heroFigure(ph, S.t); }
   g.restore();

@@ -701,7 +701,11 @@ function drawScene() {
     if (tc.state === 'walkout' || tc.state === 'walkin') list.push({ y: tc.py, k: 3, o: tc });
   });
   // Cozy wisps sort just in front of or just behind their school as they circle it.
-  if (cozy) S.schools.forEach(function (s) { if (s.spirit) list.push({ y: s.y + (spiritPos(s).front ? 0.05 : -0.05), k: 4, o: s }); });
+  if (cozy) S.schools.forEach(function (s) {
+    if (!s.spirit) return;
+    list.push({ y: s.y + (spiritPos(s).front ? 0.05 : -0.05), k: 4, o: s });
+    for (var i = 0; i < ORBIT_LEAVES; i++) list.push({ y: s.y + (leafOrbit(s, i).front ? 0.04 : -0.04), k: 5, o: s, i: i });
+  });
   list.sort(function (a, b) { return a.y - b.y; });
   if (isParty()) S.schools.forEach(cozy ? drawCozyGlow : drawPartyLights);
   list.forEach(function (e) {
@@ -715,6 +719,7 @@ function drawScene() {
     }
     else if (e.k === 2) drawCar(o, nt);
     else if (e.k === 4) drawSpirit(o, nt);
+    else if (e.k === 5) drawOrbitLeaf(o, e.i, nt);
     else drawPerson(o, o.px, o.py, S.k * depth(o.py) * 1.3, true);
   });
 
